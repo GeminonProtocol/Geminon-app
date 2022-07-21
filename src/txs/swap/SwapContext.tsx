@@ -1,17 +1,17 @@
 import { PropsWithChildren } from "react"
 import { Coins } from "@terra-money/terra.js"
 import createContext from "utils/createContext"
-import { combineState } from "data/query"
-import { useActiveDenoms, useExchangeRates } from "data/queries/oracle"
+// import { combineState } from "data/query"
+// import { useActiveDenoms, useExchangeRates } from "data/queries/oracle"
 import { TerraContracts } from "data/Terra/TerraAssets"
-import { useCW20Pairs } from "data/Terra/TerraAssets"
-import { useTerraContracts } from "data/Terra/TerraAssets"
+// import { useCW20Pairs } from "data/Terra/TerraAssets"
+// import { useTerraContracts } from "data/Terra/TerraAssets"
 import { Fetching } from "components/feedback"
 
 
 interface Swap {
   activeDenoms: Denom[]
-  exchangeRates: Coins
+  exchangeRates?: Coins
   pairs: CW20Pairs
   contracts?: TerraContracts
 }
@@ -30,13 +30,14 @@ const SwapContext = ({ children }: PropsWithChildren<{}>) => {
   // console.log('Active Denoms:')
   // console.log(activeDenoms)
 
-  const { data: exchangeRates, ...exchangeRatesState } = useExchangeRates()
-  // const exchangeRates = {
-  //   _coins: {
-  //     uusd: {denom: "uusd", amount: 1027.46332339911000},
-  //     ueur: {denom: "ueur", amount: 1009.12207561311000}
-  //   }
-  // }
+  // const { data: exchangeRates, ...exchangeRatesState } = useExchangeRates()
+  // Esto se utiliza solo para simular el swap en modo ONCHAIN (Market)
+  const exchangeRates = {
+    _coins: {
+      uusd: {denom: "uusd", amount: 1027.46332339911000},
+      ueur: {denom: "ueur", amount: 1009.12207561311000}
+    }
+  }
   console.log('Exchange Rates:')
   console.log(exchangeRates)
   // console.log(exchangeRatesState)
@@ -87,7 +88,7 @@ const SwapContext = ({ children }: PropsWithChildren<{}>) => {
   
   const render = () => {
     if (!(activeDenoms && exchangeRates && pairs && contracts)) return null
-    const value = { activeDenoms, exchangeRates, pairs, contracts }
+    const value = { activeDenoms, /* exchangeRates, */ pairs, contracts }
     return <SwapProvider value={value}>{children}</SwapProvider>
   }
 

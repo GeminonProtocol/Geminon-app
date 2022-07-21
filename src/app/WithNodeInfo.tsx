@@ -6,6 +6,7 @@ import { PropsWithChildren } from "react"
 
 
 const WithNodeInfo = ({ children }: PropsWithChildren<{}>) => {
+  console.log("[WithNodeInfo] Componente obsoleto, eliminar")
   return <>{children}</>
 }
 

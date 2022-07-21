@@ -11,9 +11,10 @@ const REQUIRED_VERSION = "1.2.0"
 const ElectronVersion = () => {
   const { t } = useTranslation()
   
-  console.log('ElectronVersion: not Electron OK')
-
-  if (!electron) return null
+  if (!electron) {
+    console.log('ElectronVersion: not Electron OK')  
+    return null
+  }
 
   const version = electron("version")
   const shouldUpdate = semver.lt(version, REQUIRED_VERSION)

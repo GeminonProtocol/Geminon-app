@@ -9,6 +9,8 @@ import Online from "./containers/Online"
 import WithNodeInfo from "./WithNodeInfo"
 
 
+// TODO: Reaprovechar el módulo Online. Todos los demás en principio
+// no sirven de nada, incluyendo el propio Init Wallet.
 const InitWallet = ({ children }: PropsWithChildren<{}>) => {
   const queryClient = useQueryClient()
   const networkName = useNetworkName()

@@ -7,14 +7,14 @@ import { ErrorBoundary, Wrong } from "components/feedback"
 import { useNav } from "./routes"
 
 /* banner */
-import NetworkName from "./sections/NetworkName"
+import BannerText from "./sections/BannerText"
 
 /* sidebar */
 import Nav from "./sections/Nav"
 import Aside from "./sections/Aside"
 
 /* header */
-import IsClassicNetwork from "./sections/IsClassicNetwork"
+import NetworkName from "./sections/NetworkName"
 import Refresh from "./sections/Refresh"
 import Preferences from "./sections/Preferences"
 import SelectTheme from "./sections/SelectTheme"
@@ -34,7 +34,7 @@ const App = () => {
   return (
     <Layout>
       <Banner>
-        <NetworkName />
+        <BannerText />
       </Banner>
 
       <Sidebar>
@@ -43,7 +43,7 @@ const App = () => {
       </Sidebar>
 
       <Header>
-        <IsClassicNetwork />
+        <NetworkName />
 
         <Actions>
           <DevTools />

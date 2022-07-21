@@ -17,7 +17,7 @@ import InitAdapter from "app/InitAdapter"
 // import InitNetworks from "app/InitNetworks"
 // import InitWallet from "app/InitWallet"
 import InitTheme from "app/InitTheme"
-import ElectronVersion from "app/ElectronVersion"
+// import ElectronVersion from "app/ElectronVersion"
 import App from "app/App"
 
 // const connectorOpts = { bridge: BRIDGE }
@@ -30,7 +30,7 @@ render(
         <ScrollToTop />
           <InitAdapter>
             <InitTheme />
-            <ElectronVersion />
+            {/* <ElectronVersion /> */}
             <App />
           </InitAdapter>
         {debug.query && <ReactQueryDevtools position="bottom-right" />}

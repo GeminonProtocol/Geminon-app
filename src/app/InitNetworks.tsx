@@ -50,12 +50,12 @@ const InitNetworks = ({ children }: PropsWithChildren<{}>) => {
   
   const [network, setNetwork] = useNetworkState()
   setNetwork("classic") // Necesario para que funcione el módulo de swaps
-  console.log("Selected network:")
-  console.log(network)
-  console.log("EVM networks:")
-  console.log(validNetworks)
-  console.log("Loaded networks:")
-  console.log(networks)
+  // console.log("Selected network:")
+  // console.log(network)
+  // console.log("EVM networks:")
+  // console.log(validNetworks)
+  // console.log("Loaded networks:")
+  // console.log(networks)
   console.log('InitNetworks OK')
   
   return <NetworksProvider value={networks}>{children}</NetworksProvider>

@@ -1,16 +1,28 @@
-// import classNames from "classnames"
-//import { useNetworkName } from "data/wallet"
-// import styles from "./NetworkName.module.scss"
+// import { useIsClassic } from "data/query"
+import styles from "./IsClassicNetwork.module.scss"
 
-const NetworkName = () => {return null}
 
-// Nombre de la red seleccionada. Se usa sólo en el banner amarillo 
-// que aparece arriba si la red seleccionada no es la mainnet. 
-// Lo apagamos para que no de por saco.
-/* const NetworkName = () => {
-  const name = useNetworkName()
-  if (name === "mainnet") return null
-  return <div className={classNames(styles.text, styles.warning)}>{name}</div>
+
+// TODO: Cambiar por "Network" y que muestre el nombre
+// de la red EVM seleccionada, o el icono. Ver si colocamos
+// aquí el menú selector de red o a la derecha.
+const NetworkName = () => {
+  return (
+    <div className={styles.component}>
+      {"Testnet"}
+    </div>
+  )
+}
+
+
+/* const IsClassicNetwork = () => {
+  const isClassic = useIsClassic()
+
+  return (
+    <div className={styles.component}>
+      {isClassic ? "Terra Classic" : "Terra 2.0"}
+    </div>
+  )
 } */
 
 export default NetworkName

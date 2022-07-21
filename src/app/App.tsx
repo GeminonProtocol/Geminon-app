@@ -58,7 +58,8 @@ const App = () => {
 
       <Content>
         <ErrorBoundary fallback={fallback}>
-          <InitBankBalance>{routes}</InitBankBalance>
+          {/* <InitBankBalance>{routes}</InitBankBalance> */}
+          {routes}
         </ErrorBoundary>
       </Content>
     </Layout>

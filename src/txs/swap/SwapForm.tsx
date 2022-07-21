@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useLocation } from "react-router-dom"
+// import { useLocation } from "react-router-dom"
 import { useQuery } from "react-query"
 import { useForm } from "react-hook-form"
-import BigNumber from "bignumber.js"
+// import BigNumber from "bignumber.js"
 import { AccAddress } from "@terra-money/terra.js"
 import { isDenomTerra } from "@terra.kitchen/utils"
 import { toAmount } from "@terra.kitchen/utils"
 
 /* helpers */
 import { has } from "utils/num"
-import { getAmount, sortCoins } from "utils/coin"
+// import { getAmount, sortCoins } from "utils/coin"
 import { queryKey } from "data/query"
 import { useAddress } from "data/wallet"
-import { useBankBalance } from "data/queries/bank"
-import { useCustomTokensCW20 } from "data/settings/CustomTokens"
+// import { useBankBalance } from "data/queries/bank"
+// import { useCustomTokensCW20 } from "data/settings/CustomTokens"
 
 /* components */
 import { Form, FormArrow, FormError } from "components/form"

@@ -15,18 +15,18 @@ import { Coin, Coins, LCDClient } from "@terra-money/terra.js"
 import { CreateTxOptions, Fee } from "@terra-money/terra.js"
 import { ConnectType, UserDenied } from "@terra-money/wallet-types"
 import { CreateTxFailed, TxFailed } from "@terra-money/wallet-types"
-import { useWallet, useConnectedWallet } from "@terra-money/use-wallet"
+// import { useWallet, useConnectedWallet } from "@terra-money/use-wallet"
 
 import { Contents } from "types/components"
 import { has } from "utils/num"
 import { getAmount, sortCoins } from "utils/coin"
 import { getErrorMessage } from "utils/error"
-import { getLocalSetting, SettingKey } from "utils/localStorage"
-import { useCurrency } from "data/settings/Currency"
-import { queryKey, RefetchOptions, useIsClassic } from "data/query"
+// import { getLocalSetting, SettingKey } from "utils/localStorage"
+// import { useCurrency } from "data/settings/Currency"
+// import { queryKey, RefetchOptions, useIsClassic } from "data/query"
 import { useAddress, useNetwork } from "data/wallet"
 import { isBroadcastingState, latestTxState } from "data/queries/tx"
-import { useBankBalance, useIsWalletEmpty } from "data/queries/bank"
+// import { useBankBalance, useIsWalletEmpty } from "data/queries/bank"
 
 import { Pre } from "components/general"
 import { Flex, Grid } from "components/layout"
@@ -82,8 +82,8 @@ interface RenderProps<TxValues> {
 
 
 function Tx<TxValues>(props: Props<TxValues>) {
-  const { token, decimals, amount, balance } = props
-  const { initialGasDenom, estimationTxValues, createTx } = props
+  const { token, decimals, amount, balance, initialGasDenom } = props
+  // const { initialGasDenom, estimationTxValues, createTx } = props
   // const { excludeGasDenom } = props 
   const { children, onChangeMax } = props
   const { onPost, redirectAfterTx, queryKeys } = props
@@ -91,66 +91,79 @@ function Tx<TxValues>(props: Props<TxValues>) {
   const [isMax, setIsMax] = useState(false)
   const [gasDenom, setGasDenom] = useState(initialGasDenom)
 
+
   // context
   const { t } = useTranslation()
-  const isClassic = useIsClassic()
-  const currency = useCurrency()
-  const network = useNetwork()
+  const isClassic = true // useIsClassic()
+  // const currency = useCurrency()
+  // const network = useNetwork()
   // const { post } = useWallet()
   // const connectedWallet = useConnectedWallet()
   const { wallet, validatePassword, ...auth } = useAuth()
-  const address = useAddress()
-  const isWalletEmpty = useIsWalletEmpty()
-  const setLatestTx = useSetRecoilState(latestTxState)
-  const isBroadcasting = useRecoilValue(isBroadcastingState)
-  const bankBalance = useBankBalance()
-  const { gasPrices } = useTx()
+  const address = useAddress() // Puenteado en origen. TODO: Pasar useAddress a contexto EVM
+  // const isWalletEmpty = false // useIsWalletEmpty()
+  const setLatestTx = useSetRecoilState(latestTxState) // Guardar hash última transacción. Probablemente para quitar.
+  const isBroadcasting = false // useRecoilValue(isBroadcastingState)
+  // const bankBalance = useBankBalance()
+  const { gasPrices } = useTx() // Contexto desde TxContet, puenteado allí
+  
+
 
   // simulation: estimate gas
-  const simulationTx = estimationTxValues && createTx(estimationTxValues)
-  const gasAdjustment = getLocalSetting<number>(SettingKey.GasAdjustment)
-  const key = {
-    address,
-    network,
-    initialGasDenom,
-    gasPrices,
-    gasAdjustment,
-    tx: simulationTx,
+  // const simulationTx = estimationTxValues && createTx(estimationTxValues)
+  // const gasAdjustment = getLocalSetting<number>(SettingKey.GasAdjustment)
+  // const key = {
+  //   address,
+  //   network,
+  //   initialGasDenom,
+  //   gasPrices,
+  //   gasAdjustment,
+  //   tx: simulationTx,
+  // }
+
+  // const { data: estimatedGas, ...estimatedGasState } = useQuery(
+  //   [queryKey.tx.create, key],
+  //   async () => {
+  //     if (!address || isWalletEmpty) return 0
+  //     // if (!(wallet || connectedWallet?.availablePost)) return 0
+  //     if (!simulationTx || !simulationTx.msgs.length) return 0
+
+  //     const config = {
+  //       ...network,
+  //       URL: network.lcd,
+  //       gasAdjustment,
+  //       gasPrices: { [initialGasDenom]: gasPrices[initialGasDenom] },
+  //     }
+
+  //     const lcd = new LCDClient(config)
+
+  //     const unsignedTx = await lcd.tx.create([{ address }], {
+  //       ...simulationTx,
+  //       feeDenoms: [initialGasDenom],
+  //     })
+
+  //     return unsignedTx.auth_info.fee.gas_limit
+  //   },
+  //   {
+  //     ...RefetchOptions.INFINITY,
+  //     // To handle sequence mismatch
+  //     retry: 3,
+  //     retryDelay: 1000,
+  //     // Because the focus occurs once when posting back from the extension
+  //     refetchOnWindowFocus: false,
+  //     enabled: !isBroadcasting,
+  //   }
+  // )
+  const estimatedGas = 1 // Si se pone un 0 se deshabilita el botón de submit
+  const estimatedGasState = {
+    error: undefined,
+    isFetching: false,
+    isIdle: false,
+    isLoading: false,
+    isSuccess: true
   }
-
-  const { data: estimatedGas, ...estimatedGasState } = useQuery(
-    [queryKey.tx.create, key],
-    async () => {
-      if (!address || isWalletEmpty) return 0
-      // if (!(wallet || connectedWallet?.availablePost)) return 0
-      if (!simulationTx || !simulationTx.msgs.length) return 0
-
-      const config = {
-        ...network,
-        URL: network.lcd,
-        gasAdjustment,
-        gasPrices: { [initialGasDenom]: gasPrices[initialGasDenom] },
-      }
-
-      const lcd = new LCDClient(config)
-
-      const unsignedTx = await lcd.tx.create([{ address }], {
-        ...simulationTx,
-        feeDenoms: [initialGasDenom],
-      })
-
-      return unsignedTx.auth_info.fee.gas_limit
-    },
-    {
-      ...RefetchOptions.INFINITY,
-      // To handle sequence mismatch
-      retry: 3,
-      retryDelay: 1000,
-      // Because the focus occurs once when posting back from the extension
-      refetchOnWindowFocus: false,
-      enabled: !isBroadcasting,
-    }
-  )
+  // console.log('[TX] estimated gas:')
+  // console.log(estimatedGas)
 
   const getGasAmount = useCallback(
     (denom: CoinDenom) => {
@@ -163,11 +176,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
     },
     [estimatedGas, gasPrices]
   )
-
   const gasAmount = getGasAmount(gasDenom)
   const gasFee = { amount: gasAmount, denom: gasDenom }
 
-  // max 
+
+  // VALOR PARA EL AMOUNT MÁXIMO DEL FORMULARIO 1 (2) 
   const getNativeMax = () => {
     if (!balance) return
     const gasAmount = gasFee.denom === token ? gasFee.amount : "0"
@@ -185,19 +198,21 @@ function Tx<TxValues>(props: Props<TxValues>) {
     if (max && isMax && onChangeMax) onChangeMax(toInput(max, decimals))
   }, [decimals, isMax, max, onChangeMax])
 
+  
   // (effect): Log error on console 
   const failed = getErrorMessage(estimatedGasState.error)
   useEffect(() => {
     if (process.env.NODE_ENV === "development" && failed) {
       console.groupCollapsed("Fee estimation failed")
-      console.info(simulationTx?.msgs.map((msg) => msg.toData(isClassic)))
+      // console.info(simulationTx?.msgs.map((msg) => msg.toData(isClassic)))
       console.info(failed)
       console.groupEnd()
     }
-  }, [failed, isClassic, simulationTx])
+  }, [failed, isClassic, /* simulationTx */])
+
 
   // submit
-  const passwordRequired = isWallet.single(wallet)
+  const passwordRequired = false // isWallet.single(wallet)
   const [password, setPassword] = useState("")
   const [incorrect, setIncorrect] = useState<string>()
 
@@ -225,24 +240,25 @@ function Tx<TxValues>(props: Props<TxValues>) {
       if (!estimatedGas || !has(gasAmount))
         throw new Error("Fee is not estimated")
 
-      const tx = createTx(values)
+      // const tx = createTx(values)
 
-      if (!tx) throw new Error("Tx is not defined")
+      // if (!tx) throw new Error("Tx is not defined")
 
-      const gasCoins = new Coins([Coin.fromData(gasFee)])
-      const fee = new Fee(estimatedGas, gasCoins)
+      // const gasCoins = new Coins([Coin.fromData(gasFee)])
+      // const fee = new Fee(estimatedGas, gasCoins)
 
-      if (isWallet.multisig(wallet)) {
-        const unsignedTx = await auth.create({ ...tx, fee })
-        navigate(toPostMultisigTx(unsignedTx))
-      } else if (wallet) {
-        const result = await auth.post({ ...tx, fee }, password)
-        setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
-      } else {
-        // const { result } = await post({ ...tx, fee })
-        const result = {height: 999, raw_log: "", txhash: ""} // {height: number, raw_log: string, txhash: string}
-        setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
-      }
+      // if (isWallet.multisig(wallet)) {
+      //   const unsignedTx = await auth.create({ ...tx, fee })
+      //   navigate(toPostMultisigTx(unsignedTx))
+      // } else if (wallet) {
+      //   const result = await auth.post({ ...tx, fee }, password)
+      //   setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
+      // } else {
+      //   const { result } = await post({ ...tx, fee })
+      //   setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
+      // }
+      const result = {height: 999, raw_log: "", txhash: ""} // {height: number, raw_log: string, txhash: string}
+      setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
 
       onPost?.()
     } catch (error) {
@@ -253,7 +269,8 @@ function Tx<TxValues>(props: Props<TxValues>) {
     setSubmitting(false)
   }
 
-  const submittingLabel = isWallet.ledger(wallet) ? t("Confirm in ledger") : ""
+  const submittingLabel = "" // isWallet.ledger(wallet) ? t("Confirm in ledger") : ""
+
 
   // render
   const balanceAfterTx =
@@ -264,9 +281,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
       .minus((gasFee.denom === token && gasFee.amount) || 0)
       .toString()
 
-  const insufficient = balanceAfterTx
-    ? new BigNumber(balanceAfterTx).lt(0)
-    : false
+  const insufficient = false // balanceAfterTx ? new BigNumber(balanceAfterTx).lt(0) : false
 
   const availableGasDenoms = [gasDenom]
   
@@ -353,7 +368,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
     )
   }
 
-  const walletError = "Wallet Error"
+  const walletError = ""
     // connectedWallet?.connectType === ConnectType.READONLY
     //   ? t("Wallet is connected as read-only mode")
     //   : !availableGasDenoms.length
@@ -402,6 +417,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
     </>
   )
 
+  // MODAL QUE APARECE TRAS ENVIAR TX SI FALLA
   const modal = !error
     ? undefined
     : {
@@ -433,6 +449,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
         submit: { fn: submit, button: submitButton },
       })}
 
+      {/* MODAL DE ERROR DE TRANSACCIÓN */}
       {modal && (
         <Modal
           {...modal}

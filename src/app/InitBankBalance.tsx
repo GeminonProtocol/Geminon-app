@@ -4,6 +4,7 @@ import { BankBalanceProvider } from "data/queries/bank"
 
 
 
+// ELEMENTO DESCONECTADO
 const InitBankBalance = ({ children }: PropsWithChildren<{}>) => {
   /* bankBalance tiene la forma:
     {

@@ -22,11 +22,11 @@ import ConnectWallet from "./sections/ConnectWallet"
 
 /* extra */
 // import LatestTx from "./sections/LatestTx"
-import ValidatorButton from "./sections/ValidatorButton"
+// import ValidatorButton from "./sections/ValidatorButton"
 import DevTools from "./sections/DevTools"
 
 /* init */
-import InitBankBalance from "./InitBankBalance"
+// import InitBankBalance from "./InitBankBalance"
 
 const App = () => {
   const { element: routes } = useNav()
@@ -58,7 +58,6 @@ const App = () => {
 
       <Content>
         <ErrorBoundary fallback={fallback}>
-          {/* <InitBankBalance>{routes}</InitBankBalance> */}
           {routes}
         </ErrorBoundary>
       </Content>

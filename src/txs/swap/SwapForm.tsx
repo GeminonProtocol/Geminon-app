@@ -39,6 +39,13 @@ import { SlippageParams } from "./SingleSwapContext"
 import { validateSlippageParams, useSingleSwap } from "./SingleSwapContext"
 import styles from "./SwapForm.module.scss"
 
+/* Token images */
+import ethIcon from "../../styles/images/tokens/eth.png"
+import gexIcon from "../../styles/images/tokens/gex.png"
+import wbtcIcon from "../../styles/images/tokens/wbtc.png"
+import paxgIcon from "../../styles/images/tokens/paxg.png"
+import xautIcon from "../../styles/images/tokens/xaut.png"
+
 
 // import { Coins } from "@terra-money/terra.js"
 
@@ -55,9 +62,9 @@ const SwapForm = () => {
   const utils = useSwapUtils()
   const { getIsSwapAvailable, getAvailableSwapModes } = utils
   const { getMsgsFunction, getSimulateFunction, getSimulateQuery } = utils
-  const { options, findTokenItem, findDecimals, calcExpected } = useSingleSwap() // Contexto: reemplazar fuentes en SingleSwapContext
+  const { options, calcExpected } = useSingleSwap() // Contexto: reemplazar fuentes en SingleSwapContext
   
-  const initialOfferAsset = "uluna"  
+  const initialOfferAsset = "eth"  
   const initialGasDenom = "uusd"
 
 
@@ -67,21 +74,57 @@ const SwapForm = () => {
 
   const assetsList = [
     {
-      balance: "100000000000000",
-      decimals: 6, // Decimals for representation
-      icon: "https://static.lido.fi/stSOL/stSOL.png",
+      balance: "10",
+      decimals: 5, // Decimals for representation
+      icon: ethIcon,
+      name: "Ethereum",
+      symbol: "ETH",
+      token: "eth",
+      address: null,
+    },
+    {
+      balance: "0",
+      decimals: 3, // Decimals for representation
+      icon: gexIcon,
       name: "Geminon",
       symbol: "GEX",
-      address: "terra1t9ul45l7m6jw6sxgvnp8e5hj8xzkjsg82g84ap",
-    }
+      token: "gex",
+      address: "0x01d4B70dB2B8F846EDb849c8102A7CA9E1Cf1a01",
+    },
+    {
+      balance: "0",
+      decimals: 6, // Decimals for representation
+      icon: wbtcIcon,
+      name: "Wrapped Bitcoin",
+      symbol: "WBTC",
+      token: "wbtc",
+      address: "0x029035Bb8D594f50EeA33d68E1C642f639B33EAF",
+    },
+    {
+      balance: "0",
+      decimals: 5, // Decimals for representation
+      icon: paxgIcon,
+      name: "PAX Gold",
+      symbol: "PAXG",
+      token: "paxg",
+      address: "0x5c0862C24fFaE793683bB175F57513dFa0199568",
+    },
+    {
+      balance: "0",
+      decimals: 5, // Decimals for representation
+      icon: xautIcon,
+      name: "Tether Gold",
+      symbol: "XAUT",
+      token: "xaut",
+      address: "0x75E7B2b017D6A7E82029027944C804743C3CFCeC",
+    },
   ]
 
   const getCoinsOptions = (key: "offerAsset" | "askAsset") => {
-    const { coins, tokens } = options
-
-    const getOptionList = (list: TokenItemWithBalance[]) =>
-      list.map((item) => {
-        const { token: value, balance } = item
+    return [{ 
+      title: t("Coins"), 
+      children: assetsList.map((asset) => {
+        const { symbol: value, balance } = asset
 
         const muted = { // Sombrear en la lista el activo seleccionado
           offerAsset: !!askAsset && false,
@@ -89,13 +132,9 @@ const SwapForm = () => {
         }[key]
 
         const hidden = key === "offerAsset" && !showAll && !has(balance)
-        return { ...item, value, muted, hidden }
+        return { ...asset, value, muted, hidden }
       })
-
-    return [
-      { title: t("Coins"), children: getOptionList(coins) },
-      { title: t("Tokens"), children: getOptionList(tokens) },
-    ]
+   }]
   }
 
 
@@ -124,6 +163,9 @@ const SwapForm = () => {
     () => ({ offerAsset, askAsset, input, slippageInput, ratio }),
     [askAsset, input, offerAsset, ratio, slippageInput]
   )
+
+  const findTokenItem = (token: string) => assetsList.find((item) => item.token === token)
+  const findDecimals = (token: string) => findTokenItem(token)?.decimals
 
   const offerTokenItem = offerAsset ? findTokenItem(offerAsset) : undefined
   const offerDecimals = offerAsset ? findDecimals(offerAsset) : undefined
@@ -232,7 +274,7 @@ const SwapForm = () => {
 
 
   // tx
-  const balance = offerTokenItem?.balance
+  const balance = "10"
   const createTx = () => undefined
   // const createTx = useCallback(
   //   (values: TxValues) => {
@@ -258,18 +300,24 @@ const SwapForm = () => {
 
 
   // fee
-  const { data: estimationTxValues } = useQuery(
-    ["estimationTxValues", { mode, assets, balance }],
-    async () => {
-      if (!(mode && validateAssets(assets) && balance)) return
-      const { offerAsset, askAsset } = assets
-      const simulate = getSimulateFunction(mode)
-      // estimate fee only after ratio simulated
-      const { ratio } = await simulate({ ...assets, amount: balance })
-      const input = toInput(balance, findDecimals(offerAsset))
-      return { mode, offerAsset, askAsset, ratio, input, slippageInput: 1 }
-    }
-  )
+  const estimationTxValues = {
+    mode, 
+    ...assets,
+    ratio: 10, 
+    input: toInput(balance ?? "", findDecimals(offerAsset ?? "")), 
+    slippageInput: 1
+  }
+  // const { data: estimationTxValues } = useQuery(
+  //   ["estimationTxValues", { mode, assets, balance }],
+  //   async () => {
+  //     if (!(mode && validateAssets(assets) && balance)) return
+  //     const { offerAsset, askAsset } = assets
+  //     // estimate fee only after ratio simulated
+  //     const ratio = 10
+  //     const input = toInput(balance, findDecimals(offerAsset))
+  //     return { mode, offerAsset, askAsset, ratio, input, slippageInput: 1 }
+  //   }
+  // )
 
   // PARÁMETROS QUE SE PASAN AL COMPONENTE TX
   const token = offerAsset
@@ -281,20 +329,13 @@ const SwapForm = () => {
     balance,
     initialGasDenom,
     estimationTxValues,
-    createTx,
-    onPost: () => {
+    createTx, // No se usa de momento, lo tenemos desactivado en Tx
+    onPost: () => { // Función para añadir token personalizado al wallet tras comprarlo -> implementar
       // add custom token on ask cw20
-      if (!(askAsset && AccAddress.validate(askAsset) && askTokenItem)) return
+      if (!(askAsset && askTokenItem)) return
       const { balance, ...rest } = askTokenItem
       // add(rest as CustomTokenCW20) // Añadir token personalizado
     },
-    queryKeys: [offerAsset, askAsset]
-      .filter((asset) => asset && AccAddress.validate(asset))
-      .map((token) => [
-        queryKey.wasm.contractQuery,
-        token,
-        { balance: address },
-      ]),
   }
 
   const disabled = isFetching ? t("Simulating...") : false
@@ -302,31 +343,31 @@ const SwapForm = () => {
 
 
   // render
-  const renderRadioGroup = () => {
-    if (!(validateAssets(assets) && isSwapAvailable)) return null
+  // const renderRadioGroup = () => {
+  //   if (!(validateAssets(assets) && isSwapAvailable)) return null
 
-    // (1) PESTAÑAS DE SELECCIÓN DE MERCADO PARA EL SWAP QUE APARECEN
-    // EN LA PARTE SUPERIOR DE LA CAJA. PODRÍAN SER ÚTILES EN EL
-    // FUTURO PARA OTRAS COSAS.
-    return (
-      <section className={styles.modes}>
-        {availableSwapModes.map((key) => {
-          const checked = mode === key
+  //   // (1) PESTAÑAS DE SELECCIÓN DE MERCADO PARA EL SWAP QUE APARECEN
+  //   // EN LA PARTE SUPERIOR DE LA CAJA. PODRÍAN SER ÚTILES EN EL
+  //   // FUTURO PARA OTRAS COSAS.
+  //   return (
+  //     <section className={styles.modes}>
+  //       {availableSwapModes.map((key) => {
+  //         const checked = mode === key
 
-          return (
-            <RadioButton
-              {...register("mode")}
-              value={key}
-              checked={checked}
-              key={key}
-            >
-              {key}
-            </RadioButton>
-          )
-        })}
-      </section>
-    )
-  }
+  //         return (
+  //           <RadioButton
+  //             {...register("mode")}
+  //             value={key}
+  //             checked={checked}
+  //             key={key}
+  //           >
+  //             {key}
+  //           </RadioButton>
+  //         )
+  //       })}
+  //     </section>
+  //   )
+  // }
 
   
   // render: expected price
@@ -346,7 +387,7 @@ const SwapForm = () => {
       {({ max, fee, submit }) => (
         <Form onSubmit={handleSubmit(submit.fn)}>
           {/* (1) PESTAÑAS MERCADOS SWAP */}
-          {renderRadioGroup()}
+          {/* {renderRadioGroup()} */}
         
           {/* (3) PRIMER FORMULARIO TOKEN */}
           <AssetFormItem

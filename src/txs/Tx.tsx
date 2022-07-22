@@ -86,7 +86,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // const { initialGasDenom, estimationTxValues, createTx } = props
   // const { excludeGasDenom } = props 
   const { children, onChangeMax } = props
-  const { onPost, redirectAfterTx, queryKeys } = props
+  const { onPost } = props // Para añadir token personalizado al wallet: conservar
 
   const [isMax, setIsMax] = useState(false)
   const [gasDenom, setGasDenom] = useState(initialGasDenom)
@@ -258,9 +258,9 @@ function Tx<TxValues>(props: Props<TxValues>) {
       //   setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
       // }
       const result = {height: 999, raw_log: "", txhash: ""} // {height: number, raw_log: string, txhash: string}
-      setLatestTx({ txhash: result.txhash, queryKeys, redirectAfterTx })
+      setLatestTx({ txhash: result.txhash })
 
-      onPost?.()
+      onPost?.() // Añadir token personalizado al wallet tras transacción
     } catch (error) {
       if (error instanceof PasswordError) setIncorrect(error.message)
       else setError(error as Error)

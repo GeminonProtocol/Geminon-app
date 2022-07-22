@@ -29,10 +29,10 @@ const FinderLink = forwardRef(
     const path = tx
       ? "tx"
       : block
-      ? "block"
-      : validator
-      ? "validator"
-      : "address"
+        ? "block"
+        : validator
+          ? "validator"
+          : "address"
 
     const value = rest.value ?? children
     const link = [FINDER, networkName, path, value].join("/")

@@ -1,6 +1,6 @@
 {
   "Blockchain": {
-    "Mnemonic": "Mnemonic",
+    "Mnemonic": "Mnemónico",
     "Address": "Dirección",
     "Wallet": "Cartera",
     "Wallets": "Carteras",
@@ -10,13 +10,14 @@
     "Tx hash": "Hash de Transacción",
     "Gas": "Gas",
     "Tax": "Impuesto",
-    "Fee": "Tasa",
+    "Fee": "Comisión",
     "Memo": "Memo",
     "decimals": "decimales",
     "Buy": "Compra",
     "Exchanges": "Exchanges",
     "Fiat": "Fiat",
-    "APY": "TAE"
+    "APY": "TAE",
+    "Block": "Bloque"
   },
   "Form": {
     "Amount": "Cantidad",
@@ -25,7 +26,7 @@
     "optional": "opcional",
     "Submit": "Enviar",
     "Confirm": "Confirmar",
-    "Reset": "Resetear"
+    "Reset": "Restablecer"
   },
   "Validate": {
     "{{label}} is required": "{{label}} es obligatorio",
@@ -81,7 +82,7 @@
     "Currency": "Moneda"
   },
   "Auth": {
-    "Connect": "Conexión",
+    "Connect": "Conectar",
     "Disconnect": "Desconectar",
     "New wallet": "Cartera nueva",
     "Recover wallet": "Recuperar cartera",
@@ -108,7 +109,7 @@
     "Contract": "Contratos"
   },
   "Dashboard": {
-    "Luna price": "Precio Luna",
+    "Luna price": "Precio de Luna",
     "Tax rate": "Tasa de impuestos",
     "Issuance": "Emisión",
     "Community pool": "Fondo de la comunidad",
@@ -136,19 +137,21 @@
     "New proposal": "Nueva propuesta",
     "Deposit": "Depósitar",
     "Vote": "Vota",
-    "Transfer NFT": "Transifere NFT",
-    "Earn": "Gain"
+    "Transfer NFT": "Transferir NFT",
+    "Earn": "Ganar"
   },
   "Swap": {
     "From": "De",
     "To": "A",
-    "Spread": "Spread",
-    "Slippage tolerance": "Tolerancia de slippage",
-    "Oracle price": "Precio de oraculo",
-    "Pair price": "Precio de la pareja",
+    "Spread": "Diferencial",
+    "Slippage tolerance": "Tolerancia de deslizamiento",
+    "Oracle price": "Precio de oráculo",
+    "Pair price": "Precio del par",
     "Expected price": "Precio previsto",
     "Minimum received": "Mínimo recibido",
-    "Trading fee": "Tasa de intercambio"
+    "Trading fee": "Comisión de operativa",
+    "Select a coin": "Seleccione una moneda",
+    "Balance after tx": "Saldo tras transacción"
   },
   "Stake": {
     "Delegations": "Delegaciones",
@@ -200,14 +203,14 @@
     "Upload": "Subir",
     "Instantiate": "Instanciar",
     "Query": "Consulta",
-    "Execute": "Ejecuta",
+    "Execute": "Ejecutar",
     "Upload a wasm file": "Subir archivo wasm",
     "File": "Archivo",
     "Size": "Tamaño",
     "Instantiate a code": "Instanciar un código"
   },
   "NFT": {
-    "Marketplace": "Marcado",
+    "Marketplace": "Mercado",
     "Collection": "Colección"
   },
   "Address book": {

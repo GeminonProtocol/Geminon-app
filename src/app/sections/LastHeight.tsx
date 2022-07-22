@@ -1,12 +1,40 @@
-// import { useTranslation } from "react-i18next"
-// import classNames from "classnames"
+import { useTranslation } from "react-i18next"
+import classNames from "classnames"
 // import { formatNumber } from "@terra.kitchen/utils"
 // import { useTerraObserver } from "data/Terra/TerraObserver"
 // import { FinderLink } from "components/general"
-// import { Flex } from "components/layout"
-// import styles from "./LastHeight.module.scss"
+import { Flex } from "components/layout"
+import styles from "./LastHeight.module.scss"
+import { useBlockNumber } from 'wagmi'
 
-const LastHeight = () => {return null}
+
+const LastHeight = () => {
+  const { t } = useTranslation()
+  const { data, isError, isLoading } = useBlockNumber()
+
+  return (
+    <Flex gap={4} className={styles.component} start>
+      <div
+        className={classNames(
+          styles.indicator,
+          data ? styles.success : styles.loading
+        )}
+      />
+      {t("Block: ")}
+      {data ? (
+        <div className={styles.link}>
+          #{data.toLocaleString('en-US')}
+        </div>
+      ) : (
+        <p className={styles.text}>{t("Loading...")}</p>
+      )}
+    </Flex>
+  )
+}
+
+
+export default LastHeight
+
 
 /* const LastHeight = () => {
   const { t } = useTranslation()
@@ -34,4 +62,4 @@ const LastHeight = () => {return null}
 }
  */
 
-export default LastHeight
+

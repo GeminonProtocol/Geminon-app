@@ -7,10 +7,7 @@ const Aside = () => {
   return (
     <Grid gap={20} className={styles.aside}>
       <Links />
-      <div></div>
-      <div></div>
-      <div></div>
-      {/* <LastHeight /> */}
+      <LastHeight />
     </Grid>
   )
 }

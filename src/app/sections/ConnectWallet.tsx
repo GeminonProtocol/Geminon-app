@@ -1,17 +1,19 @@
 import { useTranslation } from "react-i18next"
+import { useConnect, useAccount } from 'wagmi'
 // import UsbIcon from "@mui/icons-material/Usb"
 // import { useWallet } from "@terra-money/wallet-provider"
 // import { STATION } from "config/constants"
 import { RenderButton } from "types/components"
 // import { useAddress } from "data/wallet"
-import { Button, ExternalLink } from "components/general"
-// import { Grid } from "components/layout"
-// import { List } from "components/display"
+// import { Button, ExternalLink } from "components/general"
+import { Button } from "components/general"
+import { Grid } from "components/layout"
+import { List } from "components/display"
 import { ModalButton } from "components/feedback"
 // import { FormHelp } from "components/form"
 // import { useAuth } from "auth"
 // import SwitchWallet from "auth/modules/select/SwitchWallet"
-// import Connected from "./Connected"
+import Connected from "./Connected"
 
 interface Props {
   renderButton?: RenderButton
@@ -19,6 +21,8 @@ interface Props {
 
 const ConnectWallet = ({ renderButton }: Props) => {
   const { t } = useTranslation()
+  const { connect, connectors } = useConnect()
+  const { isConnected } = useAccount()
 
   const defaultRenderButton: Props["renderButton"] = (open) => (
     <Button onClick={open} size="small" outline>
@@ -26,22 +30,26 @@ const ConnectWallet = ({ renderButton }: Props) => {
     </Button>
   )
 
+  const list = [
+    ...connectors.map((connector) => ({
+      src: "", // Icono
+      children: connector.name,
+      onClick: () => connect({ connector }),
+    }))
+  ]
+
+
+  if (isConnected) return <Connected />
+
   return (
     <ModalButton
       title={t("Connect wallet")}
       renderButton={renderButton ?? defaultRenderButton}
       maxHeight
     >
-      {/* <Grid gap={20}>
-        <SwitchWallet />
-        <List list={available.length ? available : list} />
-        {!!available.length && (
-          <FormHelp>
-            Use <ExternalLink href={STATION}>Terra Station</ExternalLink> on the
-            browser to access with Ledger device
-          </FormHelp>
-        )}
-      </Grid> */}
+      <Grid gap={20}>
+        <List list={list} />
+      </Grid>
     </ModalButton>
   )
 }

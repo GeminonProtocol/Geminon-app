@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { LinkButton } from "components/general"
+// import { LinkButton } from "components/general"
 import { Page } from "components/layout"
 import TxContext from "../TxContext"
 import SwapContext from "./SwapContext"
@@ -13,7 +13,7 @@ import SwapForm from "./SwapForm"
 
 const SwapTx = () => {
   const { t } = useTranslation()
-  const description = t("Provide collateral to mine GEX")
+  const description = t("Provide collateral to mint GEX")
 
   return (
     <Page title={t("Genesis Liquidity Pools")} small extra={description}>

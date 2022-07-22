@@ -1,15 +1,20 @@
 // import { useIsClassic } from "data/query"
+import { useAccount, useNetwork } from 'wagmi'
 import styles from "./IsClassicNetwork.module.scss"
 
 
 
-// TODO: Cambiar por "Network" y que muestre el nombre
-// de la red EVM seleccionada, o el icono. Ver si colocamos
-// aquí el menú selector de red o a la derecha.
 const NetworkName = () => {
+  const { isConnected } = useAccount()
+  const { chain } = useNetwork()
+
+  if (!isConnected) return <div/>
+  // console.log("[NETWORKNAME] chain")
+  // console.log(chain)
+
   return (
     <div className={styles.component}>
-      {"Testnet"}
+      {chain?.name}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next"
 // import { useLocation } from "react-router-dom"
 import { useQuery } from "react-query"
 import { useForm } from "react-hook-form"
+import { useConnect, useAccount } from 'wagmi'
 // import BigNumber from "bignumber.js"
 import { AccAddress } from "@terra-money/terra.js"
 import { isDenomTerra } from "@terra.kitchen/utils"
@@ -12,7 +13,7 @@ import { toAmount } from "@terra.kitchen/utils"
 import { has } from "utils/num"
 // import { getAmount, sortCoins } from "utils/coin"
 import { queryKey } from "data/query"
-import { useAddress } from "data/wallet"
+// import { useAddress } from "data/wallet"
 // import { useBankBalance } from "data/queries/bank"
 // import { useCustomTokensCW20 } from "data/settings/CustomTokens"
 
@@ -39,106 +40,16 @@ import { validateSlippageParams, useSingleSwap } from "./SingleSwapContext"
 import styles from "./SwapForm.module.scss"
 
 
-import { Coins } from "@terra-money/terra.js"
+// import { Coins } from "@terra-money/terra.js"
 
 interface TxValues extends Partial<SlippageParams> {
   mode?: SwapMode
 }
 
-// const SwapForm = () => {
-
-//   /* render */
-//   const renderRadioGroup = () => {
-//     return (
-//       <section className={styles.modes}>
-//         <RadioButton
-//           value={"market"}
-//           checked={true}
-//           key={"market"}
-//         >
-//           {"market"}
-//         </RadioButton>
-//       </section>
-//     )
-//   }
-
-//   /* render: expected price */
-//   const renderExpected = () => {
-//     return (
-//       <>
-//         <dt>{"Expected price"}</dt>
-//         <dd>
-//           <span>
-//             <Read amount={String(1)} token={"askAsset"} decimals={0} /> ={" "}
-//             <Read amount={String(1)} token={"offerAsset"} decimals={0} auto />
-//           </span>
-//         </dd>
-//       </>
-//     )
-//     // <ExpectedPrice {...props} isLoading={false} />
-//   }
-
-//   const slippageDisabled = true // [offerAsset, askAsset].every(isDenomTerra)
-
-//   return (
-//     <Form onSubmit={() => {}}>
-//       {renderRadioGroup()}
-
-//       <AssetFormItem
-//         label={"From"}
-//         extra={"10"}
-//       >
-//         <SelectToken
-//           value={"offerAsset"}
-//           onChange={() => {}}
-//           options={[{ title: "Tokens", children: [] }]}
-//           checkbox={
-//             <Checkbox
-//               checked={true}
-//               onChange={() => {}}
-//             >
-//               {"Show all"}
-//             </Checkbox>
-//           }
-//           addonAfter={
-//             <AssetInput
-//               inputMode="decimal"
-//               placeholder={"0.00"}
-//               // onFocus={max.reset}
-//               autoFocus
-//             />
-//           }
-//         />
-//       </AssetFormItem>
-
-//       <FormArrow onClick={() => {}} />
-
-//       <AssetFormItem label={"To"}>
-//         <SelectToken
-//           value={"askAsset"}
-//           onChange={() => {}}
-//           options={[{ title: "Tokens", children: [] }]}
-//           addonAfter={
-//             <AssetReadOnly>
-//               <p className="muted"> {"0"} </p>
-//             </AssetReadOnly>
-//           }
-//         />
-//       </AssetFormItem>
-
-//       {renderExpected()}
-//       {/* {fee.render()} */}
-
-//       {/* {submit.button} */}
-//     </Form>
-//   )
-// }
-
-
 
 const SwapForm = () => {
   const { t } = useTranslation()
-  const address = useAddress() // TODO: Pasar useAddress a contexto EVM
+  const { address, isConnected } = useAccount()
 
   // swap context
   const utils = useSwapUtils()
@@ -146,7 +57,7 @@ const SwapForm = () => {
   const { getMsgsFunction, getSimulateFunction, getSimulateQuery } = utils
   const { options, findTokenItem, findDecimals, calcExpected } = useSingleSwap() // Contexto: reemplazar fuentes en SingleSwapContext
   
-  const initialOfferAsset = "uusd"  
+  const initialOfferAsset = "uluna"  
   const initialGasDenom = "uusd"
 
 
@@ -154,7 +65,18 @@ const SwapForm = () => {
   // MUESTRA LA LISTA DE TOKENS EN EL FORMULARIO
   const [showAll, setShowAll] = useState(false)
 
-  const getOptions = (key: "offerAsset" | "askAsset") => {
+  const assetsList = [
+    {
+      balance: "100000000000000",
+      decimals: 6, // Decimals for representation
+      icon: "https://static.lido.fi/stSOL/stSOL.png",
+      name: "Geminon",
+      symbol: "GEX",
+      address: "terra1t9ul45l7m6jw6sxgvnp8e5hj8xzkjsg82g84ap",
+    }
+  ]
+
+  const getCoinsOptions = (key: "offerAsset" | "askAsset") => {
     const { coins, tokens } = options
 
     const getOptionList = (list: TokenItemWithBalance[]) =>
@@ -218,12 +140,12 @@ const SwapForm = () => {
   }
 
   // simulate | execute
-  const params = { amount, ...assets }
+  // const params = { amount, ...assets }
   const availableSwapModes = ['Market'] // getAvailableSwapModes(assets)
   const isSwapAvailable = true // getIsSwapAvailable(assets)
-  const simulateQuery = getSimulateQuery(params)
-  console.log("[SWAPFORM] simulateQuery:")
-  console.log(simulateQuery)
+  // const simulateQuery = getSimulateQuery(params)
+  // console.log("[SWAPFORM] simulateQuery:")
+  // console.log(simulateQuery)
 
   // simulate
   const isFetching = false
@@ -440,7 +362,7 @@ const SwapForm = () => {
             <SelectToken
               value={offerAsset}
               onChange={onSelectAsset("offerAsset")}
-              options={getOptions("offerAsset")}
+              options={getCoinsOptions("offerAsset")}
               checkbox={
                 <Checkbox
                   checked={showAll}
@@ -475,7 +397,7 @@ const SwapForm = () => {
             <SelectToken
               value={askAsset}
               onChange={onSelectAsset("askAsset")}
-              options={getOptions("askAsset")}
+              options={getCoinsOptions("askAsset")}
               addonAfter={
                 <AssetReadOnly>
                   {simulatedValue ? (
@@ -553,7 +475,7 @@ export default SwapForm
 //   // options
 //   const [showAll, setShowAll] = useState(false)
 
-//   const getOptions = (key: "offerAsset" | "askAsset") => {
+//   const getCoinsOptions = (key: "offerAsset" | "askAsset") => {
 //     const { coins, tokens } = options
 
 //     const getOptionList = (list: TokenItemWithBalance[]) =>
@@ -790,7 +712,7 @@ export default SwapForm
 //             <SelectToken
 //               value={offerAsset}
 //               onChange={onSelectAsset("offerAsset")}
-//               options={getOptions("offerAsset")}
+//               options={getCoinsOptions("offerAsset")}
 //               checkbox={
 //                 <Checkbox
 //                   checked={showAll}
@@ -823,7 +745,7 @@ export default SwapForm
 //             <SelectToken
 //               value={askAsset}
 //               onChange={onSelectAsset("askAsset")}
-//               options={getOptions("askAsset")}
+//               options={getCoinsOptions("askAsset")}
 //               addonAfter={
 //                 <AssetReadOnly>
 //                   {simulatedValue ? (

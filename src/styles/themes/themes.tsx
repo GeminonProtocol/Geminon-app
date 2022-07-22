@@ -17,6 +17,14 @@ import FaviconMoon from "./Moon/favicon.png"
 import FaviconWhale from "./Whale/favicon.png"
 import FaviconMadness from "./Madness/favicon.png"
 
+/* geminon logo */
+import GeminonLight from "./Light/geminon_text.png"
+import GeminonDark from "./Dark/geminon_text.png"
+import GeminonBlossom from "./Blossom/geminon_text.png"
+import GeminonMoon from "./Moon/geminon_text.png"
+import GeminonWhale from "./Whale/geminon_text.png"
+import GeminonMadness from "./Madness/geminon_text.png"
+
 /* preview */
 import { ReactComponent as PreviewLight } from "./Light/preview.svg"
 import { ReactComponent as PreviewDark } from "./Dark/preview.svg"
@@ -31,6 +39,7 @@ export interface Theme {
   animation: string
   favicon: string
   preview: ReactNode
+  logo: string
 }
 
 export const themes: Theme[] = [
@@ -40,6 +49,7 @@ export const themes: Theme[] = [
     animation: AnimationLight,
     favicon: FaviconLight,
     preview: <PreviewLight />,
+    logo: GeminonLight
   },
   {
     name: "dark",
@@ -47,34 +57,39 @@ export const themes: Theme[] = [
     animation: AnimationDark,
     favicon: FaviconDark,
     preview: <PreviewDark />,
+    logo: GeminonDark
   },
   {
     name: "blossom",
-    unlock: toAmount("1"),
+    unlock: toAmount("0"),
     animation: AnimationBlossom,
     favicon: FaviconBlossom,
     preview: <PreviewBlossom />,
+    logo: GeminonBlossom
   },
   {
     name: "moon",
-    unlock: toAmount("10"),
+    unlock: toAmount("0"),
     animation: AnimationMoon,
     favicon: FaviconMoon,
     preview: <PreviewMoon />,
+    logo: GeminonMoon
   },
   {
     name: "whale",
-    unlock: toAmount("100"),
+    unlock: toAmount("0"),
     animation: AnimationWhale,
     favicon: FaviconWhale,
     preview: <PreviewWhale />,
+    logo: GeminonWhale
   },
   {
     name: "madness",
-    unlock: toAmount("1000"),
+    unlock: toAmount("0"),
     animation: AnimationMadness,
     favicon: FaviconMadness,
     preview: <PreviewMadness />,
+    logo: GeminonMadness
   },
 ]
 

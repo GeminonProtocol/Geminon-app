@@ -7,7 +7,8 @@ import CloseIcon from "@mui/icons-material/Close"
 import { Auto, mobileIsMenuOpenState } from "components/layout"
 import { useNav } from "../routes"
 import styles from "./Nav.module.scss"
-import geminonLogo from "../../styles/images/geminon/geminon_text.png"
+import defaultLogo from "../../styles/images/geminon/geminon_text.png"
+import { useThemeLogo } from "data/settings/Theme"
 import { GEMINON } from "../../config/constants"
 
 const cx = classNames.bind(styles)
@@ -17,6 +18,7 @@ const Nav = () => {
   const { menu } = useNav()
   const [isOpen, setIsOpen] = useRecoilState(mobileIsMenuOpenState)
   const toggle = () => setIsOpen(!isOpen)
+  const geminonLogo = useThemeLogo() ?? defaultLogo
 
   return (
     <nav>

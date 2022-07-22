@@ -14,10 +14,21 @@ import { ModalButton } from "components/feedback"
 // import { useAuth } from "auth"
 // import SwitchWallet from "auth/modules/select/SwitchWallet"
 import Connected from "./Connected"
+import metamaskLogo from "../../styles/images/wallets/MetamaskWallet.png"
+import coinbaseLogo from "../../styles/images/wallets/CoinbaseWallet.png"
+import walletconnectLogo from "../../styles/images/wallets/WalletConnect.svg"
 
 interface Props {
   renderButton?: RenderButton
 }
+
+const walletLogosMap: {[key: string]: string} = {
+  metaMask: metamaskLogo,
+  coinbaseWallet: coinbaseLogo,
+  walletConnect: walletconnectLogo
+}
+
+
 
 const ConnectWallet = ({ renderButton }: Props) => {
   const { t } = useTranslation()
@@ -32,12 +43,15 @@ const ConnectWallet = ({ renderButton }: Props) => {
 
   const list = [
     ...connectors.map((connector) => ({
-      src: "", // Icono
+      src: walletLogosMap[connector.id], // Icono
       children: connector.name,
       onClick: () => connect({ connector }),
     }))
   ]
-
+  
+  console.log("[CONNECTWALLET] Wallet connectors:")
+  console.log(connectors)
+  console.log(list)
 
   if (isConnected) return <Connected />
 

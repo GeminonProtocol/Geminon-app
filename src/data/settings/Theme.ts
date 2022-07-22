@@ -38,6 +38,11 @@ export const useThemeAnimation = () => {
   return animation
 }
 
+export const useThemeLogo = () => {
+  const { logo } = useTheme()
+  return logo
+}
+
 export const useThemeState = () => {
   const [prevName, setThemeName] = useRecoilState(themeNameState)
   const findTheme = useFindTheme()

@@ -47,6 +47,7 @@ import styles from "./Tx.module.scss"
 interface Props<TxValues> {
   /* Only when the token is paid out of the balance held */
   token?: Token
+  symbol?: string
   decimals?: number
   amount?: Amount
   balance?: Amount
@@ -82,7 +83,7 @@ interface RenderProps<TxValues> {
 
 
 function Tx<TxValues>(props: Props<TxValues>) {
-  const { token, decimals, amount, balance, initialGasDenom } = props
+  const { token, symbol, decimals, amount, balance, initialGasDenom } = props
   // const { initialGasDenom, estimationTxValues, createTx } = props
   // const { excludeGasDenom } = props 
   const { children, onChangeMax } = props
@@ -193,6 +194,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
     ? getNativeMax()
     : balance
 
+
   // (effect): Call the onChangeMax function whenever the max changes 
   useEffect(() => {
     if (max && isMax && onChangeMax) onChangeMax(toInput(max, decimals))
@@ -290,7 +292,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // element
   const resetMax = () => setIsMax(false)
   const renderMax: RenderMax = (onClick) => {
-    if (!(max && has(max))) return null
+    if (!(max && has(max))) return null // has() función de big number, dejar
 
     // (2) BOTÓN Y VALOR BALANCE MÁXIMO SOBRE INPUT CAJA 1 (TOKEN ENTRADA)
     return (
@@ -304,7 +306,8 @@ function Tx<TxValues>(props: Props<TxValues>) {
             fontSize="inherit"
             className={styles.icon}
           />
-          <Read amount={max} token={token} decimals={decimals} />
+          {/* Componente que renderiza el valor y el icono de tipo de moneda */}
+          <Read amount={max} token={symbol} decimals={decimals} />
         </Flex>
       </button>
     )
@@ -327,8 +330,8 @@ function Tx<TxValues>(props: Props<TxValues>) {
           ))}
 
           <dt className={styles.gas}>
-            {t("Fee")}
-            {availableGasDenoms.length > 1 && (
+            {t("Network fee (gas)")}
+            {/* {availableGasDenoms.length > 1 && (
               <Select
                 value={gasDenom}
                 onChange={(e) => setGasDenom(e.target.value)}
@@ -341,7 +344,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
                   </option>
                 ))}
               </Select>
-            )}
+            )} */}
           </dt>
           <dd>{gasFee.amount && <Read {...gasFee} />}</dd>
 
@@ -349,14 +352,14 @@ function Tx<TxValues>(props: Props<TxValues>) {
             <>
               <dt>{t("Balance")}</dt>
               <dd>
-                <Read amount={balance} token={token} decimals={decimals} />
+                <Read amount={balance} token={symbol} decimals={decimals} />
               </dd>
 
               <dt>{t("Balance after tx")}</dt>
               <dd>
                 <Read
                   amount={balanceAfterTx}
-                  token={token}
+                  token={symbol}
                   decimals={decimals}
                   className={classNames(insufficient && "danger")}
                 />
@@ -465,8 +468,45 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
 
 
+export default Tx
 
 
+
+
+/* utils */
+export const getInitialGasDenom = (bankBalance: Coins) => {
+  const denom = head(sortCoins(bankBalance))?.denom ?? "uusd"
+  const uusd = getAmount(bankBalance, "uusd")
+  return has(uusd) ? "uusd" : denom
+}
+
+interface Params {
+  balance: Amount
+  gasAmount: Amount
+}
+
+// Receive gas and return the maximum payment amount
+export const calcMax = ({ balance, gasAmount }: Params) => {
+  const available = new BigNumber(balance).minus(gasAmount)
+
+  const max = BigNumber.max(new BigNumber(available), 0)
+    .integerValue(BigNumber.ROUND_FLOOR)
+    .toString()
+
+  return max
+}
+
+/* hooks */
+export const useTxKey = () => {
+  const { txhash } = useRecoilValue(latestTxState)
+  const [key, setKey] = useState(txhash)
+
+  useEffect(() => {
+    if (txhash) setKey(txhash)
+  }, [txhash])
+
+  return key
+}
 
 
 
@@ -844,43 +884,3 @@ function Tx<TxValues>(props: Props<TxValues>) {
 //   )
 // }
 
-
-export default Tx
-
-
-
-
-/* utils */
-export const getInitialGasDenom = (bankBalance: Coins) => {
-  const denom = head(sortCoins(bankBalance))?.denom ?? "uusd"
-  const uusd = getAmount(bankBalance, "uusd")
-  return has(uusd) ? "uusd" : denom
-}
-
-interface Params {
-  balance: Amount
-  gasAmount: Amount
-}
-
-// Receive gas and return the maximum payment amount
-export const calcMax = ({ balance, gasAmount }: Params) => {
-  const available = new BigNumber(balance).minus(gasAmount)
-
-  const max = BigNumber.max(new BigNumber(available), 0)
-    .integerValue(BigNumber.ROUND_FLOOR)
-    .toString()
-
-  return max
-}
-
-/* hooks */
-export const useTxKey = () => {
-  const { txhash } = useRecoilValue(latestTxState)
-  const [key, setKey] = useState(txhash)
-
-  useEffect(() => {
-    if (txhash) setKey(txhash)
-  }, [txhash])
-
-  return key
-}

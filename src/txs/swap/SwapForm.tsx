@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 // import { useLocation } from "react-router-dom"
-import { useQuery } from "react-query"
+// import { useQuery } from "react-query"
 import { useForm } from "react-hook-form"
-import { useConnect, useAccount } from 'wagmi'
+import { useNetwork, useAccount, useBalance, useContractReads, erc20ABI } from 'wagmi'
+import { ethers } from "ethers"
 // import BigNumber from "bignumber.js"
-import { AccAddress } from "@terra-money/terra.js"
+// import { AccAddress } from "@terra-money/terra.js"
 import { isDenomTerra } from "@terra.kitchen/utils"
 import { toAmount } from "@terra.kitchen/utils"
 
 /* helpers */
 import { has } from "utils/num"
 // import { getAmount, sortCoins } from "utils/coin"
-import { queryKey } from "data/query"
+// import { queryKey } from "data/query"
 // import { useAddress } from "data/wallet"
 // import { useBankBalance } from "data/queries/bank"
 // import { useCustomTokensCW20 } from "data/settings/CustomTokens"
@@ -37,7 +38,7 @@ import useSwapUtils, { validateAssets } from "./useSwapUtils"
 import { SwapMode, validateParams } from "./useSwapUtils"
 import { SlippageParams } from "./SingleSwapContext"
 import { validateSlippageParams, useSingleSwap } from "./SingleSwapContext"
-import styles from "./SwapForm.module.scss"
+// import styles from "./SwapForm.module.scss"
 
 /* Token images */
 import ethIcon from "../../styles/images/tokens/eth.png"
@@ -47,78 +48,344 @@ import paxgIcon from "../../styles/images/tokens/paxg.png"
 import xautIcon from "../../styles/images/tokens/xaut.png"
 
 
+/* Smart contracts */
+import gexDeploy from "../../config/contracts/GEX.json"
+import paxgDeploy from "../../config/contracts/Token_PAXG.json"
+import xautDeploy from "../../config/contracts/Token_XAUT.json"
+import wbtcDeploy from "../../config/contracts/Token_WBTC.json"
+import paxgPoolDeploy from "../../config/contracts/GenLiqPool_PAXG.json"
+import xautPoolDeploy from "../../config/contracts/GenLiqPool_XAUT.json"
+import wbtcPoolDeploy from "../../config/contracts/GenLiqPool_WBTC.json"
+
 // import { Coins } from "@terra-money/terra.js"
+
+
+
+const defaultDecimals = 18
+
+const nativeAsset: AssetEVM = {
+  balance: "0",
+  decimals: defaultDecimals,
+  icon: ethIcon,
+  name: "Ethereum",
+  symbol: "ETH",
+  token: "nativeAsset",
+}
+
+const tokensList: ERC20Token[] = [
+  {
+    balance: "0",
+    decimals: defaultDecimals,
+    icon: gexIcon,
+    name: "Geminon",
+    symbol: "GEX",
+    token: "0x370ea586fB88a4ADB9396188A3Dfd59Bc7652578",
+    address: "0x370ea586fB88a4ADB9396188A3Dfd59Bc7652578",
+  },
+  {
+    balance: "0",
+    decimals: defaultDecimals,
+    icon: wbtcIcon,
+    name: "Wrapped Bitcoin",
+    symbol: "WBTC",
+    token: "0xF6AFB8dAa36eEAf55596DDED79FD9e2076557943",
+    address: "0xF6AFB8dAa36eEAf55596DDED79FD9e2076557943",
+  },
+  {
+    balance: "0",
+    decimals: defaultDecimals,
+    icon: paxgIcon,
+    name: "PAX Gold",
+    symbol: "PAXG",
+    token: "0x6C9c5CD2406ccecc361b3ae15e2867fd293F91Df",
+    address: "0x6C9c5CD2406ccecc361b3ae15e2867fd293F91Df",
+  },
+  {
+    balance: "0",
+    decimals: defaultDecimals,
+    icon: xautIcon,
+    name: "Tether Gold",
+    symbol: "XAUT",
+    token: "0xf7f08Ef70BacB985330b29976dA2cd8497020b24",
+    address: "0xf7f08Ef70BacB985330b29976dA2cd8497020b24",
+  },
+]
+
+// const assetsList: TokenItemWithBalance[] = [
+//   nativeAsset,
+//   ...tokensList
+// ]
+
+
+// HACK PARA USAR HOOK ITERANDO
+// const IterableUseAssetBalance = (asset: TokenItemWithBalance) => {
+//   return useAssetBalance(asset)
+// }
+
+// const useAssetBalance = (asset: TokenItemWithBalance) => {
+//   const { address } = useAccount()
+
+//   const { data } = useBalance({
+//     addressOrName: address,
+//     token: asset.address,
+//     formatUnits: 'wei'
+//   })
+
+//   return { 
+//     ...asset, 
+//     decimals: data?.decimals ?? asset.decimals, 
+//     balance: data?.formatted ?? asset.balance}
+// }
+
+
+const useReadBalances = () => {
+  const { address } = useAccount()
+  const functionName = "balanceOf"
+  const contracts = tokensList.map((asset) => {
+    return {
+      addressOrName: asset.address,
+      contractInterface: erc20ABI,
+      functionName: functionName,
+      args: address
+    }
+  })
+  
+  const { data: coinData } = useBalance({addressOrName: address, formatUnits: 'wei'})
+  const { data: tokenData } = useContractReads({ contracts })
+  
+  nativeAsset.balance = coinData?.formatted ?? "0"
+  tokensList.forEach((asset, index) => {
+    asset.balance = tokenData?.[index]?.toString() ?? "0"
+  })
+  
+  return [nativeAsset, ...tokensList]
+}
+
+
+
+const usePoolTradeInfo = (poolSymbol:string, offerAsset:string, offerAmount:string) => {
+  poolSymbol = poolSymbol.toLowerCase()
+  // if (isNaN(offerAmount)) offerAmount = 0
+  console.log("[usePoolTradeInfo] params:", poolSymbol, offerAsset, offerAmount)
+  const { address, abi, isError } = usePoolContractInfo(poolSymbol)
+
+  
+  const contracts = offerAsset === "GEX" ?
+  [
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getOutCollateralAmount",
+      args: offerAmount, 
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getGEXPrice",
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getCollateralPrice",
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getGEXQuote",
+      enabled: !isError
+    },
+  ] : [
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getOutGEXAmount",
+      args: offerAmount, 
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getCollateralPrice",
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getGEXPrice",
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getCollateralQuote",
+      enabled: !isError
+    },
+  ]
+  
+  const { data } = useContractReads({ contracts })
+  console.log("[usePoolTradeInfo] Contract Read:")
+  console.log(data)
+  
+  return { 
+    outAmount: data?.[0]?.toString(),
+    offerAssetPrice: data?.[1]?.toString(),
+    askAssetPrice: data?.[2]?.toString(),
+    offerAssetRatio: data?.[3]?.toString(),
+  }
+}
+
+
+const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => {
+  poolSymbol = poolSymbol.toLowerCase()
+  // if (isNaN(gexAmount)) gexAmount = 0
+  console.log("[usePoolFees] params:", poolSymbol, offerAsset, gexAmount)
+  const { address, abi, isError } = usePoolContractInfo(poolSymbol)
+
+  
+  const contracts = offerAsset === "GEX" ?
+  [
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "amountRedeemFee",
+      args: gexAmount, 
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getRedeemFee",
+      args: gexAmount, 
+      enabled: !isError
+    },
+  ] : [
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "amountMintFee",
+      args: gexAmount, 
+      enabled: !isError
+    },
+    {
+      addressOrName: address,
+      contractInterface: abi,
+      functionName: "getMintFee",
+      args: gexAmount, 
+      enabled: !isError
+    },
+  ]
+  
+  const { data } = useContractReads({ contracts })
+  console.log("[usePoolFees] Contract Read:")
+  console.log(data)
+  
+  return { 
+    feeAmount: data?.[0]?.toString(),
+    feePerc: data?.[1]?.toString(),
+  }
+}
+
+
+const usePoolContractInfo = (poolSymbol: string) => {
+  const { chain } = useNetwork()
+  const connectedNetworkId = chain?.id.toString()
+  
+  const deployInfo = loadContractsInfo().pools
+  const key = poolSymbol as keyof typeof deployInfo
+
+  let isError = false
+  if (deployInfo?.[key].network != connectedNetworkId) {
+    console.log("[useGetPoolABI] Network mismatch")
+    isError = true
+  }
+
+  return { 
+    address: deployInfo[key].address, 
+    abi: deployInfo[key].abi, 
+    isError: isError 
+  }
+}
+
+const loadContractsInfo = () => {
+  return {
+    tokens: {
+      gex: gexDeploy,
+      paxg: paxgDeploy,
+      xaut: xautDeploy,
+      wbtc: wbtcDeploy,
+    },
+    pools: {
+      eth: paxgPoolDeploy,  // TODO: CAMBIAR POR POOL CORRECTO CUANDO LO TENGAMOS
+      paxg: paxgPoolDeploy,
+      xaut: xautPoolDeploy,
+      wbtc: wbtcPoolDeploy,
+    }
+  }
+}
+
+
+// interface Params {
+//   askAsset: string
+//   offerAmount: number
+// }
+// const ExpectedMintResults = ({ askAsset, offerAmount }: Params) => {
+//   const contracts = loadAbis()
+//   const poolKey =  askAsset.toLowerCase() as keyof typeof contracts.pools
+  
+//   console.log("[SWAPFORM]: pool address")
+//   console.log(contracts.pools[poolKey].address)
+//   if (askAsset == "GEX") {
+//     const { data: outAmount } = useContractRead({
+//       addressOrName: contracts.pools[poolKey].address,
+//       contractInterface: contracts.pools[poolKey].abi,
+//       functionName: "getOutGEXAmount",
+//       args: offerAmount
+//     })
+//     console.log(outAmount)
+// }
+
+
+
+
+
+
+
 
 interface TxValues extends Partial<SlippageParams> {
   mode?: SwapMode
 }
-
 
 const SwapForm = () => {
   const { t } = useTranslation()
   const { address, isConnected } = useAccount()
 
   // swap context
-  const utils = useSwapUtils()
-  const { getIsSwapAvailable, getAvailableSwapModes } = utils
-  const { getMsgsFunction, getSimulateFunction, getSimulateQuery } = utils
+  // const utils = useSwapUtils()
+  // const { getIsSwapAvailable, getAvailableSwapModes } = utils
+  // const { getMsgsFunction, getSimulateFunction, getSimulateQuery } = utils
   const { options, calcExpected } = useSingleSwap() // Contexto: reemplazar fuentes en SingleSwapContext
   
-  const initialOfferAsset = "eth"  
-  const initialGasDenom = "uusd"
+  
+  // BALANCES
+  // const assetsList: TokenItemWithBalance[] = 
+  // tokensList.map((asset) => IterableUseAssetBalance(asset))
 
+  const assetsList: TokenItemWithBalance[] = useReadBalances()
+  
+  
 
+  // Get native asset of the network to initialize form
+  const findNativeAsset = () => assetsList.find((item) => item.token == "nativeAsset")
 
+  const initialOfferAsset = nativeAsset.symbol  //findNativeAsset()?.symbol
+  const initialGasDenom = initialOfferAsset  //?? ""
+  
+  
   // MUESTRA LA LISTA DE TOKENS EN EL FORMULARIO
   const [showAll, setShowAll] = useState(false)
-
-  const assetsList = [
-    {
-      balance: "10",
-      decimals: 5, // Decimals for representation
-      icon: ethIcon,
-      name: "Ethereum",
-      symbol: "ETH",
-      token: "eth",
-      address: null,
-    },
-    {
-      balance: "0",
-      decimals: 3, // Decimals for representation
-      icon: gexIcon,
-      name: "Geminon",
-      symbol: "GEX",
-      token: "gex",
-      address: "0x01d4B70dB2B8F846EDb849c8102A7CA9E1Cf1a01",
-    },
-    {
-      balance: "0",
-      decimals: 6, // Decimals for representation
-      icon: wbtcIcon,
-      name: "Wrapped Bitcoin",
-      symbol: "WBTC",
-      token: "wbtc",
-      address: "0x029035Bb8D594f50EeA33d68E1C642f639B33EAF",
-    },
-    {
-      balance: "0",
-      decimals: 5, // Decimals for representation
-      icon: paxgIcon,
-      name: "PAX Gold",
-      symbol: "PAXG",
-      token: "paxg",
-      address: "0x5c0862C24fFaE793683bB175F57513dFa0199568",
-    },
-    {
-      balance: "0",
-      decimals: 5, // Decimals for representation
-      icon: xautIcon,
-      name: "Tether Gold",
-      symbol: "XAUT",
-      token: "xaut",
-      address: "0x75E7B2b017D6A7E82029027944C804743C3CFCeC",
-    },
-  ]
 
   const getCoinsOptions = (key: "offerAsset" | "askAsset") => {
     return [{ 
@@ -126,12 +393,15 @@ const SwapForm = () => {
       children: assetsList.map((asset) => {
         const { symbol: value, balance } = asset
 
-        const muted = { // Sombrear en la lista el activo seleccionado
-          offerAsset: !!askAsset && false,
-          askAsset: !!offerAsset && false
+        // Sombrear en la lista, si hay un activo seleccionado en el otro
+        // formulario, diferente a GEX, todas las opciones que no sean GEX 
+        const muted = { 
+          offerAsset: !!askAsset && (askAsset!="GEX" && value!="GEX") || (askAsset==value),
+          askAsset: !!offerAsset && (offerAsset!="GEX" && value!="GEX") || (offerAsset==value)
         }[key]
 
-        const hidden = key === "offerAsset" && !showAll && !has(balance)
+        const hidden = key === "offerAsset" && !showAll && !has(balance) && isConnected
+        
         return { ...asset, value, muted, hidden }
       })
    }]
@@ -141,18 +411,21 @@ const SwapForm = () => {
   // form
   const form = useForm<TxValues>({
     mode: "onChange", // what triggers validation of form inputs. onChange is expensive. Alt: onSubmit
-    defaultValues: { offerAsset: initialOfferAsset, slippageInput: 1 },
+    defaultValues: { offerAsset: initialOfferAsset, askAsset: "GEX", slippageInput: 1 },
   })
 
-  const { register, trigger, watch, setValue, handleSubmit, formState } = form
+  const { register, trigger, watch, setValue, resetField, handleSubmit, formState } = form
   const { errors } = formState
   const values = watch()
   const { mode, offerAsset, askAsset, input, slippageInput, ratio } = values
+  
+  if (Number.isNaN(input)) resetField("input")  // A veces aparece un NaN, causa desconocida.
 
-  useEffect(() => {
-    // validate input on change mode
-    if (mode) trigger("input")
-  }, [mode, trigger])
+  // No necesario si no se usa el Radio Group
+  // useEffect(() => {
+  //   // validate input on change mode
+  //   if (mode) trigger("input")
+  // }, [mode, trigger])
 
   const assets = useMemo(
     () => ({ offerAsset, askAsset }),
@@ -164,30 +437,56 @@ const SwapForm = () => {
     [askAsset, input, offerAsset, ratio, slippageInput]
   )
 
-  const findTokenItem = (token: string) => assetsList.find((item) => item.token === token)
-  const findDecimals = (token: string) => findTokenItem(token)?.decimals
+  const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
+  const findAssetDecimalsBySymbol = (symbol: string) => findAssetBySymbol(symbol)?.decimals ?? defaultDecimals
+  
 
-  const offerTokenItem = offerAsset ? findTokenItem(offerAsset) : undefined
-  const offerDecimals = offerAsset ? findDecimals(offerAsset) : undefined
-  const askTokenItem = askAsset ? findTokenItem(askAsset) : undefined
-  const askDecimals = askAsset ? findDecimals(askAsset) : undefined
+  const offerTokenItem = offerAsset ? findAssetBySymbol(offerAsset) : undefined
+  const offerDecimals = offerAsset ? findAssetDecimalsBySymbol(offerAsset) : defaultDecimals
+  const askTokenItem = askAsset ? findAssetBySymbol(askAsset) : undefined
+  const askDecimals = askAsset ? findAssetDecimalsBySymbol(askAsset) : defaultDecimals
 
-  const amount = toAmount(input, { decimals: offerDecimals })
-
+  const amount = toAmount(input, { decimals: offerDecimals }) // Number to string (wei units)
+  // const inAmount = ethers.utils.parseEther((input ?? 0).toString()).toString() // String (wei units)
+  
+  
+  
+  // Change assets position in the form
   const swapAssets = () => {
     setValue("offerAsset", askAsset)
     setValue("askAsset", offerAsset)
     setValue("input", undefined)
-    trigger("input")
+    resetField("input")
   }
 
+
+
+
+
   // simulate | execute
+  const poolSymbol = [offerAsset, askAsset].find(asset => asset && asset != "GEX") ?? "paxg"
+
+  const tradeInfo = usePoolTradeInfo(poolSymbol, offerAsset ?? "GEX", amount)
+  const { outAmount, offerAssetPrice, askAssetPrice, offerAssetRatio } = tradeInfo
+  console.log("[SwapForm] Tradeinfo:", tradeInfo)
+
+  const gexAmount = offerAsset == "GEX" ?
+    amount :
+    askAsset == "GEX" ?
+    outAmount :
+    "0"
+  const fees = usePoolFees(poolSymbol, offerAsset ?? "GEX", gexAmount ?? "0")
+  console.log("[SwapForm] Fees:", fees)
+  
+
+  // expectedSwapResults({ askAsset, offerAsset, offerAmount: input, contracts })
+
+
   // const params = { amount, ...assets }
-  const availableSwapModes = ['Market'] // getAvailableSwapModes(assets)
+  // const availableSwapModes = ['Market'] // getAvailableSwapModes(assets)
   const isSwapAvailable = true // getIsSwapAvailable(assets)
   // const simulateQuery = getSimulateQuery(params)
-  // console.log("[SWAPFORM] simulateQuery:")
-  // console.log(simulateQuery)
+  
 
   // simulate
   const isFetching = false
@@ -226,15 +525,11 @@ const SwapForm = () => {
     },
     rate: 9684.286047895272, // Oracle price
     ratio: 45678, // Expected price
-    value: "1122334455" // Amount output 
+    value: tradeInfo.outAmount // Amount output 
   }
   
-  const simulatedValue = result?.value
+  const simulatedValue = tradeInfo?.outAmount //result?.value
   const simulatedRatio = result?.ratio
-  // console.log(results)
-  // console.log(result)
-  // console.log(simulatedValue)
-  // console.log(simulatedRatio)
 
   useEffect(() => {
     // Set ratio on simulate
@@ -243,7 +538,7 @@ const SwapForm = () => {
 
 
 
-  // Select asset
+  // Handle select asset on form
   const onSelectAsset = (key: "offerAsset" | "askAsset") => {
     return async (value: Token) => {
       const assets = {
@@ -251,17 +546,15 @@ const SwapForm = () => {
         askAsset: { offerAsset, askAsset: value },
       }[key]
 
-      // set mode if only one available
-      const availableSwapModes = getAvailableSwapModes(assets)
-      const availableSwapMode = 
-        availableSwapModes?.length === 1 ? availableSwapModes[0] : undefined
-      setValue("mode", availableSwapMode)
-
+      // Enforce swap always against GEX
+      if (value != "GEX") {
+        setValue(key === "offerAsset" ? "askAsset" : "offerAsset", "GEX")
+      }
       // empty opposite asset if select the same asset
-      if (assets.offerAsset === assets.askAsset) {
+      else if (assets.offerAsset === assets.askAsset) {
         setValue(key === "offerAsset" ? "askAsset" : "offerAsset", undefined)
       }
-
+      
       // focus on input if select offer asset
       if (key === "offerAsset") {
         form.resetField("input")
@@ -274,7 +567,9 @@ const SwapForm = () => {
 
 
   // tx
-  const balance = "10"
+  const balance = offerTokenItem?.balance
+  
+  // Callback que se pasa a TX, está desactivado allí
   const createTx = () => undefined
   // const createTx = useCallback(
   //   (values: TxValues) => {
@@ -300,11 +595,12 @@ const SwapForm = () => {
 
 
   // fee
+  // Valores que se pasan al callback createTx en Tx
   const estimationTxValues = {
     mode, 
     ...assets,
     ratio: 10, 
-    input: toInput(balance ?? "", findDecimals(offerAsset ?? "")), 
+    input: toInput(balance ?? "", findAssetDecimalsBySymbol(offerAsset ?? "")), 
     slippageInput: 1
   }
   // const { data: estimationTxValues } = useQuery(
@@ -321,14 +617,16 @@ const SwapForm = () => {
 
   // PARÁMETROS QUE SE PASAN AL COMPONENTE TX
   const token = offerAsset
+  const symbol = offerTokenItem?.symbol ?? ""
   const decimals = offerDecimals
   const tx = {
-    token,
+    token: offerAsset,
+    symbol,
     decimals,
     amount,
     balance,
     initialGasDenom,
-    estimationTxValues,
+    estimationTxValues, // Valores que se pasan a createTx
     createTx, // No se usa de momento, lo tenemos desactivado en Tx
     onPost: () => { // Función para añadir token personalizado al wallet tras comprarlo -> implementar
       // add custom token on ask cw20
@@ -342,7 +640,9 @@ const SwapForm = () => {
 
 
 
-  // render
+  // RENDER FUNCTIONS
+
+  // render radio group
   // const renderRadioGroup = () => {
   //   if (!(validateAssets(assets) && isSwapAvailable)) return null
 
@@ -380,7 +680,8 @@ const SwapForm = () => {
     return <ExpectedPrice {...props} isLoading={isFetching} />
   }
 
-  const slippageDisabled = [offerAsset, askAsset].every(isDenomTerra)
+  const slippageDisabled = false //[offerAsset, askAsset].every(isDenomTerra)
+  
 
   return (
     <Tx {...tx} disabled={disabled}>
@@ -422,7 +723,7 @@ const SwapForm = () => {
                     ),
                   })}
                   inputMode="decimal"
-                  placeholder={getPlaceholder(offerDecimals)}
+                  placeholder={"0.000"}
                   onFocus={max.reset}
                   autoFocus
                 />

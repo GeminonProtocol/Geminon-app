@@ -7,7 +7,7 @@ type Price = number
 /* coin | token */
 type CoinDenom = string // uluna | uusd
 type IBCDenom = string // ibc/...
-type TokenAddress = TerraAddress
+type TokenAddress = string
 type Denom = CoinDenom | IBCDenom
 type Token = Denom | TokenAddress
 
@@ -29,7 +29,8 @@ interface AssetInfoCW20Token {
 
 /* token item */
 interface TokenItem {
-  token: TerraAddress
+  token: Token // TODO: eliminar campo token y cambiar por symbol
+  address?: TokenAddress
   decimals: number
   symbol: string
   name?: string
@@ -39,6 +40,23 @@ interface TokenItem {
 interface TokenItemWithBalance extends TokenItem {
   balance: string
 }
+
+
+interface AssetEVM {
+  address?: TokenAddress
+  decimals: number
+  symbol: string
+  name?: string
+  icon?: string
+  balance: string
+  token: Token
+}
+
+interface ERC20Token extends AssetEVM {
+  address: TokenAddress
+}
+
+
 
 /* native */
 interface CoinData {

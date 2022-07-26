@@ -2,7 +2,7 @@ import { ForwardedRef, forwardRef, Fragment } from "react"
 import classNames from "classnames/bind"
 import { FormatConfig } from "@terra.kitchen/utils"
 import { formatPercent, readAmount, truncate } from "@terra.kitchen/utils"
-import { WithTokenItem } from "data/token"
+// import { WithTokenItem } from "data/token"
 import styles from "./Read.module.scss"
 
 const cx = classNames.bind(styles)
@@ -10,7 +10,7 @@ const cx = classNames.bind(styles)
 interface Props extends Partial<FormatConfig> {
   amount?: Amount | Value
   denom?: Denom
-  token?: Token
+  token?: string
 
   approx?: boolean
   block?: boolean
@@ -50,19 +50,28 @@ const Read = forwardRef(
     }
 
     const renderSymbol = () => {
-      const token = props.token ?? denom
-
-      if (!token) return null
+      const token = props.token ?? ""
 
       return (
         <span className={styles.small}>
-          {" "}
-          <WithTokenItem token={token}>
-            {({ symbol }) => symbol ?? truncate(token)}
-          </WithTokenItem>
+          {" "}{token}
         </span>
       )
     }
+    // const renderSymbol = () => {
+    //   const token = props.token ?? denom
+
+    //   if (!token) return null
+
+    //   return (
+    //     <span className={styles.small}>
+    //       {" "}
+    //       <WithTokenItem token={token}>
+    //         {({ symbol }) => symbol ?? truncate(token)}
+    //       </WithTokenItem>
+    //     </span>
+    //   )
+    // }
 
     const className = cx(styles.component, { block }, props.className)
 

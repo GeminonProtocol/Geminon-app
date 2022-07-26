@@ -12,6 +12,7 @@ import styles from "./SelectToken.module.scss"
 
 const cx = classNames.bind(styles)
 
+
 interface GroupProps {
   title: string
   children: ItemProps[]
@@ -29,6 +30,7 @@ const SelectTokenGroup = ({ title, children }: GroupProps) => {
     </article>
   )
 }
+
 
 interface ItemProps extends TokenItem {
   balance?: string
@@ -57,6 +59,7 @@ const SelectTokenItem = (props: ItemProps) => {
     </button>
   )
 }
+
 
 interface Props {
   value?: string

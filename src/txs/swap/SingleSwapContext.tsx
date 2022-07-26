@@ -8,7 +8,7 @@ import { toPrice } from "utils/num"
 import createContext from "utils/createContext"
 // import { useCurrency } from "data/settings/Currency"
 // import { combineState, useIsClassic } from "data/query"
-// import { useBankBalance } from "data/queries/bank"
+import { useBankBalance } from "data/queries/bank"
 // import { useTokenBalances } from "data/queries/wasm"
 // import { readIBCDenom, readNativeDenom } from "data/token"
 // import { useIBCWhitelist } from "data/Terra/TerraAssets"
@@ -23,12 +23,12 @@ import { SwapAssets, validateAssets } from "./useSwapUtils"
 export interface SlippageParams extends SwapAssets {
   input: number
   slippageInput: number
-  ratio: Price
+  ratio: number
 }
 
 export interface SwapSpread {
   max_spread: string
-  minimum_receive: Amount
+  minimum_receive: string
   belief_price: string
   price: number
 }

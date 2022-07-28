@@ -19,7 +19,7 @@ interface Swap {
 
 export const [useSwap, SwapProvider] = createContext<Swap>("useSwap")
 
-
+// ESTE COMPONENTE SE PUEDE ELIMINAR POR COMPLETO. 
 const SwapContext = ({ children }: PropsWithChildren<{}>) => {
   
   const activeDenoms = [

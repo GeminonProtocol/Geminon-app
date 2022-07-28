@@ -42,15 +42,27 @@ const Read = forwardRef(
     const renderDecimal = () => {
       if (!decimal) return null
 
+      const optimDecimals = integer.length > 3 ? 2 : 7 - integer.length
+      const limitDecimal = decimal.length > 6 ? decimal.slice(0, optimDecimals) : decimal
+
       return (
         <span className={cx({ small: !props.prefix })}>
-          {decimal && `.${decimal}`}
+          {limitDecimal && `.${limitDecimal}`}
         </span>
       )
     }
+    // const renderDecimal = () => {
+    //   if (!decimal) return null
+
+    //   return (
+    //     <span className={cx({ small: !props.prefix })}>
+    //       {decimal && `.${decimal}`}
+    //     </span>
+    //   )
+    // }
 
     const renderSymbol = () => {
-      const token = props.token ?? ""
+      const token = props.token ?? denom
 
       return (
         <span className={styles.small}>

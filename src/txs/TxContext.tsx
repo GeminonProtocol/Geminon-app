@@ -10,6 +10,7 @@ import { useTxKey } from "./Tx"
 export const [useTx, TxProvider] = createContext<{ gasPrices: GasPrices }>("useTx")
 
 // Este contexto se utiliza únicamente en el componente de la transacción Tx
+// Si integramos el ErrorBoundary en SwapTx, podríamos eliminarlo junto con SwapContext
 const TxContext = ({ children }: PropsWithChildren<{}>) => {
   const { t } = useTranslation()
   const txKey = ""

@@ -26,7 +26,8 @@
     "optional": "opcional",
     "Submit": "Enviar",
     "Confirm": "Confirmar",
-    "Reset": "Restablecer"
+    "Reset": "Restablecer",
+    "Approve": "Aprobar"
   },
   "Validate": {
     "{{label}} is required": "{{label}} es obligatorio",
@@ -151,7 +152,8 @@
     "Minimum received": "Mínimo recibido",
     "Trading fee": "Comisión de operativa",
     "Select a coin": "Seleccione una moneda",
-    "Balance after tx": "Saldo tras transacción"
+    "Balance after tx": "Saldo tras transacción",
+    "Provide collateral to mint GEX": "Proporcione colateral para acuñar GEX"
   },
   "Stake": {
     "Delegations": "Delegaciones",

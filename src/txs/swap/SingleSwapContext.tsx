@@ -48,6 +48,7 @@ export const [useSingleSwap, SingleSwapProvider] = createContext<SingleSwap>("us
 
 
 // PROPORCIONA LAS LISTAS DE TOKENS PARA EL SWAP Y LOS BALANCES DE CADA UNO
+// RENOMBRAR A GLPContext y dejar como único contexto de SwapForm
 const SingleSwapContext = ({ children }: PropsWithChildren<{}>) => {
   // const currency = "uluna"
   // const isClassic = true
@@ -288,6 +289,28 @@ const SingleSwapContext = ({ children }: PropsWithChildren<{}>) => {
 
 
 
+export default SingleSwapContext
+
+
+/* type guard */
+export const validateSlippageParams = (
+  params: Partial<SlippageParams>
+): params is SlippageParams => {
+  const { input, slippageInput, ratio, ...assets } = params
+  return !!(validateAssets(assets) && input && slippageInput && ratio)
+}
+
+/* minimum received */
+export const calcMinimumReceive = (
+  simulatedValue: Value,
+  max_spread: string
+) => {
+  const minRatio = new BigNumber(1).minus(max_spread)
+  const value = new BigNumber(simulatedValue).times(minRatio)
+  return value.integerValue(BigNumber.ROUND_FLOOR).toString()
+}
+
+
 
 
 // const SingleSwapContext = ({ children }: PropsWithChildren<{}>) => {
@@ -428,23 +451,4 @@ const SingleSwapContext = ({ children }: PropsWithChildren<{}>) => {
 // }
 
 
-export default SingleSwapContext
 
-
-/* type */
-export const validateSlippageParams = (
-  params: Partial<SlippageParams>
-): params is SlippageParams => {
-  const { input, slippageInput, ratio, ...assets } = params
-  return !!(validateAssets(assets) && input && slippageInput && ratio)
-}
-
-/* minimum received */
-export const calcMinimumReceive = (
-  simulatedValue: Value,
-  max_spread: string
-) => {
-  const minRatio = new BigNumber(1).minus(max_spread)
-  const value = new BigNumber(simulatedValue).times(minRatio)
-  return value.integerValue(BigNumber.ROUND_FLOOR).toString()
-}

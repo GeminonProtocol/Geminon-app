@@ -335,8 +335,9 @@ interface TxValues extends Partial<SlippageParams> {
 }
 
 const SwapForm = () => {
+  console.log("[SWAPFORM] START")
   const { t } = useTranslation()
-  const { address, isConnected } = useAccount()
+  const { isConnected } = useAccount()
 
   // BALANCES
   const assetsList: TokenItemWithBalance[] = useReadBalances()
@@ -375,7 +376,7 @@ const SwapForm = () => {
     defaultValues: { offerAsset: initialOfferAsset, askAsset: "GEX", slippageInput: 1 },
   })
 
-  const { register, trigger, watch, setValue, resetField, handleSubmit, formState } = form
+  const { register, trigger, watch, setValue, resetField, handleSubmit, reset, formState } = form
   const { errors } = formState
   const values = watch()
   const { mode, offerAsset, askAsset, input, slippageInput, ratio } = values // Esta desestructuración viene definida por el interfaz TxValues
@@ -487,7 +488,8 @@ const SwapForm = () => {
     outAmount,
     askAssetRatio,
     feePerc,
-    poolSymbol
+    poolSymbol, 
+    resetForm: () => reset()
   }
   const initialGasDenom = initialOfferAsset
   const token = offerAsset
@@ -539,7 +541,7 @@ const SwapForm = () => {
     } 
     // (7-10) DATOS DEBAJO DEL PAR, APARECEN SOLO
     // SI SE INTRODUCE UNA CANTIDAD ARRIBA PARA CAMBIAR
-    console.log("[renderExpected] props VALIDATED", props)
+    console.log("[SWAPFORM][renderExpected] props VALIDATED", props)
     return <ExpectedPrice {...props} isLoading={isFetching} />
   }
 

@@ -140,6 +140,45 @@ const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enable:boole
 }
 
 
+const useSubmitTx = (offerAsset:string, poolSymbol:string, inAmount:string, enable:boolean) => {
+  const { isConnected } = useAccount()
+
+  const swapFunction = offerAsset == "GEX" ? "redeemSwap" : "mintSwap"
+
+  const contractsInfo = loadContractsInfo().pools
+  const key = poolSymbol as keyof typeof contractsInfo
+  
+  const contract = poolSymbol == nativeAsset.symbol.toLowerCase() ? 
+  {
+    addressOrName: contractsInfo[key].address,
+    contractInterface: contractsInfo[key].abi,
+    functionName: swapFunction,
+    enabled: isConnected && enable,
+    overrides: {value: inAmount}
+  } : {
+    addressOrName: contractsInfo[key].address,
+    contractInterface: contractsInfo[key].abi,
+    functionName: swapFunction,
+    args: inAmount,
+    enabled: isConnected && enable
+  }
+
+  const { config, ...prepareState } = usePrepareContractWrite(contract)
+  
+  const { data, write, ...writeState } = useContractWrite(config)
+  
+  const { ...waitState } = useWaitForTransaction({ 
+    hash: data?.hash,
+    confirmations: 10, 
+  })
+  
+  const state = combineState(prepareState, writeState, waitState)
+  console.log("[useSubmitTx] Combined state:", state)
+
+  return { write, ...state }
+}
+
+
 
 const isAmountApproved = (allowed: string, requested: string) => {
   if (allowed == "0") return false
@@ -158,6 +197,7 @@ interface TxProps {
   askAssetRatio: string | undefined,
   feePerc: string | undefined,
   poolSymbol: string
+  resetForm: () => void
 }
 
 
@@ -165,13 +205,13 @@ interface TxProps {
 
 function Tx<TxValues>(props: Props<TxValues>) {
   const { newProps } = props
-  const { symbol, decimals, balance, inAmount, outAmount, askAssetRatio, feePerc, poolSymbol } = newProps as TxProps
+  const { symbol, decimals, balance, inAmount, outAmount, askAssetRatio, feePerc, poolSymbol, resetForm } = newProps as TxProps
   console.log("[TX] START - newProps:", newProps)
   // const { token, symbol, decimals, amount, balance, initialGasDenom } = props
   // const { initialGasDenom, estimationTxValues, createTx } = props
   // const { excludeGasDenom } = props 
   const { children, onChangeMax } = props
-  const { onPost } = props // Para añadir token personalizado al wallet: conservar
+  // const { onPost } = props // Para añadir token personalizado al wallet: conservar
 
   // INTERNAL STATE
   const [isApproved, setIsApproved] = useState(false)
@@ -179,7 +219,6 @@ function Tx<TxValues>(props: Props<TxValues>) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<Error>()
   // const [gasDenom, setGasDenom] = useState(initialGasDenom)
-
 
   // context
   const { isConnected } = useAccount()
@@ -219,6 +258,10 @@ function Tx<TxValues>(props: Props<TxValues>) {
   const {write: writeApprove, ...approveStatus} = 
     useInfiniteApprove(offerTokenItem?.address ?? "", poolSymbol, enableHooks)
   
+  const {write: writeSubmit, ...submitStatus} = 
+    useSubmitTx(symbol ?? "", poolSymbol, inAmount, enableHooks && isApproved)
+
+
   // useEffect avoids error window repeating after closing it
   useEffect(() => {
     if (approveStatus.error && !error) {
@@ -226,18 +269,20 @@ function Tx<TxValues>(props: Props<TxValues>) {
       setError(approveStatus.error as Error)
       setSubmitting(false)
     }
-  }, [approveStatus.error, submitting])
+    else if (submitStatus.error && !error) {
+      console.log("[TX][useEffect] SUBMIT ERROR:", submitStatus.error)
+      setError(submitStatus.error as Error)
+      setSubmitting(false)
+    }
+  }, [approveStatus.error, submitStatus.error, submitting])
 
-  const isLoading = approveStatus.isLoading
-  const isSuccess = approveStatus.isSuccess
+  const isLoading = approveStatus.isLoading || submitStatus.isLoading
+  const isSuccess = approveStatus.isSuccess || submitStatus.isSuccess
 
   if (isSuccess && submitting) {
     console.log("[TX] SUCCESS SUBMITTING!!!")
     setSubmitting(false)
   }
-
-
-  
 
   // VALOR PARA EL AMOUNT MÁXIMO DEL FORMULARIO 1 (2) 
   // const getNativeMax = () => {
@@ -256,6 +301,8 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // }, [decimals, isMax, max, onChangeMax])
 
   
+  // TODO: Este lo usaremos si el slippage es mayor q el establecido para que muestre 
+  // la advertencia en rojo debajo del formulario y desactive los botones
   const disabled = ""
     // passwordRequired && !password
     //   ? t("Enter password")
@@ -272,18 +319,23 @@ function Tx<TxValues>(props: Props<TxValues>) {
     
   // SEND TRANSACTIONS
   const sendApprove = () => writeApprove?.()
+
+  const sendSubmit = () => writeSubmit?.()
   
   // FUNCIÓN QUE SE PASA A handleSubmit (onClick)
   const onSubmit = () => {
     setSubmitting(true)
     
-    if (!isApproved) sendApprove()
-    
-    if (approveStatus.isSuccess) {
-      console.log("[TX][onSubmit] approve SUCCESS, set submitting=false:", approveStatus)
-      setSubmitting(false)
+    if (!isApproved) {
+      sendApprove()
+      console.log("[TX][onSubmit] APPROVE SENT, approveStatus:", approveStatus)
     }
-    console.log("[TX][onSubmit] approveStatus:", approveStatus)
+    else {
+      sendSubmit()
+      console.log("[TX][onSubmit] SUBMIT SENT, submitStatus:", submitStatus)
+    }
+    
+    
   }
 
   const submittingLabel = "" // isWallet.ledger(wallet) ? t("Confirm in ledger") : ""
@@ -421,21 +473,21 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
           {/* {failed && <FormError>{failed}</FormError>} */}
 
-          {!isApproved ? (
+          {!!inAmount && inAmount!="0" && !isApproved ? (
             <Approve
               disabled={!!disabled || isLoading}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
             </Approve>
-          ) : (
+          ) : !!inAmount && inAmount!="0" ? (
             <Submit
               disabled={!!disabled || isLoading}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
             </Submit>
-          )}
+          ) : null}
           
         </Grid>
       )}
@@ -483,6 +535,8 @@ function Tx<TxValues>(props: Props<TxValues>) {
             console.log("[TX][return][MODAL] Request close error. Error:", error)
             setError(undefined)
             setSubmitting(false)
+            resetForm()
+            console.log("[TX][return][MODAL] End modal")
           }}
           isOpen
         />

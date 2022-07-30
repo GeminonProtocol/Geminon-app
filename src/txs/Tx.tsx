@@ -12,6 +12,8 @@ import { head, isNil } from "ramda"
 
 import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet"
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"
+import CheckIcon from "@mui/icons-material/Check"
 // import { isDenom, isDenomIBC, readDenom } from "@terra.kitchen/utils"
 import { Coin, Coins, LCDClient } from "@terra-money/terra.js"
 import { CreateTxOptions, Fee } from "@terra-money/terra.js"
@@ -88,6 +90,7 @@ interface RenderProps<TxValues> {
 
 
 const useApproved = (tokenAddress:string|undefined, poolSymbol:string, enable:boolean) => {
+  console.log("[useApproved] tokenAddress, pool, enable:", tokenAddress, poolSymbol, enable)
   const { address, isConnected } = useAccount()
 
   const contractInfo = loadContractsInfo().pools
@@ -101,10 +104,10 @@ const useApproved = (tokenAddress:string|undefined, poolSymbol:string, enable:bo
       enabled: isConnected && enable
     }
   
-  const { data: allowedAmount } = useContractRead(contract)
-  console.log("[useApproved] allowedAmount:", allowedAmount)
+  const { data, refetch, ...status } = useContractRead(contract)
+  console.log("[useApproved] allowedAmount, status:", data, status)
   
-  return allowedAmount?.toString()
+  return {allowedAmount: data?.toString(), refetchAllowance: refetch}
 }
 
 
@@ -117,24 +120,26 @@ const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enable:boole
   const key = poolSymbol as keyof typeof contractsInfo
   
   const contract = {
-      addressOrName: tokenAddress,
-      contractInterface: erc20ABI,
-      functionName: "approve",
-      args: [contractsInfo[key].address, maxUint256],
-      enabled: isConnected && enable
-    }
+    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
+    addressOrName: tokenAddress,
+    contractInterface: erc20ABI,
+    functionName: "approve",
+    args: [contractsInfo[key].address, maxUint256],
+    enabled: isConnected && enable
+  }
   
   const { config, ...prepareState } = usePrepareContractWrite(contract)
+  // if (prepareState.error) console.log("[useInfiniteApprove] Prepare contract ERROR:", prepareState.error)
   
   const { data, write, ...writeState } = useContractWrite(config)
   
   const { ...waitState } = useWaitForTransaction({ 
     hash: data?.hash,
-    confirmations: 3, 
+    confirmations: 2, 
   })
   
-  const state = combineState(prepareState, writeState, waitState)
-  console.log("[useInfiniteApprove] Combined state:", state)
+  const state = combineState(writeState, waitState)
+  console.log("[useInfiniteApprove] Combined state, enabled:", state, enable)
 
   return { write, ...state }
 }
@@ -143,19 +148,24 @@ const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enable:boole
 const useSubmitTx = (offerAsset:string, poolSymbol:string, inAmount:string, enable:boolean) => {
   const { isConnected } = useAccount()
 
-  const swapFunction = offerAsset == "GEX" ? "redeemSwap" : "mintSwap"
-
+  const swapFunction = offerAsset == "GEX" ? 
+    "redeemSwap" : 
+    poolSymbol == "eth" ?
+    "mintSwapNative" :
+    "mintSwap"
+  
   const contractsInfo = loadContractsInfo().pools
   const key = poolSymbol as keyof typeof contractsInfo
   
-  const contract = poolSymbol == nativeAsset.symbol.toLowerCase() ? 
-  {
+  const contract = poolSymbol == nativeAsset.symbol.toLowerCase() ? {
+    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
     addressOrName: contractsInfo[key].address,
     contractInterface: contractsInfo[key].abi,
     functionName: swapFunction,
     enabled: isConnected && enable,
     overrides: {value: inAmount}
   } : {
+    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
     addressOrName: contractsInfo[key].address,
     contractInterface: contractsInfo[key].abi,
     functionName: swapFunction,
@@ -164,16 +174,17 @@ const useSubmitTx = (offerAsset:string, poolSymbol:string, inAmount:string, enab
   }
 
   const { config, ...prepareState } = usePrepareContractWrite(contract)
+  // if (prepareState.error) console.log("[useSubmitTx] Prepare contract ERROR:", prepareState.error)
   
   const { data, write, ...writeState } = useContractWrite(config)
   
   const { ...waitState } = useWaitForTransaction({ 
     hash: data?.hash,
-    confirmations: 10, 
+    confirmations: 4, 
   })
   
-  const state = combineState(prepareState, writeState, waitState)
-  console.log("[useSubmitTx] Combined state:", state)
+  const state = combineState(writeState, waitState)
+  console.log("[useSubmitTx] Combined state, enabled:", state, enable)
 
   return { write, ...state }
 }
@@ -181,8 +192,12 @@ const useSubmitTx = (offerAsset:string, poolSymbol:string, inAmount:string, enab
 
 
 const isAmountApproved = (allowed: string, requested: string) => {
-  if (allowed == "0") return false
-  return new BigNumber(allowed) >= new BigNumber(requested)
+  console.log("[isAmountApproved] allowed, requested", allowed, requested)
+  if (allowed == "0") {
+    console.log("[isAmountApproved] allowed == 0", allowed)
+    return false
+  }
+  return new BigNumber(allowed).gte(new BigNumber(requested))
 }
 
 
@@ -236,27 +251,50 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // const bankBalance = useBankBalance()
   // const { gasPrices } = useTx() // Contexto desde TxContet, puenteado allí
 
-  const findAssetBySymbol = (symbol: string) => tokensList.find((item) => item.symbol === symbol)
   
-  const offerTokenItem = symbol ? findAssetBySymbol(symbol) : undefined
+  const assetsList = [nativeAsset, ...tokensList]
+  const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
+  
+  const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
 
-  const enableHooks = !!offerTokenItem && !error
-  const allowedAmount = useApproved(offerTokenItem?.address, poolSymbol, enableHooks)
+  const enableHooks = !!offerAssetItem && !error
+  if (!enableHooks) console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
   
+  
+  const { allowedAmount, refetchAllowance, ...allowanceStatus } = 
+    useApproved(offerAssetItem?.address, poolSymbol, enableHooks)
+  console.log("[TX] Allowed Amount:", allowedAmount)
+  if (allowedAmount) console.log("[TX] is Amount Approved:", isAmountApproved(allowedAmount, inAmount))
+
+  
+  
+  
+  
+  if (symbol == nativeAsset.symbol) {
+    if (!isApproved) setIsApproved(true)
+  } 
+  else if (!!allowedAmount && inAmount!="0") {
+    if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
+      setIsApproved(true)
+    else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
+      setIsApproved(false)
+  }
   // useEffect avoids infinite rendering loop
-  useEffect(() => {
-    if (symbol == nativeAsset.symbol) {
-      return !isApproved ? setIsApproved(true) : undefined
-    } else if (!!allowedAmount && inAmount!="0") {
-        if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
-          setIsApproved(true)
-        else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
-          setIsApproved(false)
-    }
-  }, [isConnected, symbol, inAmount, allowedAmount, isApproved])
+  // useEffect(() => {
+  //   if (symbol == nativeAsset.symbol) {
+  //     return !isApproved ? setIsApproved(true) : undefined
+  //   } else if (!!allowedAmount && inAmount!="0") {
+  //       if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
+  //         setIsApproved(true)
+  //       else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
+  //         setIsApproved(false)
+
+  //   console.log("[TX][useEffect] isApproved, enableHooks:", isApproved, enableHooks)
+  //   }
+  // }, [isConnected, symbol, inAmount])
   
   const {write: writeApprove, ...approveStatus} = 
-    useInfiniteApprove(offerTokenItem?.address ?? "", poolSymbol, enableHooks)
+    useInfiniteApprove(offerAssetItem?.address ?? "", poolSymbol, enableHooks)
   
   const {write: writeSubmit, ...submitStatus} = 
     useSubmitTx(symbol ?? "", poolSymbol, inAmount, enableHooks && isApproved)
@@ -274,15 +312,15 @@ function Tx<TxValues>(props: Props<TxValues>) {
       setError(submitStatus.error as Error)
       setSubmitting(false)
     }
-  }, [approveStatus.error, submitStatus.error, submitting])
+  }, [approveStatus.error, submitStatus.error])
 
-  const isLoading = approveStatus.isLoading || submitStatus.isLoading
-  const isSuccess = approveStatus.isSuccess || submitStatus.isSuccess
-
-  if (isSuccess && submitting) {
-    console.log("[TX] SUCCESS SUBMITTING!!!")
-    setSubmitting(false)
+  
+  if (approveStatus.isSuccess && !isApproved) {
+    console.log("[TX] APPROVE SUCCESS, REFETCHING ALLOWANCE")
+    refetchAllowance()
+    console.log("[TX] APPROVE SUCCESS, allowedAmount", allowedAmount)
   }
+
 
   // VALOR PARA EL AMOUNT MÁXIMO DEL FORMULARIO 1 (2) 
   // const getNativeMax = () => {
@@ -327,15 +365,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
     setSubmitting(true)
     
     if (!isApproved) {
-      sendApprove()
-      console.log("[TX][onSubmit] APPROVE SENT, approveStatus:", approveStatus)
+      writeApprove?.()
     }
     else {
-      sendSubmit()
-      console.log("[TX][onSubmit] SUBMIT SENT, submitStatus:", submitStatus)
+      writeSubmit?.()
     }
-    
-    
   }
 
   const submittingLabel = "" // isWallet.ledger(wallet) ? t("Confirm in ledger") : ""
@@ -475,14 +509,14 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
           {!!inAmount && inAmount!="0" && !isApproved ? (
             <Approve
-              disabled={!!disabled || isLoading}
+              disabled={!!disabled || approveStatus.isLoading}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
             </Approve>
           ) : !!inAmount && inAmount!="0" ? (
             <Submit
-              disabled={!!disabled || isLoading}
+              disabled={!!disabled || submitStatus.isLoading}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
@@ -532,11 +566,33 @@ function Tx<TxValues>(props: Props<TxValues>) {
           {...errorDescription}
           icon={<ErrorOutlineIcon fontSize="inherit" className="danger" />}
           onRequestClose={() => {
-            console.log("[TX][return][MODAL] Request close error. Error:", error)
             setError(undefined)
             setSubmitting(false)
             resetForm()
-            console.log("[TX][return][MODAL] End modal")
+          }}
+          isOpen
+        />
+      )}
+
+      {approveStatus.isSuccess && submitting && !isApproved && (
+        <Modal
+          {...{title: "Approved"}}
+          icon={<CheckIcon fontSize="inherit" className="success" />}
+          onRequestClose={() => {
+            setSubmitting(false)
+            setIsApproved(true)
+          }}
+          isOpen
+        />
+      )}
+
+      {submitStatus.isSuccess && submitting && (
+        <Modal
+          {...{title: "Success"}}
+          icon={<CheckCircleOutlineIcon fontSize="inherit" className="success" />}
+          onRequestClose={() => {
+            setSubmitting(false)
+            resetForm()
           }}
           isOpen
         />

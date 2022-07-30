@@ -2,7 +2,7 @@ import { PropsWithChildren, useState } from "react"
 // import { fromPairs } from "ramda"
 // import axios from "axios"
 // import { ASSETS } from "config/constants"
-import { validNetworks } from "config/networks"
+// import { validNetworks } from "config/networks"
 import createContext from "utils/createContext"
 // import { useCustomNetworks } from "data/settings/CustomNetworks"
 import { useNetworkState } from "data/wallet"
@@ -48,8 +48,8 @@ export const [useNetworks, NetworksProvider] = createContext<CustomNetworks>("us
 const InitNetworks = ({ children }: PropsWithChildren<{}>) => {
   const [networks, setNetworks] = useState<CustomNetworks>(terraNetworks)
   
-  const [network, setNetwork] = useNetworkState()
-  setNetwork("classic") // Necesario para que funcione el módulo de swaps
+  // const [network, setNetwork] = useNetworkState()
+  // setNetwork("classic") // Necesario para que funcione el módulo de swaps
   // console.log("Selected network:")
   // console.log(network)
   // console.log("EVM networks:")

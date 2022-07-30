@@ -53,12 +53,32 @@ import gexDeploy from "../../config/contracts/GEX.json"
 import paxgDeploy from "../../config/contracts/Token_PAXG.json"
 import xautDeploy from "../../config/contracts/Token_XAUT.json"
 import wbtcDeploy from "../../config/contracts/Token_WBTC.json"
+import natPoolDeploy from "../../config/contracts/GenLiqPoolNat.json"
 import paxgPoolDeploy from "../../config/contracts/GenLiqPool_PAXG.json"
 import xautPoolDeploy from "../../config/contracts/GenLiqPool_XAUT.json"
 import wbtcPoolDeploy from "../../config/contracts/GenLiqPool_WBTC.json"
+import BigNumber from "bignumber.js"
 
 // import { Coins } from "@terra-money/terra.js"
 
+
+
+export const loadContractsInfo = () => {
+  return {
+    tokens: {
+      gex: gexDeploy,
+      paxg: paxgDeploy,
+      xaut: xautDeploy,
+      wbtc: wbtcDeploy,
+    },
+    pools: {
+      eth: natPoolDeploy,
+      paxg: paxgPoolDeploy,
+      xaut: xautPoolDeploy,
+      wbtc: wbtcPoolDeploy,
+    }
+  }
+}
 
 
 const defaultDecimals = 18
@@ -79,8 +99,8 @@ export const tokensList: ERC20Token[] = [
     icon: gexIcon,
     name: "Geminon",
     symbol: "GEX",
-    token: "0x370ea586fB88a4ADB9396188A3Dfd59Bc7652578",
-    address: "0x370ea586fB88a4ADB9396188A3Dfd59Bc7652578",
+    token: loadContractsInfo().tokens.gex.address,
+    address: loadContractsInfo().tokens.gex.address,
   },
   {
     balance: "0",
@@ -88,8 +108,8 @@ export const tokensList: ERC20Token[] = [
     icon: wbtcIcon,
     name: "Wrapped Bitcoin",
     symbol: "WBTC",
-    token: "0xF6AFB8dAa36eEAf55596DDED79FD9e2076557943",
-    address: "0xF6AFB8dAa36eEAf55596DDED79FD9e2076557943",
+    token: loadContractsInfo().tokens.wbtc.address,
+    address: loadContractsInfo().tokens.wbtc.address,
   },
   {
     balance: "0",
@@ -97,8 +117,8 @@ export const tokensList: ERC20Token[] = [
     icon: paxgIcon,
     name: "PAX Gold",
     symbol: "PAXG",
-    token: "0x6C9c5CD2406ccecc361b3ae15e2867fd293F91Df",
-    address: "0x6C9c5CD2406ccecc361b3ae15e2867fd293F91Df",
+    token: loadContractsInfo().tokens.paxg.address,
+    address: loadContractsInfo().tokens.paxg.address,
   },
   {
     balance: "0",
@@ -106,8 +126,8 @@ export const tokensList: ERC20Token[] = [
     icon: xautIcon,
     name: "Tether Gold",
     symbol: "XAUT",
-    token: "0xf7f08Ef70BacB985330b29976dA2cd8497020b24",
-    address: "0xf7f08Ef70BacB985330b29976dA2cd8497020b24",
+    token: loadContractsInfo().tokens.xaut.address,
+    address: loadContractsInfo().tokens.xaut.address,
   },
 ]
 
@@ -243,10 +263,8 @@ const usePoolTradeInfo = (poolSymbol:string, offerAsset:string, offerAmount:stri
 const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => {
   const { isConnected } = useAccount()
   poolSymbol = poolSymbol.toLowerCase()
-  // if (isNaN(gexAmount)) gexAmount = 0
-  console.log("[usePoolFees] params:", poolSymbol, offerAsset, gexAmount)
-  const { address, abi, isError } = usePoolContractInfo(poolSymbol)
 
+  const { address, abi, isError } = usePoolContractInfo(poolSymbol)
   
   const contracts = offerAsset === "GEX" ?
   [
@@ -260,8 +278,8 @@ const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => 
     {
       addressOrName: address,
       contractInterface: abi,
-      functionName: "getRedeemFee",
-      args: gexAmount, 
+      functionName: "getFee",
+      args: [gexAmount, 2000], 
       enabled: !isError && isConnected
     },
   ] : [
@@ -275,15 +293,14 @@ const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => 
     {
       addressOrName: address,
       contractInterface: abi,
-      functionName: "getMintFee",
-      args: gexAmount, 
+      functionName: "getFee",
+      args: [gexAmount, 1000], 
       enabled: !isError && isConnected
     },
   ]
   
-  const { data } = useContractReads({ contracts })
-  console.log("[usePoolFees] Contract Read:")
-  console.log(data)
+  const { data, ...status } = useContractReads({ contracts })
+  if (status.error) console.log("[usePoolFees] Contract read ERROR:", data, status.error)
   
   return { 
     feeAmount: data?.[0]?.toString(),  // Number as string in wei units (1e18)
@@ -312,22 +329,7 @@ const usePoolContractInfo = (poolSymbol: string) => {
   }
 }
 
-export const loadContractsInfo = () => {
-  return {
-    tokens: {
-      gex: gexDeploy,
-      paxg: paxgDeploy,
-      xaut: xautDeploy,
-      wbtc: wbtcDeploy,
-    },
-    pools: {
-      eth: paxgPoolDeploy,  // TODO: CAMBIAR POR POOL CORRECTO CUANDO LO TENGAMOS
-      paxg: paxgPoolDeploy,
-      xaut: xautPoolDeploy,
-      wbtc: wbtcPoolDeploy,
-    }
-  }
-}
+
 
 
 interface TxValues extends Partial<SlippageParams> {
@@ -404,7 +406,9 @@ const SwapForm = () => {
   const askTokenItem = askAsset ? findAssetBySymbol(askAsset) : undefined
   const askDecimals = askAsset ? findAssetDecimalsBySymbol(askAsset) : defaultDecimals
 
-  const inAmount = toAmount(input, { decimals: offerDecimals }) // Number to string (wei units)
+  // const inAmount = toAmount(input, { decimals: offerDecimals }) // Number to string (wei units)
+  const inAmount = new BigNumber(input ?? 0).shiftedBy(offerDecimals).toFixed()
+  console.log("[SWAPFORM] IN AMOUNT:", inAmount)
     
   
   

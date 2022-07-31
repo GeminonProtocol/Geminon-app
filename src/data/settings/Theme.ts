@@ -11,7 +11,8 @@ import { getLocalSetting, setLocalSetting } from "utils/localStorage"
 
 export const themeNameState = atom({
   key: "themeName",
-  default: getLocalSetting<Theme["name"]>(SettingKey.Theme),
+  // default: getLocalSetting<Theme["name"]>(SettingKey.Theme),
+  default: themes[1]["name"]
 })
 
 export const useFindTheme = () => {

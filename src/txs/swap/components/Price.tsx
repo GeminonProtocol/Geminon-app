@@ -1,4 +1,4 @@
-import { ethers } from "ethers"
+import BigNumber from "bignumber.js"
 import { Read } from "components/token"
 // import { SwapAssets } from "../useSwapUtils"
 
@@ -14,9 +14,7 @@ interface Props {
 const Price = ({ price, priceDecimals=18, offerAsset, askAsset, className }: Props) => {
   if (!price || !offerAsset || !askAsset || price=="0") return null
 
-  const denom = ethers.utils.parseUnits("1", priceDecimals)  // BigNumber 1e18
-  // BigNumber is Integer. Multiply and divide by 1000 trick to handle decimals
-  const smallNumPrice = ethers.BigNumber.from(price).mul(1000).div(denom).toNumber() / 1000  
+  const smallNumPrice =  new BigNumber(price).shiftedBy(-priceDecimals).toNumber()
   
   return smallNumPrice > 1 ? (
     <span className={className}>

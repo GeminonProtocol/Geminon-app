@@ -48,7 +48,7 @@ import useToPostMultisigTx from "pages/multisig/utils/useToPostMultisigTx"
 // import { useTx } from "./TxContext"
 import styles from "./Tx.module.scss"
 
-import {nativeAsset, tokensList, loadContractsInfo} from "./swap/SwapForm"
+import {tokensList, contractsInfo, useTokenInfo} from "./mint/MintForm"
 
 
 // Interfaz TxValues definido en SwapForm
@@ -89,18 +89,15 @@ interface RenderProps<TxValues> {
 
 
 
-const useApproved = (tokenAddress:string|undefined, poolSymbol:string, enable:boolean) => {
-  console.log("[useApproved] tokenAddress, pool, enable:", tokenAddress, poolSymbol, enable)
+const useApproved = (tokenAddress:string|undefined, enable:boolean) => {
+  console.log("[useApproved] tokenAddress, enable:", tokenAddress, enable)
   const { address, isConnected } = useAccount()
 
-  const contractInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof contractInfo
-  
   const contract = {
       addressOrName: tokenAddress ?? "",
       contractInterface: erc20ABI,
       functionName: "allowance",
-      args: [address, contractInfo[key].address],
+      args: [address, contractsInfo.minter.address],
       enabled: isConnected && enable
     }
   
@@ -111,25 +108,22 @@ const useApproved = (tokenAddress:string|undefined, poolSymbol:string, enable:bo
 }
 
 
-const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enable:boolean) => {
+const useInfiniteApprove = (tokenAddress:string, enable:boolean) => {
   const { isConnected } = useAccount()
 
   const maxUint256 = new BigNumber(2).exponentiatedBy(256).minus(1).toFixed()
 
-  const contractsInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof contractsInfo
-  
   const contract = {
     // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
     addressOrName: tokenAddress,
     contractInterface: erc20ABI,
     functionName: "approve",
-    args: [contractsInfo[key].address, maxUint256],
+    args: [contractsInfo.minter.address, maxUint256],
     enabled: isConnected && enable
   }
   
   const { config, ...prepareState } = usePrepareContractWrite(contract)
-  // if (prepareState.error) console.log("[useInfiniteApprove] Prepare contract ERROR:", prepareState.error)
+  if (prepareState.error) console.log("[useInfiniteApprove] Prepare contract ERROR:", prepareState.error)
   
   const { data, write, ...writeState } = useContractWrite(config)
   
@@ -145,35 +139,23 @@ const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enable:boole
 }
 
 
-const useSubmitTx = (offerAsset:string, poolSymbol:string, inAmount:string, enable:boolean) => {
+const useSubmitTx = (offerAsset:string, stablecoinSymbol:string, inAmount:string, enable:boolean) => {
   const { isConnected } = useAccount()
+  const { scAddress } = useTokenInfo(stablecoinSymbol ?? "USDI")
 
-  const swapFunction = offerAsset == "GEX" ? "redeemSwap" : "mintSwap"
+  const swapFunction = offerAsset == "GEX" ? "mintStablecoin" : "redeemStablecoin"
   
-  const contractsInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof contractsInfo
-  
-  const contract = offerAsset == nativeAsset.symbol ? {
+  const contract = {
     // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
-    addressOrName: contractsInfo[key].address,
-    contractInterface: contractsInfo[key].abi,
-    functionName: "mintSwapNative",
-    enabled: isConnected && enable,
-    overrides: {value: inAmount}
-  } : {
-    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
-    addressOrName: contractsInfo[key].address,
-    contractInterface: contractsInfo[key].abi,
+    addressOrName: contractsInfo.minter.address,
+    contractInterface: contractsInfo.minter.abi,
     functionName: swapFunction,
-    args: inAmount,
+    args: [scAddress, inAmount],
     enabled: isConnected && enable
   }
 
   const { config, ...prepareState } = usePrepareContractWrite(contract)
-  if (prepareState.error) {
-    console.log("[useSubmitTx] Prepare contract ERROR:", prepareState.error)
-    console.log("[useSubmitTx] Prepare contract CONFIG:", config)
-  }
+  if (prepareState.error) console.log("[useSubmitTx] Prepare contract ERROR:", prepareState.error)
   
   const { data, write, ...writeState } = useContractWrite(config)
   
@@ -200,100 +182,65 @@ const isAmountApproved = (allowed: string, requested: string) => {
 
 interface TxProps {
   symbol: string | undefined,
+  scSymbol: string,
   decimals: number,
   balance: string | undefined,
   inAmount: string,
   outAmount: string | undefined,
-  askAssetRatio: string | undefined,
   feePerc: string | undefined,
-  poolSymbol: string
   resetForm: () => void
 }
 
 
 
 
-function Tx<TxValues>(props: Props<TxValues>) {
+function Txm<TxValues>(props: Props<TxValues>) {
   const { newProps } = props
-  const { symbol, decimals, balance, inAmount, outAmount, askAssetRatio, feePerc, poolSymbol, resetForm } = newProps as TxProps
+  const { symbol, scSymbol, decimals, balance, inAmount, outAmount, feePerc, resetForm } = newProps as TxProps
   console.log("[TX] START - newProps:", newProps)
-  // const { token, symbol, decimals, amount, balance, initialGasDenom } = props
-  // const { initialGasDenom, estimationTxValues, createTx } = props
-  // const { excludeGasDenom } = props 
-  const { children, onChangeMax } = props
-  // const { onPost } = props // Para añadir token personalizado al wallet: conservar
+  
+  const { children } = props
 
   // INTERNAL STATE
   const [isApproved, setIsApproved] = useState(false)
   const [isMax, setIsMax] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<Error>()
-  // const [gasDenom, setGasDenom] = useState(initialGasDenom)
+  
 
   // context
   const { isConnected } = useAccount()
   const { t } = useTranslation()
-  // const isClassic = true // useIsClassic()
-  // const currency = useCurrency()
-  // const network = useNetwork()
-  // const { post } = useWallet()
-  // const connectedWallet = useConnectedWallet()
-  // const { wallet, validatePassword, ...auth } = useAuth()
-  // const address = useAddress() // Puenteado en origen. TODO: Pasar useAddress a contexto EVM
-  // const isWalletEmpty = false // useIsWalletEmpty()
-  // const setLatestTx = useSetRecoilState(latestTxState) // Guardar hash última transacción. Probablemente para quitar.
-  // const isBroadcasting = false // useRecoilValue(isBroadcastingState)
-  // const bankBalance = useBankBalance()
-  // const { gasPrices } = useTx() // Contexto desde TxContet, puenteado allí
-
   
-  const assetsList = [nativeAsset, ...tokensList]
+  
+  const assetsList = [...tokensList]
   const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
   
   const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
 
-  const enableHooks = !!offerAssetItem && !!inAmount && !!outAmount && !!poolSymbol && !error
-  if (!enableHooks) console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
+  const enableHooks = !!offerAssetItem && !!scSymbol && !!inAmount && !!outAmount && !error
+  if (!enableHooks) console.log("[TX] Hooks DISABLED: symbols, amounts, error", symbol, scSymbol, inAmount, outAmount, error)
   
   
-  const { allowedAmount, refetchAllowance, ...allowanceStatus } = 
-    useApproved(offerAssetItem?.address, poolSymbol, enableHooks)
+  const { allowedAmount, refetchAllowance, ...allowanceStatus } = useApproved(offerAssetItem?.address, enableHooks)
   console.log("[TX] Allowed Amount:", allowedAmount)
   if (allowedAmount) console.log("[TX] is Amount Approved:", isAmountApproved(allowedAmount, inAmount))
 
   
   
-  
-  
-  if (symbol == nativeAsset.symbol) {
-    if (!isApproved) setIsApproved(true)
-  } 
-  else if (!!allowedAmount && inAmount!="0") {
+  if (!!allowedAmount && inAmount!="0") {
     if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
       setIsApproved(true)
     else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
       setIsApproved(false)
   }
-  // useEffect avoids infinite rendering loop
-  // useEffect(() => {
-  //   if (symbol == nativeAsset.symbol) {
-  //     return !isApproved ? setIsApproved(true) : undefined
-  //   } else if (!!allowedAmount && inAmount!="0") {
-  //       if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
-  //         setIsApproved(true)
-  //       else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
-  //         setIsApproved(false)
-
-  //   console.log("[TX][useEffect] isApproved, enableHooks:", isApproved, enableHooks)
-  //   }
-  // }, [isConnected, symbol, inAmount])
-  
+    
 
   const {write: writeApprove, ...approveStatus} = 
-    useInfiniteApprove(offerAssetItem?.address ?? "", poolSymbol, enableHooks)
+    useInfiniteApprove(offerAssetItem?.address ?? "", enableHooks)
   
   const {write: writeSubmit, ...submitStatus} = 
-    useSubmitTx(symbol ?? "", poolSymbol, inAmount, enableHooks && isApproved)
+    useSubmitTx(symbol ?? "", scSymbol, inAmount, enableHooks && isApproved)
 
 
   // useEffect avoids error window repeating after closing it
@@ -318,37 +265,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
   }
 
 
-  // VALOR PARA EL AMOUNT MÁXIMO DEL FORMULARIO 1 (2) 
-  // const getNativeMax = () => {
-  //   if (!balance) return
-  //   const gasAmount = gasFee.denom === token ? gasFee.amount : "0"
-  //   return calcMax({ balance, gasAmount })
-  // }
-
   const max = !balance ? undefined : balance
-    
-
-
-  // (effect): Call the onChangeMax function whenever the max changes 
-  // useEffect(() => {
-  //   if (max && isMax && onChangeMax) onChangeMax(toInput(max, decimals))
-  // }, [decimals, isMax, max, onChangeMax])
-
   
   // TODO: Este lo usaremos si el slippage es mayor q el establecido para que muestre 
   // la advertencia en rojo debajo del formulario y desactive los botones
-  const disabled = ""
-    // passwordRequired && !password
-    //   ? t("Enter password")
-    //   : estimatedGasState.isLoading
-    //   ? t("Estimating fee...")
-    //   : estimatedGasState.error
-    //   ? t("Fee estimation failed")
-    //   : isBroadcasting
-    //   ? t("Broadcasting a tx...")
-    //   : props.disabled || ""
-
-  
+  const disabled = ""  
 
     
   // SEND TRANSACTIONS  
@@ -467,15 +388,6 @@ function Tx<TxValues>(props: Props<TxValues>) {
     // )
   }
 
-  // const walletError = ""
-    // connectedWallet?.connectType === ConnectType.READONLY
-    //   ? t("Wallet is connected as read-only mode")
-    //   : !availableGasDenoms.length
-    //   ? t("Insufficient balance to pay transaction fee")
-    //   : isWalletEmpty
-    //   ? t("Coins required to post transactions")
-    //   : ""
-
   const submitButton = (
     <>
       {!isConnected ? (
@@ -488,19 +400,6 @@ function Tx<TxValues>(props: Props<TxValues>) {
         />
       ) : (
         <Grid gap={4}>
-          {/* {passwordRequired && (
-            <FormItem label={t("Password")} error={incorrect}>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => {
-                  setIncorrect(undefined)
-                  setPassword(e.target.value)
-                }}
-              />
-            </FormItem>
-          )} */}
-
           {/* {failed && <FormError>{failed}</FormError>} */}
 
           {!!inAmount && inAmount!="0" && !isApproved ? (
@@ -600,7 +499,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
 
 
-export default Tx
+export default Txm
 
 
 

@@ -20,16 +20,17 @@ export interface ExpectedPriceProps  {
   askDecimals: number
   offerAssetPrice: string
   askAssetPrice: string
-  askAssetRatio: string
+  askAssetRatio?: string
   feeAmount: string
   minimum_receive: string
   isLoading: boolean
+  mode?: string
 }
 
 const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
   const { offerAsset, offerDecimals, askAsset, askDecimals } = props
   const { offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount } = props
-  const { minimum_receive, isLoading } = props
+  const { minimum_receive, isLoading, mode } = props
   const { t } = useTranslation()
   
   
@@ -126,13 +127,34 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
       </>
     )
   }
+
+  const renderSCMint = () => {
+    return (
+      <>
+        {renderUsdPrices()}
+
+        {/* COMPONENTE READ MATEMÁTICAS INSEGURAS */}
+        <dt>{t("Trading fee")}</dt>
+        <dd>
+          {!isLoading && (
+            <Read amount={feeAmount} token={"GEX"} decimals={askDecimals} />
+          )}
+        </dd>
+
+        {/* {renderMinimumReceived()} */}
+      </>
+    )
+  }
   
   
 
   // (7-10) VALORES ESPERADOS DEL SWAP
   return (
     <dl>
-      {renderGLPswap()}
+      {mode == "SCMint" ? 
+       renderSCMint() : 
+       renderGLPswap()
+      }
     </dl>
   )
 }

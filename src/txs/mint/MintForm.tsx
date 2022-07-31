@@ -8,7 +8,7 @@ import { useNetwork, useAccount, useBalance, useContractReads, erc20ABI } from '
 // import BigNumber from "bignumber.js"
 // import { AccAddress } from "@terra-money/terra.js"
 // import { isDenomTerra } from "@terra.kitchen/utils"
-import { toAmount } from "@terra.kitchen/utils"
+// import { toAmount } from "@terra.kitchen/utils"
 
 /* helpers */
 import { has } from "utils/num"
@@ -27,71 +27,46 @@ import { Read } from "components/token"
 /* tx modules */
 import { getPlaceholder, toInput } from "../utils"
 import validate from "../validate"
-import Tx, { getInitialGasDenom } from "../Tx"
+import Txm from "../Txm"
 
 /* swap modules */
-import AssetFormItem from "./components/AssetFormItem"
-import { AssetInput, AssetReadOnly } from "./components/AssetFormItem"
-import SelectToken from "./components/SelectToken"
-import SlippageControl from "./components/SlippageControl"
-import ExpectedPrice, { ExpectedPriceProps } from "./components/ExpectedPrice"
+import AssetFormItem from "../swap/components/AssetFormItem"
+import { AssetInput, AssetReadOnly } from "../swap/components/AssetFormItem"
+import SelectToken from "../swap/components/SelectToken"
+import SlippageControl from "../swap/components/SlippageControl"
+import ExpectedPrice, { ExpectedPriceProps } from "../swap/components/ExpectedPrice"
 // import useSwapUtils, { validateAssets } from "./useSwapUtils"
-import { SwapMode, validateParams } from "./useSwapUtils"
-import { SlippageParams } from "./SingleSwapContext"
+import { SwapMode, validateParams } from "../swap/useSwapUtils"
+import { SlippageParams } from "../swap/SingleSwapContext"
 // import { validateSlippageParams, useSingleSwap } from "./SingleSwapContext"
 // import styles from "./SwapForm.module.scss"
 
 /* Token images */
-import ethIcon from "../../styles/images/tokens/eth.png"
 import gexIcon from "../../styles/images/tokens/gex.png"
-import wbtcIcon from "../../styles/images/tokens/wbtc.png"
-import paxgIcon from "../../styles/images/tokens/paxg.png"
-import xautIcon from "../../styles/images/tokens/xaut.png"
-
+import usdiIcon from "../../styles/images/tokens/usdi.png"
 
 /* Smart contracts */
 import gexDeploy from "../../config/contracts/GEX.json"
-import paxgDeploy from "../../config/contracts/Token_PAXG.json"
-import xautDeploy from "../../config/contracts/Token_XAUT.json"
-import wbtcDeploy from "../../config/contracts/Token_WBTC.json"
-import natPoolDeploy from "../../config/contracts/GenLiqPoolNat.json"
-import paxgPoolDeploy from "../../config/contracts/GenLiqPool_PAXG.json"
-import xautPoolDeploy from "../../config/contracts/GenLiqPool_XAUT.json"
-import wbtcPoolDeploy from "../../config/contracts/GenLiqPool_WBTC.json"
+import usdiDeploy from "../../config/contracts/USDI.json"
+import scminterDeploy from "../../config/contracts/SCMinter.json"
+import oracleDeploy from "../../config/contracts/GeminonOracle.json"
 
 
 // import { Coins } from "@terra-money/terra.js"
 
 
 
-export const loadContractsInfo = () => {
-  return {
-    tokens: {
-      gex: gexDeploy,
-      paxg: paxgDeploy,
-      xaut: xautDeploy,
-      wbtc: wbtcDeploy,
-    },
-    pools: {
-      eth: natPoolDeploy,
-      paxg: paxgPoolDeploy,
-      xaut: xautPoolDeploy,
-      wbtc: wbtcPoolDeploy,
-    }
-  }
+export const contractsInfo = {
+  tokens: {
+    gex: gexDeploy,
+    usdi: usdiDeploy,
+  },
+  minter: scminterDeploy,
+  oracle: oracleDeploy,
 }
 
 
 const defaultDecimals = 18
-
-export const nativeAsset: AssetEVM = {
-  balance: "0",
-  decimals: defaultDecimals,
-  icon: ethIcon,
-  name: "Ethereum",
-  symbol: "ETH",
-  token: "nativeAsset",
-}
 
 export const tokensList: ERC20Token[] = [
   {
@@ -100,63 +75,19 @@ export const tokensList: ERC20Token[] = [
     icon: gexIcon,
     name: "Geminon",
     symbol: "GEX",
-    token: loadContractsInfo().tokens.gex.address,
-    address: loadContractsInfo().tokens.gex.address,
+    token: contractsInfo.tokens.gex.address,
+    address: contractsInfo.tokens.gex.address,
   },
   {
     balance: "0",
     decimals: defaultDecimals,
-    icon: wbtcIcon,
-    name: "Wrapped Bitcoin",
-    symbol: "WBTC",
-    token: loadContractsInfo().tokens.wbtc.address,
-    address: loadContractsInfo().tokens.wbtc.address,
-  },
-  {
-    balance: "0",
-    decimals: defaultDecimals,
-    icon: paxgIcon,
-    name: "PAX Gold",
-    symbol: "PAXG",
-    token: loadContractsInfo().tokens.paxg.address,
-    address: loadContractsInfo().tokens.paxg.address,
-  },
-  {
-    balance: "0",
-    decimals: defaultDecimals,
-    icon: xautIcon,
-    name: "Tether Gold",
-    symbol: "XAUT",
-    token: loadContractsInfo().tokens.xaut.address,
-    address: loadContractsInfo().tokens.xaut.address,
+    icon: usdiIcon,
+    name: "Inflation Indexed Dollar",
+    symbol: "USDI",
+    token: contractsInfo.tokens.usdi.address,
+    address: contractsInfo.tokens.usdi.address,
   },
 ]
-
-// const assetsList: TokenItemWithBalance[] = [
-//   nativeAsset,
-//   ...tokensList
-// ]
-
-
-// HACK PARA USAR HOOK ITERANDO
-// const IterableUseAssetBalance = (asset: TokenItemWithBalance) => {
-//   return useAssetBalance(asset)
-// }
-
-// const useAssetBalance = (asset: TokenItemWithBalance) => {
-//   const { address } = useAccount()
-
-//   const { data } = useBalance({
-//     addressOrName: address,
-//     token: asset.address,
-//     formatUnits: 'wei'
-//   })
-
-//   return { 
-//     ...asset, 
-//     decimals: data?.decimals ?? asset.decimals, 
-//     balance: data?.formatted ?? asset.balance}
-// }
 
 
 const useReadBalances = () => {
@@ -166,100 +97,104 @@ const useReadBalances = () => {
       addressOrName: asset.address,
       contractInterface: erc20ABI,
       functionName: "balanceOf",
-      args: address,
-      enabled: isConnected
+      args: address,    
     }
   })
   
-  const { data: coinData } = useBalance({addressOrName: address, formatUnits: 'wei'})
-  const { data: tokenData } = useContractReads({ contracts })
+  const { data: tokenData } = useContractReads({ contracts, enabled: isConnected })
   
-  nativeAsset.balance = coinData?.formatted ?? "0"
   tokensList.forEach((asset, index) => {
     asset.balance = tokenData?.[index]?.toString() ?? "0"
   })
   
-  return [nativeAsset, ...tokensList]
+  return tokensList
 }
 
-
-
-const usePoolTradeInfo = (poolSymbol:string, offerAsset:string|undefined, offerAmount:string, enabled:boolean) => {
-  const { isConnected } = useAccount()
-  poolSymbol = poolSymbol.toLowerCase()
+export const useTokenInfo = (tokenSymbol: string) => {
+  const { chain } = useNetwork()
+  const connectedNetworkId = chain?.id.toString()
   
-  console.log("[usePoolTradeInfo] params:", poolSymbol, offerAsset, offerAmount)
-  const { address, abi, isError } = usePoolContractInfo(poolSymbol)
+  const deployInfo = contractsInfo.tokens
+  const key = tokenSymbol.toLowerCase() as keyof typeof deployInfo
 
-  const contracts = offerAsset === "GEX" ?
+  let isError = false
+  if (deployInfo?.[key].network != connectedNetworkId) {
+    console.log("[useTokenInfo] Network mismatch")
+    isError = true
+  }
+  console.log("[useTokenInfo] address", deployInfo[key].address)
+  return { 
+    scAddress: deployInfo[key].address, 
+    scAbi: deployInfo[key].abi, 
+    isError: isError 
+  }
+}
+
+const useMinterInfo = (offerAsset:string|undefined, offerAmount:string, 
+  stablecoinSymbol:string, enabled:boolean) => {
+  const { isConnected } = useAccount()
+  const { scAddress, scAbi } = useTokenInfo(stablecoinSymbol)
+  console.log("[useMinterInfo] params:", offerAsset, offerAmount)
+  
+  const contracts = offerAsset === "GEX" ? 
   [
     {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getOutCollateralAmount",
-      args: offerAmount, 
+      addressOrName: contractsInfo.minter.address,
+      contractInterface: contractsInfo.minter.abi,
+      functionName: "calculateRedeemAmount",
+      args: [scAddress, offerAmount], 
       
     },
     {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getGEXPrice",
+      addressOrName: contractsInfo.oracle.address,
+      contractInterface: contractsInfo.oracle.abi,
+      functionName: "getPrice",
     },
     {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getCollateralPrice",
-    },
-    {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getCollateralQuote",
-    },
+      addressOrName: scAddress,
+      contractInterface: scAbi,
+      functionName: "getPegValue",
+    }
   ] : [
     {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getOutGEXAmount",
-      args: offerAmount, 
+      addressOrName: contractsInfo.minter.address,
+      contractInterface: contractsInfo.minter.abi,
+      functionName: "calculateMintAmount",
+      args: [scAddress, offerAmount], 
     },
     {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getCollateralPrice",
+      addressOrName: scAddress,
+      contractInterface: scAbi,
+      functionName: "getPegValue",
     },
     {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getGEXPrice",
-    },
-    {
-      addressOrName: address,
-      contractInterface: abi,
-      functionName: "getGEXQuote",
+      addressOrName: contractsInfo.oracle.address,
+      contractInterface: contractsInfo.oracle.abi,
+      functionName: "getPrice",
     },
   ]
   
-  const { data } = useContractReads({ 
-    contracts,
-    enabled: enabled && isConnected && !isError 
-   })
-  console.log("[usePoolTradeInfo] Contract Read:", data)
+  const { data, status } = useContractReads({ 
+    contracts, 
+    enabled: isConnected && enabled 
+  })
+  console.log("[useMinterInfo] Contract Read. status, data:", status, data)
   
   // All amounts numbers as string in wei units (1e18)
   return { 
     outAmount: data?.[0]?.toString(),
     offerAssetPrice: data?.[1]?.toString(),
     askAssetPrice: data?.[2]?.toString(),
-    askAssetRatio: data?.[3]?.toString(),
   }
 }
 
 
-const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => {
+const useMintFees = (offerAsset:string|undefined, 
+  gexAmount:string|undefined, enabled:boolean) => {
   const { isConnected } = useAccount()
-  poolSymbol = poolSymbol.toLowerCase()
 
-  const { address, abi, isError } = usePoolContractInfo(poolSymbol)
+  const { address, abi } = contractsInfo.minter
+  console.log("[useMintFees] Minter address", address)
   
   const contracts = offerAsset === "GEX" ?
   [
@@ -268,14 +203,13 @@ const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => 
       contractInterface: abi,
       functionName: "amountRedeemFee",
       args: gexAmount, 
-      enabled: !isError && isConnected
+      
     },
     {
       addressOrName: address,
       contractInterface: abi,
       functionName: "getFee",
       args: [gexAmount, 2000], 
-      enabled: !isError && isConnected
     },
   ] : [
     {
@@ -283,44 +217,26 @@ const usePoolFees = (poolSymbol:string, offerAsset:string, gexAmount:string) => 
       contractInterface: abi,
       functionName: "amountMintFee",
       args: gexAmount, 
-      enabled: !isError && isConnected
     },
     {
       addressOrName: address,
       contractInterface: abi,
       functionName: "getFee",
       args: [gexAmount, 1000], 
-      enabled: !isError && isConnected
     },
   ]
   
-  const { data, ...status } = useContractReads({ contracts })
+  console.log("[usePoolFees] Contracts config:", contracts)
+  const { data, ...status } = useContractReads({ 
+    contracts,
+    enabled: enabled && isConnected 
+  })
+  console.log("[usePoolFees] Contracts read, status:", data, status)
   if (status.error) console.log("[usePoolFees] Contract read ERROR:", data, status.error)
   
   return { 
     feeAmount: data?.[0]?.toString(),  // Number as string in wei units (1e18)
     feePerc: data?.[1]?.toString(),  // Number as string in 1e6 units
-  }
-}
-
-
-const usePoolContractInfo = (poolSymbol: string) => {
-  const { chain } = useNetwork()
-  const connectedNetworkId = chain?.id.toString()
-  
-  const deployInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof deployInfo
-
-  let isError = false
-  if (deployInfo?.[key].network != connectedNetworkId) {
-    console.log("[usePoolContractInfo] Network mismatch")
-    isError = true
-  }
-
-  return { 
-    address: deployInfo[key].address, 
-    abi: deployInfo[key].abi, 
-    isError: isError 
   }
 }
 
@@ -331,18 +247,15 @@ interface TxValues extends Partial<SlippageParams> {
   mode?: SwapMode
 }
 
-const SwapForm = () => {
-  console.log("[SWAPFORM] START")
+const MintForm = () => {
+  console.log("[MINTFORM] START")
   const { t } = useTranslation()
   const { isConnected } = useAccount()
 
   // BALANCES
   const assetsList: TokenItemWithBalance[] = useReadBalances()
 
-  const initialOfferAsset = nativeAsset.symbol
-  
-  
-  
+    
   // MUESTRA LA LISTA DE TOKENS EN EL FORMULARIO
   const [showAll, setShowAll] = useState(false)
 
@@ -367,10 +280,10 @@ const SwapForm = () => {
   }
 
 
-  // form
+  // FORM
   const form = useForm<TxValues>({
     mode: "onChange", // what triggers validation of form inputs. onChange is expensive. Alt: onSubmit
-    defaultValues: { offerAsset: initialOfferAsset, askAsset: "GEX", slippageInput: 1 },
+    defaultValues: { offerAsset: "GEX", askAsset: "USDI", slippageInput: 1 },
   })
 
   const { register, trigger, watch, setValue, resetField, handleSubmit, reset, formState } = form
@@ -379,7 +292,6 @@ const SwapForm = () => {
   const { mode, offerAsset, askAsset, input, slippageInput, ratio } = values // Esta desestructuración viene definida por el interfaz TxValues
   
   if (Number.isNaN(input)) resetField("input")  // A veces aparece un NaN, causa desconocida.
-
 
 
   const assets = useMemo(
@@ -395,16 +307,12 @@ const SwapForm = () => {
   const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
   const findAssetDecimalsBySymbol = (symbol: string) => findAssetBySymbol(symbol)?.decimals ?? defaultDecimals
   
-
   const offerTokenItem = offerAsset ? findAssetBySymbol(offerAsset) : undefined
   const offerDecimals = offerAsset ? findAssetDecimalsBySymbol(offerAsset) : defaultDecimals
   const askTokenItem = askAsset ? findAssetBySymbol(askAsset) : undefined
   const askDecimals = askAsset ? findAssetDecimalsBySymbol(askAsset) : defaultDecimals
 
-  // const inAmount = toAmount(input, { decimals: offerDecimals }) // Number to string (wei units)
   const inAmount = new BigNumber(input ?? 0).shiftedBy(offerDecimals).toFixed()
-  console.log("[SWAPFORM] IN AMOUNT:", inAmount)
-    
   
   
   // Change assets position in the form
@@ -417,21 +325,20 @@ const SwapForm = () => {
 
 
   // FETCH SWAP ESTIMATES
-  const enableHooks = isConnected && !!offerAsset && !!input
-  const poolSymbol = [offerAsset, askAsset].find(asset => asset && asset != "GEX")?.toLowerCase() ?? 
-    nativeAsset.symbol.toLowerCase()
+  const enableHooks = isConnected && !!offerAsset && !!askAsset && !!input 
+  if (!enableHooks) console.log("[MINTFORM] Hooks DISABLED: symbols, input", offerAsset, askAsset, input)
 
-  const tradeInfo = usePoolTradeInfo(poolSymbol, offerAsset, inAmount, enableHooks)
-  const { outAmount, offerAssetPrice, askAssetPrice, askAssetRatio } = tradeInfo
-  console.log("[SwapForm] Tradeinfo:", tradeInfo)
+  const tradeInfo = useMinterInfo(offerAsset, inAmount, askAsset ?? "USDI", enableHooks)
+  const { outAmount, offerAssetPrice, askAssetPrice } = tradeInfo
+  console.log("[MINTFORM] Tradeinfo:", tradeInfo)
 
   const gexAmount = offerAsset == "GEX" ?
     inAmount :
     askAsset == "GEX" ?
     outAmount :
     "0"
-  const { feeAmount, feePerc } = usePoolFees(poolSymbol, offerAsset ?? "GEX", gexAmount ?? "0")
-  console.log("[SwapForm] Fees:", feeAmount, feePerc)
+  const { feeAmount, feePerc } = useMintFees(offerAsset, gexAmount, enableHooks)
+  console.log("[MINTFORM] Fees:", feeAmount, feePerc)
   
 
   
@@ -483,16 +390,15 @@ const SwapForm = () => {
   // PARÁMETROS QUE SE PASAN AL COMPONENTE TX
   const txProps = {
     symbol: offerAsset,
+    scSymbol: askAsset, 
     decimals: offerDecimals,
     balance: offerTokenItem?.balance,
     inAmount,
     outAmount,
-    askAssetRatio,
     feePerc,
-    poolSymbol, 
     resetForm: () => reset()
   }
-  const initialGasDenom = initialOfferAsset
+  const initialGasDenom = ""
   const token = offerAsset
   const symbol = offerTokenItem?.symbol ?? ""
   const decimals = offerDecimals
@@ -522,9 +428,9 @@ const SwapForm = () => {
     params: Partial<ExpectedPriceProps>
     ): params is ExpectedPriceProps => {
       const { offerAsset, askAsset, offerAssetPrice, askAssetPrice, 
-        askAssetRatio, feeAmount, minimum_receive } = params
+        feeAmount, minimum_receive } = params
       return !!(offerAsset && askAsset && offerAssetPrice && 
-        askAssetPrice && askAssetRatio && feeAmount && minimum_receive)
+        askAssetPrice && feeAmount && minimum_receive)
     }
 
   // render: expected price
@@ -534,22 +440,22 @@ const SwapForm = () => {
     const minimum_receive = outAmount
     const isLoading = false
     const props = { offerAsset, offerDecimals, askAsset, askDecimals, 
-      offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount, minimum_receive, isLoading}
+      offerAssetPrice, feeAmount, minimum_receive, isLoading, mode:"SCMint"}
 
     if (!(isConnected && validateExpectedPriceProps(props))){
-      console.log("[renderExpected] props NOT VALIDATED", props)
+      console.log("[MINTFORM][renderExpected] props NOT VALIDATED", props)
       return null
     } 
     // (7-10) DATOS DEBAJO DEL PAR, APARECEN SOLO
     // SI SE INTRODUCE UNA CANTIDAD ARRIBA PARA CAMBIAR
-    console.log("[SWAPFORM][renderExpected] props VALIDATED", props)
+    console.log("[MINTFORM][renderExpected] props VALIDATED", props)
     return <ExpectedPrice {...props} isLoading={isFetching} />
   }
 
     
 
   return (
-    <Tx {...tx} disabled={disabled}>
+    <Txm {...tx} disabled={disabled}>
       {({ max, fee, submit }) => (
         <Form onSubmit={handleSubmit(submit.fn)}>
           {/* (1) PESTAÑAS MERCADOS SWAP */}
@@ -624,20 +530,6 @@ const SwapForm = () => {
             />
           </AssetFormItem>
 
-          {/* (6) CONTROL SLIPPAGE */}
-          {isConnected && (
-            <SlippageControl
-              {...register("slippageInput", {
-                valueAsNumber: true,
-                validate: validate.input(50, 2, "Slippage tolerance"),
-              })}
-              input={slippageInput} // to warn
-              inputMode="decimal"
-              placeholder={getPlaceholder(2)}
-              error={errors.slippageInput?.message}
-            />
-          )}
-
           {/* (7-10) DATOS RESULTADO SWAP */}
           {renderExpected()}
           
@@ -652,12 +544,12 @@ const SwapForm = () => {
           {submit.button}
         </Form>
       )}
-    </Tx>
+    </Txm>
   )
 }
 
 
-export default SwapForm
+export default MintForm
 
 
 

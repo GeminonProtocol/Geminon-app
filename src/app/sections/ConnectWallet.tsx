@@ -69,6 +69,10 @@ const ConnectWallet = ({ renderButton }: Props) => {
 }
 
 
+export default ConnectWallet
+
+
+
 
 /*const ConnectWallet = ({ renderButton }: Props) => {
   const { t } = useTranslation()
@@ -123,4 +127,4 @@ const ConnectWallet = ({ renderButton }: Props) => {
   )
 } */
 
-export default ConnectWallet
+

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { QueryKey, useQuery } from "react-query"
 // import { useNavigate } from "react-router-dom"
-import { useAccount, useContractRead, erc20ABI } from 'wagmi'
+import { useAccount, useContractRead, useNetwork, erc20ABI } from 'wagmi'
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import classNames from "classnames"
@@ -388,8 +388,13 @@ function Txm<TxValues>(props: Props<TxValues>) {
     // )
   }
 
+  const { chain } = useNetwork()
+  const isWrongNetwork = chain && chain.id != 42
+
   const submitButton = (
     <>
+      {isWrongNetwork && <FormError>{"Switch to Kovan testnet"}</FormError>}
+
       {!isConnected ? (
         <ConnectWallet
           renderButton={(open) => (
@@ -404,14 +409,14 @@ function Txm<TxValues>(props: Props<TxValues>) {
 
           {!!inAmount && inAmount!="0" && !isApproved ? (
             <Approve
-              disabled={!!disabled || approveStatus.isLoading || !enableHooks}
+              disabled={!!disabled || approveStatus.isLoading || !enableHooks || isWrongNetwork}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
             </Approve>
           ) : !!inAmount && inAmount!="0" ? (
             <Submit
-              disabled={!!disabled || submitStatus.isLoading || !enableHooks}
+              disabled={!!disabled || submitStatus.isLoading || !enableHooks || isWrongNetwork}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}

@@ -22,7 +22,7 @@ export interface ExpectedPriceProps  {
   askAssetPrice: string
   askAssetRatio?: string
   feeAmount: string
-  minimum_receive: string
+  minimum_receive?: string
   isLoading: boolean
   mode?: string
 }
@@ -81,24 +81,24 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
   }
 
   // (10) CANTIDAD MÍNIMA RECIBIDA EN EL SWAP
-  const renderMinimumReceived = () => {
+  // const renderMinimumReceived = () => {
     
-    return (
-      <>
-        <dt>{t("Minimum received")}</dt>
-        {/* COMPONENTE READ MATEMÁTICAS INSEGURAS */}
-        <dd>
-          {!isLoading && (
-            <Read
-              amount={minimum_receive}
-              token={askAsset}
-              decimals={askDecimals}
-            />
-          )}
-        </dd>
-      </>
-    )
-  }
+  //   return (
+  //     <>
+  //       <dt>{t("Minimum received")}</dt>
+  //       {/* COMPONENTE READ MATEMÁTICAS INSEGURAS */}
+  //       <dd>
+  //         {!isLoading && (
+  //           <Read
+  //             amount={minimum_receive}
+  //             token={askAsset}
+  //             decimals={askDecimals}
+  //           />
+  //         )}
+  //       </dd>
+  //     </>
+  //   )
+  // }
 
 
   // (7-9) INFORMACIÓN DEL SWAP DEPENDIENDO DEL MODO DE SWAP ELEGIDO

@@ -141,7 +141,7 @@ const useMinterInfo = (offerAsset:string|undefined, offerAmount:string,
     {
       addressOrName: contractsInfo.minter.address,
       contractInterface: contractsInfo.minter.abi,
-      functionName: "calculateRedeemAmount",
+      functionName: "calculateMintAmount",
       args: [scAddress, offerAmount], 
       
     },
@@ -159,7 +159,7 @@ const useMinterInfo = (offerAsset:string|undefined, offerAmount:string,
     {
       addressOrName: contractsInfo.minter.address,
       contractInterface: contractsInfo.minter.abi,
-      functionName: "calculateMintAmount",
+      functionName: "calculateRedeemAmount",
       args: [scAddress, offerAmount], 
     },
     {
@@ -201,7 +201,7 @@ const useMintFees = (offerAsset:string|undefined,
     {
       addressOrName: address,
       contractInterface: abi,
-      functionName: "amountRedeemFee",
+      functionName: "amountMintFee",
       args: gexAmount, 
       
     },
@@ -215,7 +215,7 @@ const useMintFees = (offerAsset:string|undefined,
     {
       addressOrName: address,
       contractInterface: abi,
-      functionName: "amountMintFee",
+      functionName: "amountRedeemFee",
       args: gexAmount, 
     },
     {
@@ -426,12 +426,12 @@ const MintForm = () => {
   // type guard
   const validateExpectedPriceProps = (
     params: Partial<ExpectedPriceProps>
-    ): params is ExpectedPriceProps => {
-      const { offerAsset, askAsset, offerAssetPrice, askAssetPrice, 
-        feeAmount, minimum_receive } = params
-      return !!(offerAsset && askAsset && offerAssetPrice && 
-        askAssetPrice && feeAmount && minimum_receive)
-    }
+  ): params is ExpectedPriceProps => {
+    
+    const { offerAsset, askAsset, offerAssetPrice, askAssetPrice, feeAmount} = params      
+    
+    return !!(offerAsset && askAsset && offerAssetPrice && askAssetPrice && feeAmount)
+  }
 
   // render: expected price
   const renderExpected = () => {
@@ -440,7 +440,7 @@ const MintForm = () => {
     const minimum_receive = outAmount
     const isLoading = false
     const props = { offerAsset, offerDecimals, askAsset, askDecimals, 
-      offerAssetPrice, feeAmount, minimum_receive, isLoading, mode:"SCMint"}
+      offerAssetPrice, askAssetPrice, feeAmount, isLoading, mode:"SCMint"}
 
     if (!(isConnected && validateExpectedPriceProps(props))){
       console.log("[MINTFORM][renderExpected] props NOT VALIDATED", props)

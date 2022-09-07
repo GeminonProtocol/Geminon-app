@@ -7,7 +7,7 @@ import { Navigate, useNavigate, useRoutes } from "react-router-dom"
 // import { ReactComponent as HistoryIcon } from "styles/images/menu/History.svg"
 import { ReactComponent as SwapIcon } from "styles/images/menu/Swap.svg"
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-// import { ReactComponent as StakeIcon } from "styles/images/menu/Stake.svg"
+import { ReactComponent as StakeIcon } from "styles/images/menu/Stake.svg"
 // import { ReactComponent as GovernanceIcon } from "styles/images/menu/Governance.svg"
 // import { ReactComponent as ContractIcon } from "styles/images/menu/Contract.svg"
 // import { useIsClassic } from "data/query"
@@ -59,6 +59,7 @@ import MintTx from "txs/mint/MintTx"
 
 /* 404 */
 import NotFound from "pages/NotFound"
+import UnderConstruction from "pages/UnderConstruction"
 
 const ICON_SIZE = { width: 20, height: 20 }
 
@@ -67,22 +68,28 @@ export const useNav = () => {
 
   const menu = [
     {
-      path: "/swap",
+      path: "/collateral",
       element: <SwapTx />,
-      title: t("Swap GEX"),
-      icon: <SwapIcon {...ICON_SIZE} />
+      title: t("Collateral"),
+      icon: <StakeIcon {...ICON_SIZE} />
     },
     {
       path: "/mint",
       element: <MintTx />,
-      title: t("Stablecoins"),
+      title: t("StableMint"),
       icon: <AttachMoneyIcon {...ICON_SIZE} />
+    },
+    {
+      path: "/swap",
+      element: <UnderConstruction />,
+      title: t("StableSwap"),
+      icon: <SwapIcon {...ICON_SIZE} />
     },
   ]
 
   const routes = [
     // { path: "/", element: <Dashboard /> },
-    { path: "/", element: <Navigate to={"/swap"} /> },
+    { path: "/", element: <Navigate to={"/collateral"} /> },
 
     /* pages */
     ...menu,

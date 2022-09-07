@@ -14,7 +14,7 @@ import CopyStyles from "components/general/Copy.module.scss"
 import { Flex, Grid } from "components/layout"
 import { Tooltip, Popover } from "components/display"
 // import { isWallet, useAuth } from "auth"
-import SwitchWallet from "auth/modules/select/SwitchWallet"
+// import SwitchWallet from "auth/modules/select/SwitchWallet"
 import PopoverNone from "../components/PopoverNone"
 import WalletQR from "./WalletQR"
 import styles from "./Connected.module.scss"
@@ -36,7 +36,7 @@ const Connected = () => {
           <Grid gap={16}>
             <Grid gap={4}>
               <section>
-                <Tooltip content={t("View on Terra Finder")}>
+                <Tooltip content={t("View on block explorer")}>
                   <FinderLink className={styles.link} short>
                     {address}
                   </FinderLink>
@@ -56,8 +56,6 @@ const Connected = () => {
                 />
               </Flex>
             </Grid>
-
-            <SwitchWallet />
           </Grid>
         </PopoverNone>
       }

@@ -19,7 +19,10 @@ interface Swap {
 
 export const [useSwap, SwapProvider] = createContext<Swap>("useSwap")
 
-// ESTE COMPONENTE SE PUEDE ELIMINAR POR COMPLETO. 
+// ESTE COMPONENTE SE UTILIZA SOLO PARA PASAR ESTOS DATOS A LAS FUNCIONES
+// DEL MÓDULO useSwapUtils, que es un hook que proporciones funcionalidades
+// a otros componentes. Si no se va a usar ese hook, es seguro eliminar este
+// componente (te ahorro un click: no se usan ya).
 const SwapContext = ({ children }: PropsWithChildren<{}>) => {
   
   const activeDenoms = [
@@ -38,8 +41,8 @@ const SwapContext = ({ children }: PropsWithChildren<{}>) => {
       ueur: {denom: "ueur", amount: 1009.12207561311000}
     }
   }
-  console.log('Exchange Rates:')
-  console.log(exchangeRates)
+  // console.log('Exchange Rates:')
+  // console.log(exchangeRates)
   // console.log(exchangeRatesState)
   
   
@@ -92,7 +95,7 @@ const SwapContext = ({ children }: PropsWithChildren<{}>) => {
     return <SwapProvider value={value}>{children}</SwapProvider>
   }
 
-  console.log("SwapContext OK")
+  // console.log("SwapContext OK")
   return !state.isSuccess ? null : <Fetching {...state}>{render()}</Fetching>
 }
 

@@ -1,23 +1,23 @@
-// import { useIsClassic } from "data/query"
+import { useTranslation } from "react-i18next"
 import { useAccount, useNetwork } from 'wagmi'
+import Select from '@mui/material/Select' // https://mui.com/material-ui/react-select/
 import styles from "./IsClassicNetwork.module.scss"
 
+import { validNetworkID } from 'config/networks'
 
 
 const NetworkName = () => {
+  const { t } = useTranslation()
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
 
-  const validNetworks = [42]
-  const isValidNetwork = chain && validNetworks.includes(chain.id)
+  const isValidNetwork = chain && validNetworkID.includes(chain.id)
 
   if (!isConnected) return <div/>
-  // console.log("[NETWORKNAME] chain")
-  // console.log(chain)
 
   return (
     <div className={styles.component}>
-      {isValidNetwork ? chain?.name : "Wrong network"}
+      {isValidNetwork ? chain?.name : t("Wrong network")}
     </div>
   )
 }

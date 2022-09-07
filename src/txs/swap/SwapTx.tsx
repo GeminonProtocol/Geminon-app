@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { Page } from "components/layout"
 import TxContext from "../TxContext"
 import SwapContext from "./SwapContext"
-import SingleSwapContext from "./SingleSwapContext"
+import GLPContext from "./GLPContext"
 import SwapForm from "./SwapForm"
 
 // The sequence below is required before rendering the Swap form:
@@ -19,9 +19,9 @@ const SwapTx = () => {
     <Page title={t("Genesis Liquidity Pools")} small extra={description}>
       <TxContext>
         <SwapContext>
-          <SingleSwapContext>
+          <GLPContext>
             <SwapForm />
-          </SingleSwapContext>
+          </GLPContext>
         </SwapContext>
       </TxContext>
     </Page>

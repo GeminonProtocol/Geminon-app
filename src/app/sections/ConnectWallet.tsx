@@ -49,10 +49,6 @@ const ConnectWallet = ({ renderButton }: Props) => {
     }))
   ]
   
-  console.log("[CONNECTWALLET] Wallet connectors:")
-  console.log(connectors)
-  console.log(list)
-
   if (isConnected) return <Connected />
 
   return (

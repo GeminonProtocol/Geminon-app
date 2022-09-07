@@ -1,11 +1,12 @@
 import { PropsWithChildren } from "react"
-import { useInitialBankBalance } from "data/queries/bank"
-import { BankBalanceProvider } from "data/queries/bank"
+// import { useInitialBankBalance } from "data/queries/bank"
+// import { BankBalanceProvider } from "data/queries/bank"
 
 
 
 // ELEMENTO DESCONECTADO
 const InitBankBalance = ({ children }: PropsWithChildren<{}>) => {
+  return null
   /* bankBalance tiene la forma:
     {
       _coins: {
@@ -21,22 +22,22 @@ const InitBankBalance = ({ children }: PropsWithChildren<{}>) => {
       }
     }
   */
-  const { data: bankBalance } = useInitialBankBalance()
+  // const { data: bankBalance } = useInitialBankBalance()
 
-  console.log('Bank balance:')
-  console.log(bankBalance)
+  // console.log('Bank balance:')
+  // console.log(bankBalance)
 
-  // If the balance doesn't exist, nothing is worth rendering.
-  if (!bankBalance) {
-    console.log('InitBankBalance: NOT OK')
-    return null
-    // return <BankBalanceProvider value={bankBalance}>{children}</BankBalanceProvider>
-  }
+  // // If the balance doesn't exist, nothing is worth rendering.
+  // if (!bankBalance) {
+  //   console.log('InitBankBalance: NOT OK')
+  //   return null
+  //   // return <BankBalanceProvider value={bankBalance}>{children}</BankBalanceProvider>
+  // }
   
-  console.log('InitBankBalance: OK')
-  return (
-    <BankBalanceProvider value={bankBalance}>{children}</BankBalanceProvider>
-  )
+  // console.log('InitBankBalance: OK')
+  // return (
+  //   <BankBalanceProvider value={bankBalance}>{children}</BankBalanceProvider>
+  // )
 }
 
 

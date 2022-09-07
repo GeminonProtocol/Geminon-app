@@ -2,9 +2,7 @@ import { Fragment, ReactNode } from "react"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { QueryKey, useQuery } from "react-query"
-// import { useNavigate } from "react-router-dom"
-import { useAccount, useContractRead, useNetwork, erc20ABI } from 'wagmi'
-import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { useRecoilValue, useSetRecoilState } from "recoil"
 import classNames from "classnames"
 import BigNumber from "bignumber.js"
@@ -14,41 +12,32 @@ import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet"
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline"
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline"
 import CheckIcon from "@mui/icons-material/Check"
-// import { isDenom, isDenomIBC, readDenom } from "@terra.kitchen/utils"
 import { Coin, Coins, LCDClient } from "@terra-money/terra.js"
-import { CreateTxOptions, Fee } from "@terra-money/terra.js"
 import { ConnectType, UserDenied } from "@terra-money/wallet-types"
 import { CreateTxFailed, TxFailed } from "@terra-money/wallet-types"
-// import { useWallet, useConnectedWallet } from "@terra-money/use-wallet"
 
 import { Contents } from "types/components"
 import { has } from "utils/num"
 import { getAmount, sortCoins } from "utils/coin"
-import { getErrorMessage } from "utils/error"
-// import { getLocalSetting, SettingKey } from "utils/localStorage"
-// import { useCurrency } from "data/settings/Currency"
-import { combineState, queryKey, RefetchOptions, useIsClassic } from "data/query"
-// import { useAddress, useNetwork } from "data/wallet"
+// import { getErrorMessage } from "utils/error"
 import { isBroadcastingState, latestTxState } from "data/queries/tx"
-// import { useBankBalance, useIsWalletEmpty } from "data/queries/bank"
+
 
 import { Pre } from "components/general"
 import { Flex, Grid } from "components/layout"
-import { FormError, Submit, Select, Input, FormItem } from "components/form"
+import { Submit, Select, Input, FormItem } from "components/form"
+import { FormError, FormWarning, FormHelp } from "components/form"
 import Approve from "components/form/Approve"
 import { Modal } from "components/feedback"
-import { Details } from "components/display"
+// import { Details } from "components/display"
 import { Read } from "components/token"
 import ConnectWallet from "app/sections/ConnectWallet"
-import useToPostMultisigTx from "pages/multisig/utils/useToPostMultisigTx"
-// import { isWallet, useAuth } from "auth"
-// import { PasswordError } from "auth/scripts/keystore"
-
-// import { toInput } from "./utils"
-// import { useTx } from "./TxContext"
 import styles from "./Tx.module.scss"
 
-import {nativeAsset, tokensList, loadContractsInfo} from "./swap/SwapForm"
+
+import { validNetworkID, defaultNetworkID } from 'config/networks'
+import { useReadBalances, useFetchAllowance, useInfiniteApprove, useSubmitTx } from "./swap/useContractsEVM"
+
 
 
 // Interfaz TxValues definido en SwapForm
@@ -61,10 +50,10 @@ interface Props<TxValues> {
   balance?: Amount
 
   /* tx simulation */
-  initialGasDenom: CoinDenom
-  estimationTxValues?: TxValues
-  createTx: (values: TxValues) => CreateTxOptions | undefined
-  excludeGasDenom?: (denom: string) => boolean
+  // initialGasDenom: CoinDenom
+  // estimationTxValues?: TxValues
+  // createTx?: (values: TxValues) => CreateTxOptions | undefined
+  // excludeGasDenom?: (denom: string) => boolean
 
   /* render */
   disabled?: string | false
@@ -87,127 +76,16 @@ interface RenderProps<TxValues> {
 }
 
 
-
-
-const useApproved = (tokenAddress:string|undefined, poolSymbol:string, enable:boolean) => {
-  console.log("[useApproved] tokenAddress, pool, enable:", tokenAddress, poolSymbol, enable)
-  const { address, isConnected } = useAccount()
-
-  const contractInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof contractInfo
-  
-  const contract = {
-      addressOrName: tokenAddress ?? "",
-      contractInterface: erc20ABI,
-      functionName: "allowance",
-      args: [address, contractInfo[key].address],
-      enabled: isConnected && enable
-    }
-  
-  const { data, refetch, ...status } = useContractRead(contract)
-  console.log("[useApproved] allowedAmount, status:", data, status)
-  
-  return {allowedAmount: data?.toString(), refetchAllowance: refetch}
-}
-
-
-const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enable:boolean) => {
-  const { isConnected } = useAccount()
-
-  const maxUint256 = new BigNumber(2).exponentiatedBy(256).minus(1).toFixed()
-
-  const contractsInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof contractsInfo
-  
-  const contract = {
-    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
-    addressOrName: tokenAddress,
-    contractInterface: erc20ABI,
-    functionName: "approve",
-    args: [contractsInfo[key].address, maxUint256],
-    enabled: isConnected && enable
-  }
-  
-  const { config, ...prepareState } = usePrepareContractWrite(contract)
-  // if (prepareState.error) console.log("[useInfiniteApprove] Prepare contract ERROR:", prepareState.error)
-  
-  const { data, write, ...writeState } = useContractWrite(config)
-  
-  const { ...waitState } = useWaitForTransaction({ 
-    hash: data?.hash,
-    confirmations: 2, 
-  })
-  
-  const state = combineState(writeState, waitState)
-  console.log("[useInfiniteApprove] Combined state, enabled:", state, enable)
-
-  return { write, ...state }
-}
-
-
-const useSubmitTx = (offerAsset:string, poolSymbol:string, inAmount:string, enable:boolean) => {
-  const { isConnected } = useAccount()
-
-  const swapFunction = offerAsset == "GEX" ? "redeemSwap" : "mintSwap"
-  
-  const contractsInfo = loadContractsInfo().pools
-  const key = poolSymbol as keyof typeof contractsInfo
-  
-  const contract = offerAsset == nativeAsset.symbol ? {
-    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
-    addressOrName: contractsInfo[key].address,
-    contractInterface: contractsInfo[key].abi,
-    functionName: "mintSwapNative",
-    enabled: isConnected && enable,
-    overrides: {value: inAmount}
-  } : {
-    // mode: 'recklesslyUnprepared' as 'recklesslyUnprepared',
-    addressOrName: contractsInfo[key].address,
-    contractInterface: contractsInfo[key].abi,
-    functionName: swapFunction,
-    args: inAmount,
-    enabled: isConnected && enable
-  }
-
-  const { config, ...prepareState } = usePrepareContractWrite(contract)
-  if (prepareState.error) {
-    console.log("[useSubmitTx] Prepare contract ERROR:", prepareState.error)
-    console.log("[useSubmitTx] Prepare contract CONFIG:", config)
-  }
-  
-  const { data, write, ...writeState } = useContractWrite(config)
-  
-  const { ...waitState } = useWaitForTransaction({ 
-    hash: data?.hash,
-    confirmations: 4, 
-  })
-  
-  const state = combineState(writeState, waitState)
-  console.log("[useSubmitTx] Combined state, enabled:", state, enable)
-
-  return { write, ...state }
-}
-
-
-
-const isAmountApproved = (allowed: string, requested: string) => {
-  if (allowed == "0") return false
-  return new BigNumber(allowed).gte(new BigNumber(requested))
-}
-
-
-
-
-interface TxProps {
-  symbol: string | undefined,
-  decimals: number,
-  balance: string | undefined,
+export interface TxProps {
+  offerAssetItem: PoolAsset,
   inAmount: string,
   outAmount: string | undefined,
-  askAssetRatio: string | undefined,
-  feePerc: string | undefined,
-  poolSymbol: string
-  resetForm: () => void
+  minReceive: string,
+  nativeSymbol: string,
+  poolSymbol: string,
+  resetForm: () => void,
+  networkID: number,
+  isConnected: boolean,
 }
 
 
@@ -215,57 +93,46 @@ interface TxProps {
 
 function Tx<TxValues>(props: Props<TxValues>) {
   const { newProps } = props
-  const { symbol, decimals, balance, inAmount, outAmount, askAssetRatio, feePerc, poolSymbol, resetForm } = newProps as TxProps
-  console.log("[TX] START - newProps:", newProps)
-  // const { token, symbol, decimals, amount, balance, initialGasDenom } = props
-  // const { initialGasDenom, estimationTxValues, createTx } = props
-  // const { excludeGasDenom } = props 
+  const { offerAssetItem, inAmount, outAmount, minReceive, nativeSymbol, poolSymbol, resetForm, networkID, isConnected } = newProps as TxProps
+  // console.log("[TX] START - newProps:", newProps)
   const { children, onChangeMax } = props
-  // const { onPost } = props // Para añadir token personalizado al wallet: conservar
 
   // INTERNAL STATE
   const [isApproved, setIsApproved] = useState(false)
   const [isMax, setIsMax] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<Error>()
-  // const [gasDenom, setGasDenom] = useState(initialGasDenom)
 
   // context
-  const { isConnected } = useAccount()
   const { t } = useTranslation()
-  // const isClassic = true // useIsClassic()
-  // const currency = useCurrency()
-  // const network = useNetwork()
-  // const { post } = useWallet()
-  // const connectedWallet = useConnectedWallet()
-  // const { wallet, validatePassword, ...auth } = useAuth()
-  // const address = useAddress() // Puenteado en origen. TODO: Pasar useAddress a contexto EVM
-  // const isWalletEmpty = false // useIsWalletEmpty()
-  // const setLatestTx = useSetRecoilState(latestTxState) // Guardar hash última transacción. Probablemente para quitar.
-  // const isBroadcasting = false // useRecoilValue(isBroadcastingState)
-  // const bankBalance = useBankBalance()
-  // const { gasPrices } = useTx() // Contexto desde TxContet, puenteado allí
+  // const { isConnected } = useAccount()
+  // const { chain } = useNetwork()
+  
+  // const networkID = chain?.id ?? defaultNetworkID
+  // // console.log("[TX] networkID=", networkID, " defaultNetworkID=", defaultNetworkID, " wagmi chain id=", chain?.id)
 
+  // const { nativeAsset, tokensList } = getAssetsList(networkID)
+  // const assetsList: PoolAsset[] = useReadBalances(nativeAsset, tokensList)
+
+  // const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
   
-  const assetsList = [nativeAsset, ...tokensList]
-  const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
-  
-  const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
+  // const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
 
   const enableHooks = !!offerAssetItem && !!inAmount && !!outAmount && !!poolSymbol && !error
-  if (!enableHooks) console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
+  // if (!enableHooks) console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
   
+  const balance = offerAssetItem.balance
+  const offerTokenAddress = offerAssetItem.address ?? ""
   
-  const { allowedAmount, refetchAllowance, ...allowanceStatus } = 
-    useApproved(offerAssetItem?.address, poolSymbol, enableHooks)
-  console.log("[TX] Allowed Amount:", allowedAmount)
-  if (allowedAmount) console.log("[TX] is Amount Approved:", isAmountApproved(allowedAmount, inAmount))
+  const { allowedAmount, refetchAllowance } = useFetchAllowance(offerTokenAddress, poolSymbol, enableHooks)
+  // console.log("[TX] Allowed Amount:", allowedAmount)
+  if (allowedAmount) // console.log("[TX] is Amount Approved:", isAmountApproved(allowedAmount, inAmount))
 
   
   
   
   
-  if (symbol == nativeAsset.symbol) {
+  if (offerAssetItem.symbol == nativeSymbol) {
     if (!isApproved) setIsApproved(true)
   } 
   else if (!!allowedAmount && inAmount!="0") {
@@ -276,7 +143,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   }
   // useEffect avoids infinite rendering loop
   // useEffect(() => {
-  //   if (symbol == nativeAsset.symbol) {
+  //   if (symbol == nativeSymbol) {
   //     return !isApproved ? setIsApproved(true) : undefined
   //   } else if (!!allowedAmount && inAmount!="0") {
   //       if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
@@ -284,27 +151,26 @@ function Tx<TxValues>(props: Props<TxValues>) {
   //       else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
   //         setIsApproved(false)
 
-  //   console.log("[TX][useEffect] isApproved, enableHooks:", isApproved, enableHooks)
+  //   // console.log("[TX][useEffect] isApproved, enableHooks:", isApproved, enableHooks)
   //   }
   // }, [isConnected, symbol, inAmount])
   
 
-  const {write: writeApprove, ...approveStatus} = 
-    useInfiniteApprove(offerAssetItem?.address ?? "", poolSymbol, enableHooks)
+  const {write: writeApprove, ...approveStatus} = useInfiniteApprove(offerTokenAddress, poolSymbol, enableHooks)
   
   const {write: writeSubmit, ...submitStatus} = 
-    useSubmitTx(symbol ?? "", poolSymbol, inAmount, enableHooks && isApproved)
+    useSubmitTx(nativeSymbol, offerAssetItem.symbol, poolSymbol, inAmount, minReceive, enableHooks && isApproved)
 
 
   // useEffect avoids error window repeating after closing it
   useEffect(() => {
     if (approveStatus.error && !error) {
-      console.log("[TX][useEffect] APPROVE ERROR:", approveStatus.error)
+      // console.log("[TX][useEffect] APPROVE ERROR:", approveStatus.error)
       setError(approveStatus.error as Error)
       setSubmitting(false)
     }
     else if (submitStatus.error && !error) {
-      console.log("[TX][useEffect] SUBMIT ERROR:", submitStatus.error)
+      // console.log("[TX][useEffect] SUBMIT ERROR:", submitStatus.error)
       setError(submitStatus.error as Error)
       setSubmitting(false)
     }
@@ -312,9 +178,9 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
   
   if (approveStatus.isSuccess && !isApproved && !submitting) {
-    console.log("[TX] APPROVE SUCCESS, REFETCHING ALLOWANCE")
+    // console.log("[TX] APPROVE SUCCESS, REFETCHING ALLOWANCE")
     refetchAllowance()
-    console.log("[TX] APPROVE SUCCESS, allowedAmount", allowedAmount)
+    // console.log("[TX] APPROVE SUCCESS, allowedAmount", allowedAmount)
   }
 
 
@@ -359,11 +225,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
       
       if (!isApproved) {
         writeApprove?.()
-        console.log("[TX] APPROVAL SUBMITTED")
+        // console.log("[TX] APPROVAL SUBMITTED")
       }
       else {
         writeSubmit?.()
-        console.log("[TX] TRANSACTION SUBMITTED")
+        // console.log("[TX] TRANSACTION SUBMITTED")
       }
     }
   }
@@ -402,7 +268,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
             className={styles.icon}
           />
           {/* Componente que renderiza el valor y el icono de tipo de moneda */}
-          <Read amount={max} token={symbol} decimals={decimals} />
+          <Read amount={max} token={offerAssetItem.symbol} decimals={offerAssetItem.decimals} />
         </Flex>
       </button>
     )
@@ -476,12 +342,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
     //   ? t("Coins required to post transactions")
     //   : ""
 
-    const { chain } = useNetwork()
-    const isWrongNetwork = chain && chain.id != 42
+    const isWrongNetwork = !validNetworkID.includes(networkID)
 
     const submitButton = (
     <>
-      {isWrongNetwork && <FormError>{"Switch to Kovan testnet"}</FormError>}
+      {isWrongNetwork && <FormWarning>{"Wrong network"}</FormWarning>}
 
       {!isConnected ? (
         <ConnectWallet
@@ -608,6 +473,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
 export default Tx
 
 
+
+const isAmountApproved = (allowed: string, requested: string) => {
+  if (allowed == "0") return false
+  return new BigNumber(allowed).gte(new BigNumber(requested))
+}
 
 
 /* utils */

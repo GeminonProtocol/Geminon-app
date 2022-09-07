@@ -9,7 +9,7 @@ import MintForm from "./MintForm"
 
 const MintTx = () => {
   const { t } = useTranslation()
-  const description = t("Mint and redeem stablecoins with zero slippage")
+  const description = t("Mint/redeem stablecoins using GEX")
 
   return (
     <Page title={t("Stablecoins Minter")} small extra={description}>

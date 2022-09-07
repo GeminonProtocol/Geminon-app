@@ -12,7 +12,7 @@ type Denom = CoinDenom | IBCDenom
 type Token = Denom | TokenAddress
 
 /* asset info */
-interface Asset {
+interface TerrAsset {
   amount: Amount
   info: AssetInfo
 }
@@ -29,7 +29,7 @@ interface AssetInfoCW20Token {
 
 /* token item */
 interface TokenItem {
-  token: Token // TODO: eliminar campo token y cambiar por symbol
+  token?: Token // TODO: eliminar campo token y cambiar por symbol
   address?: TokenAddress
   decimals: number
   symbol: string
@@ -42,7 +42,7 @@ interface TokenItemWithBalance extends TokenItem {
 }
 
 
-interface AssetEVM {
+interface OldAssetEVM {
   address?: TokenAddress
   decimals: number
   symbol: string
@@ -52,7 +52,18 @@ interface AssetEVM {
   token: Token
 }
 
-interface ERC20Token extends AssetEVM {
+type AssetEVM = {
+  name: string,
+  symbol: string,
+  decimals: number,
+  icon: string,
+  address?: string
+}
+
+type TokenEVM = AssetEVM & {address: string}
+type PoolAsset = AssetEVM & {balance: string}
+
+interface ERC20Token extends OldAssetEVM {
   address: TokenAddress
 }
 

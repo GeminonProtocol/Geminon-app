@@ -46,10 +46,10 @@ import gexIcon from "../../styles/images/tokens/gex.png"
 import usdiIcon from "../../styles/images/tokens/usdi.png"
 
 /* Smart contracts */
-import gexDeploy from "../../config/contracts/GEX.json"
-import usdiDeploy from "../../config/contracts/USDI.json"
-import scminterDeploy from "../../config/contracts/SCMinter.json"
-import oracleDeploy from "../../config/contracts/GeminonOracle.json"
+import gexDeploy from "../../config/deployments/GEX.json"
+import usdiDeploy from "../../config/deployments/USDI.json"
+import scminterDeploy from "../../config/deployments/SCMinter.json"
+import oracleDeploy from "../../config/deployments/GeminonOracle.json"
 
 
 // import { Coins } from "@terra-money/terra.js"

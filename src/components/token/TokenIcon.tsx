@@ -1,26 +1,29 @@
 import { HTMLAttributes, useState } from "react"
 import classNames from "classnames/bind"
-import { AccAddress } from "@terra-money/terra.js"
-import { isDenomIBC } from "@terra.kitchen/utils"
-import { getIcon } from "data/token"
+// import { AccAddress } from "@terra-money/terra.js"
+// import { isDenomIBC } from "@terra.kitchen/utils"
+// import { getIcon } from "data/token"
 import styles from "./TokenIcon.module.scss"
+
+import geminonIcon from "../../styles/images/geminon/geminon.png"
 
 const cx = classNames.bind(styles)
 
 interface Props extends HTMLAttributes<HTMLImageElement> {
-  token: Token
+  token?: Token
   icon?: string
   size?: number | "inherit"
 }
 
-const TokenIcon = ({ token, icon, size, ...rest }: Props) => {
+const TokenIcon = ({ icon, size, ...rest }: Props) => {
   const [isError, setIsError] = useState(false)
 
-  const defaultIcon = AccAddress.validate(token)
-    ? getIcon("CW.svg")
-    : isDenomIBC(token)
-    ? getIcon("IBC.svg")
-    : getIcon("Terra.svg")
+  // const defaultIcon = AccAddress.validate(token)
+  //   ? getIcon("CW.svg")
+  //   : isDenomIBC(token)
+  //   ? getIcon("IBC.svg")
+  //   : getIcon("Terra.svg")
+  const defaultIcon = geminonIcon
 
   const src = !icon || isError ? defaultIcon : icon
   const sizes =

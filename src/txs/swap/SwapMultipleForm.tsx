@@ -1,38 +1,38 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useQuery } from "react-query"
-import { useForm } from "react-hook-form"
-import BigNumber from "bignumber.js"
-import { flatten, fromPairs } from "ramda"
+// import { useCallback, useEffect, useMemo, useState } from "react"
+// import { useTranslation } from "react-i18next"
+// import { useQuery } from "react-query"
+// import { useForm } from "react-hook-form"
+// import BigNumber from "bignumber.js"
+// import { flatten, fromPairs } from "ramda"
 
-/* helpers */
-import { has } from "utils/num"
-import { sortDenoms } from "utils/coin"
-import { useCurrency } from "data/settings/Currency"
-import { readNativeDenom, WithTokenItem } from "data/token"
-import { useIsClassic } from "data/query"
-import { useMemoizedCalcValue, useMemoizedPrices } from "data/queries/oracle"
+// /* helpers */
+// import { has } from "utils/num"
+// import { sortDenoms } from "utils/coin"
+// import { useCurrency } from "data/settings/Currency"
+// import { readNativeDenom, WithTokenItem } from "data/token"
+// import { useIsClassic } from "data/query"
+// import { useMemoizedCalcValue, useMemoizedPrices } from "data/queries/oracle"
 
-/* components */
-import { Form, FormArrow, Checkbox } from "components/form"
-import { Table } from "components/layout"
-import { Read, Token } from "components/token"
+// /* components */
+// import { Form, FormArrow, Checkbox } from "components/form"
+// import { Table } from "components/layout"
+// import { Read, Token } from "components/token"
 
-/* tx modules */
-import Tx, { calcMax } from "../Tx"
+// /* tx modules */
+// import Tx, { calcMax } from "../Tx"
 
-/* swap modules */
-import AssetFormItem, { AssetReadOnly } from "./components/AssetFormItem"
-import SelectToken from "./components/SelectToken"
-import Price from "./components/Price"
-import useSwapUtils, { SwapMode } from "./useSwapUtils"
-import { useSwap } from "./SwapContext"
-import { useMultipleSwap } from "./MultipleSwapContext"
-import styles from "./SwapMultipleForm.module.scss"
+// /* swap modules */
+// import AssetFormItem, { AssetReadOnly } from "./components/AssetFormItem"
+// import SelectToken from "./components/SelectToken"
+// import Price from "./components/Price"
+// import useSwapUtils, { SwapMode } from "./useSwapUtils"
+// import { useSwap } from "./SwapContext"
+// import { useMultipleSwap } from "./MultipleSwapContext"
+// import styles from "./SwapMultipleForm.module.scss"
 
-interface TxValues {
-  askAsset: CoinDenom
-}
+// interface TxValues {
+//   askAsset: CoinDenom
+// }
 
 // available > simulatable > simulated > selectable > offers
 // available: all assets
@@ -40,269 +40,272 @@ interface TxValues {
 // selectable: simulated result value exists
 // offers: selected by the user
 const SwapMultipleForm = () => {
-  const { t } = useTranslation()
-  const currency = useCurrency()
-  const isClassic = useIsClassic()
 
-  /* swap context */
-  const utils = useSwapUtils()
-  const { getSwapMode, getSimulateFunction, getMsgsFunction } = utils
-  const { activeDenoms } = useSwap()
-  const { available } = useMultipleSwap()
-  const initialGasDenom = "uluna"
+  return null
 
-  /* options: askAsset */
-  const options = [
-    {
-      title: t("Coins"),
-      children: sortDenoms(activeDenoms, currency).map((denom) => {
-        return { ...readNativeDenom(denom, isClassic), value: denom }
-      }),
-    },
-  ]
+  // const { t } = useTranslation()
+  // const currency = useCurrency()
+  // const isClassic = useIsClassic()
 
-  /* form */
-  const form = useForm<TxValues>({
-    mode: "onChange",
-    defaultValues: { askAsset: "uluna" },
-  })
+  // /* swap context */
+  // const utils = useSwapUtils()
+  // const { getSwapMode, getSimulateFunction, getMsgsFunction } = utils
+  // const { activeDenoms } = useSwap()
+  // const { available } = useMultipleSwap()
+  // const initialGasDenom = "uluna"
 
-  const { watch, setValue, handleSubmit } = form
-  const { askAsset } = watch()
+  // /* options: askAsset */
+  // const options = [
+  //   {
+  //     title: t("Coins"),
+  //     children: sortDenoms(activeDenoms, currency).map((denom) => {
+  //       return { ...readNativeDenom(denom, isClassic), value: denom }
+  //     }),
+  //   },
+  // ]
 
-  const simulatable = useMemo(
-    () =>
-      available
-        .map((item) => {
-          const { token: offerAsset, balance } = item
-          const mode = getSwapMode({ offerAsset, askAsset })
-          if (mode === SwapMode.ONCHAIN) return { ...item, max: balance }
-          const max = calcMax({ balance, gasAmount: "0" })
-          return { ...item, max }
-        })
-        .filter(({ token, max }) => token !== askAsset && has(max)),
-    [askAsset, available, getSwapMode]
-  )
+  // /* form */
+  // const form = useForm<TxValues>({
+  //   mode: "onChange",
+  //   defaultValues: { askAsset: "uluna" },
+  // })
 
-  /* simulate */
-  const { data: simulated = [], isFetching: isSimulating } = useQuery(
-    ["simulate.swap.multiple", simulatable, askAsset],
-    async () => {
-      const simulated = await Promise.allSettled(
-        simulatable.map(async ({ token: offerAsset, max: amount }) => {
-          const mode = getSwapMode({ offerAsset, askAsset })
+  // const { watch, setValue, handleSubmit } = form
+  // const { askAsset } = watch()
 
-          try {
-            const params = { amount, offerAsset, askAsset }
-            const { value } = await getSimulateFunction(mode)(params)
-            return { offerAsset, mode, amount, value }
-          } catch (error) {
-            // errors because too small amount is simulated
-            return { offerAsset, mode, amount, value: "0" }
-          }
-        })
-      )
+  // const simulatable = useMemo(
+  //   () =>
+  //     available
+  //       .map((item) => {
+  //         const { token: offerAsset, balance } = item
+  //         const mode = getSwapMode({ offerAsset, askAsset })
+  //         if (mode === SwapMode.ONCHAIN) return { ...item, max: balance }
+  //         const max = calcMax({ balance, gasAmount: "0" })
+  //         return { ...item, max }
+  //       })
+  //       .filter(({ token, max }) => token !== askAsset && has(max)),
+  //   [askAsset, available, getSwapMode]
+  // )
 
-      return simulated.map((result) => {
-        if (result.status === "rejected") throw new Error(result.reason)
-        return result.value
-      })
-    }
-  )
+  // /* simulate */
+  // const { data: simulated = [], isFetching: isSimulating } = useQuery(
+  //   ["simulate.swap.multiple", simulatable, askAsset],
+  //   async () => {
+  //     const simulated = await Promise.allSettled(
+  //       simulatable.map(async ({ token: offerAsset, max: amount }) => {
+  //         const mode = getSwapMode({ offerAsset, askAsset })
 
-  /* select denoms */
-  const selectable = useMemo(
-    () => simulated.filter(({ value }) => has(value)),
-    [simulated]
-  )
+  //         try {
+  //           const params = { amount, offerAsset, askAsset }
+  //           const { value } = await getSimulateFunction(mode)(params)
+  //           return { offerAsset, mode, amount, value }
+  //         } catch (error) {
+  //           // errors because too small amount is simulated
+  //           return { offerAsset, mode, amount, value: "0" }
+  //         }
+  //       })
+  //     )
 
-  const init = useMemo(
-    () => fromPairs(selectable.map(({ offerAsset }) => [offerAsset, true])),
-    [selectable]
-  )
+  //     return simulated.map((result) => {
+  //       if (result.status === "rejected") throw new Error(result.reason)
+  //       return result.value
+  //     })
+  //   }
+  // )
 
-  const [state, setState] = useState<Record<CoinDenom, boolean>>(init)
+  // /* select denoms */
+  // const selectable = useMemo(
+  //   () => simulated.filter(({ value }) => has(value)),
+  //   [simulated]
+  // )
 
-  useEffect(() => {
-    setState(init)
-  }, [init, selectable, setValue])
+  // const init = useMemo(
+  //   () => fromPairs(selectable.map(({ offerAsset }) => [offerAsset, true])),
+  //   [selectable]
+  // )
 
-  /* tx */
-  const offers = selectable.filter(({ offerAsset }) => state[offerAsset])
-  const createTx = useCallback(
-    ({ askAsset }: TxValues) => {
-      if (isSimulating || !offers.length) return
+  // const [state, setState] = useState<Record<CoinDenom, boolean>>(init)
 
-      const msgs = flatten(
-        offers.map((params) => {
-          const getMsgs = getMsgsFunction(params.mode)
-          return getMsgs({ ...params, askAsset })
-        })
-      )
+  // useEffect(() => {
+  //   setState(init)
+  // }, [init, selectable, setValue])
 
-      return { msgs }
-    },
-    [offers, isSimulating, getMsgsFunction]
-  )
+  // /* tx */
+  // const offers = selectable.filter(({ offerAsset }) => state[offerAsset])
+  // const createTx = useCallback(
+  //   ({ askAsset }: TxValues) => {
+  //     if (isSimulating || !offers.length) return
 
-  /* fee */
-  const estimationTxValues = useMemo(() => ({ askAsset }), [askAsset])
+  //     const msgs = flatten(
+  //       offers.map((params) => {
+  //         const getMsgs = getMsgsFunction(params.mode)
+  //         return getMsgs({ ...params, askAsset })
+  //       })
+  //     )
 
-  const excludeGasDenom = useCallback(
-    (denom: string) => !!state[denom],
-    [state]
-  )
+  //     return { msgs }
+  //   },
+  //   [offers, isSimulating, getMsgsFunction]
+  // )
 
-  const tx = {
-    initialGasDenom,
-    estimationTxValues,
-    createTx,
-    excludeGasDenom,
-    onSuccess: { label: t("Wallet"), path: "/wallet" },
-  }
+  // /* fee */
+  // const estimationTxValues = useMemo(() => ({ askAsset }), [askAsset])
 
-  const disabled = isSimulating ? t("Simulating...") : false
+  // const excludeGasDenom = useCallback(
+  //   (denom: string) => !!state[denom],
+  //   [state]
+  // )
 
-  /* render */
-  const { data: prices } = useMemoizedPrices(askAsset)
-  const calcValue = useMemoizedCalcValue(askAsset)
-  const renderTable = () => {
-    if (isSimulating || !(selectable && prices && calcValue)) return []
+  // const tx = {
+  //   initialGasDenom,
+  //   estimationTxValues,
+  //   createTx,
+  //   excludeGasDenom,
+  //   onSuccess: { label: t("Wallet"), path: "/wallet" },
+  // }
 
-    const dataSource = selectable.map((item) => {
-      const { offerAsset, amount, value: expectedValue } = item
+  // const disabled = isSimulating ? t("Simulating...") : false
 
-      /* oracle */
-      const oracleValue = calcValue({ amount, denom: offerAsset })
-      const oraclePrice = 1 / prices?.[offerAsset]
-      const oracle = { value: oracleValue, price: oraclePrice }
+  // /* render */
+  // const { data: prices } = useMemoizedPrices(askAsset)
+  // const calcValue = useMemoizedCalcValue(askAsset)
+  // const renderTable = () => {
+  //   if (isSimulating || !(selectable && prices && calcValue)) return []
 
-      /* expected */
-      const expectedPrice = Number(amount) / Number(expectedValue)
-      const expected = { value: expectedValue, price: expectedPrice }
+  //   const dataSource = selectable.map((item) => {
+  //     const { offerAsset, amount, value: expectedValue } = item
 
-      return { ...item, oracle, expected }
-    })
+  //     /* oracle */
+  //     const oracleValue = calcValue({ amount, denom: offerAsset })
+  //     const oraclePrice = 1 / prices?.[offerAsset]
+  //     const oracle = { value: oracleValue, price: oraclePrice }
 
-    return (
-      <Table
-        dataSource={dataSource}
-        columns={[
-          {
-            dataIndex: "offerAsset",
-            key: "checkbox",
-            render: (offerAsset) => {
-              const checked = state[offerAsset]
-              return (
-                <Checkbox
-                  checked={checked}
-                  onChange={() =>
-                    setState({ ...state, [offerAsset]: !checked })
-                  }
-                  key={offerAsset}
-                />
-              )
-            },
-          },
-          {
-            dataIndex: "offerAsset",
-            render: (offerAsset) => (
-              <WithTokenItem token={offerAsset}>
-                {(item) => <Token {...item} name="" />}
-              </WithTokenItem>
-            ),
-          },
-          {
-            title: "Balance",
-            dataIndex: "amount",
-            render: (amount) => <Read amount={amount} />,
-            align: "right",
-          },
-          {
-            title: "Value",
-            dataIndex: "oracle",
-            render: (oracle, { offerAsset }) => {
-              return (
-                <>
-                  <Read
-                    amount={oracle.value}
-                    denom={askAsset}
-                    auto
-                    approx
-                    block
-                  />
-                  <Price
-                    price={oracle.price}
-                    offerAsset={offerAsset}
-                    askAsset={askAsset}
-                    className={styles.price}
-                  />
-                </>
-              )
-            },
-            align: "right",
-          },
-          {
-            title: "Expected",
-            dataIndex: "expected",
-            render: (expected, { offerAsset }) => {
-              if (!expected) return null
-              return (
-                <>
-                  <Read amount={expected.value} denom={askAsset} approx block />
-                  <Price
-                    price={expected.price}
-                    offerAsset={offerAsset}
-                    askAsset={askAsset}
-                    className={styles.price}
-                  />
-                </>
-              )
-            },
-            align: "right",
-          },
-        ]}
-        size="small"
-      />
-    )
-  }
+  //     /* expected */
+  //     const expectedPrice = Number(amount) / Number(expectedValue)
+  //     const expected = { value: expectedValue, price: expectedPrice }
 
-  const expectedTotal = useMemo(() => {
-    if (isSimulating) return
-    return BigNumber.sum(...offers.map(({ value }) => value)).toString()
-  }, [isSimulating, offers])
+  //     return { ...item, oracle, expected }
+  //   })
 
-  return (
-    <Tx {...tx} disabled={disabled}>
-      {({ fee, submit }) => (
-        <Form onSubmit={handleSubmit(submit.fn)}>
-          {renderTable()}
+  //   return (
+  //     <Table
+  //       dataSource={dataSource}
+  //       columns={[
+  //         {
+  //           dataIndex: "offerAsset",
+  //           key: "checkbox",
+  //           render: (offerAsset) => {
+  //             const checked = state[offerAsset]
+  //             return (
+  //               <Checkbox
+  //                 checked={checked}
+  //                 onChange={() =>
+  //                   setState({ ...state, [offerAsset]: !checked })
+  //                 }
+  //                 key={offerAsset}
+  //               />
+  //             )
+  //           },
+  //         },
+  //         {
+  //           dataIndex: "offerAsset",
+  //           render: (offerAsset) => (
+  //             <WithTokenItem token={offerAsset}>
+  //               {(item) => <Token {...item} name="" />}
+  //             </WithTokenItem>
+  //           ),
+  //         },
+  //         {
+  //           title: "Balance",
+  //           dataIndex: "amount",
+  //           render: (amount) => <Read amount={amount} />,
+  //           align: "right",
+  //         },
+  //         {
+  //           title: "Value",
+  //           dataIndex: "oracle",
+  //           render: (oracle, { offerAsset }) => {
+  //             return (
+  //               <>
+  //                 <Read
+  //                   amount={oracle.value}
+  //                   denom={askAsset}
+  //                   auto
+  //                   approx
+  //                   block
+  //                 />
+  //                 <Price
+  //                   price={oracle.price}
+  //                   offerAsset={offerAsset}
+  //                   askAsset={askAsset}
+  //                   className={styles.price}
+  //                 />
+  //               </>
+  //             )
+  //           },
+  //           align: "right",
+  //         },
+  //         {
+  //           title: "Expected",
+  //           dataIndex: "expected",
+  //           render: (expected, { offerAsset }) => {
+  //             if (!expected) return null
+  //             return (
+  //               <>
+  //                 <Read amount={expected.value} denom={askAsset} approx block />
+  //                 <Price
+  //                   price={expected.price}
+  //                   offerAsset={offerAsset}
+  //                   askAsset={askAsset}
+  //                   className={styles.price}
+  //                 />
+  //               </>
+  //             )
+  //           },
+  //           align: "right",
+  //         },
+  //       ]}
+  //       size="small"
+  //     />
+  //   )
+  // }
 
-          {!!selectable.length && (
-            <>
-              <FormArrow />
+  // const expectedTotal = useMemo(() => {
+  //   if (isSimulating) return
+  //   return BigNumber.sum(...offers.map(({ value }) => value)).toString()
+  // }, [isSimulating, offers])
 
-              <AssetFormItem label={t("To")}>
-                <SelectToken
-                  value={askAsset}
-                  onChange={(value) => setValue("askAsset", value)}
-                  options={options}
-                  addonAfter={
-                    <AssetReadOnly>
-                      <Read amount={expectedTotal} />
-                    </AssetReadOnly>
-                  }
-                />
-              </AssetFormItem>
-            </>
-          )}
+  // return (
+  //   <Tx {...tx} disabled={disabled}>
+  //     {({ fee, submit }) => (
+  //       <Form onSubmit={handleSubmit(submit.fn)}>
+  //         {renderTable()}
 
-          {fee.render()}
-          {submit.button}
-        </Form>
-      )}
-    </Tx>
-  )
+  //         {!!selectable.length && (
+  //           <>
+  //             <FormArrow />
+
+  //             <AssetFormItem label={t("To")}>
+  //               <SelectToken
+  //                 value={askAsset}
+  //                 onChange={(value) => setValue("askAsset", value)}
+  //                 options={options}
+  //                 addonAfter={
+  //                   <AssetReadOnly>
+  //                     <Read amount={expectedTotal} />
+  //                   </AssetReadOnly>
+  //                 }
+  //               />
+  //             </AssetFormItem>
+  //           </>
+  //         )}
+
+  //         {fee.render()}
+  //         {submit.button}
+  //       </Form>
+  //     )}
+  //   </Tx>
+  // )
 }
 
 export default SwapMultipleForm

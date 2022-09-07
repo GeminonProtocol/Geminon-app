@@ -34,7 +34,8 @@ import { isBroadcastingState, latestTxState } from "data/queries/tx"
 
 import { Pre } from "components/general"
 import { Flex, Grid } from "components/layout"
-import { FormError, Submit, Select, Input, FormItem } from "components/form"
+import { Submit, Select, Input, FormItem } from "components/form"
+import { FormError, FormWarning, FormHelp } from "components/form"
 import Approve from "components/form/Approve"
 import { Modal } from "components/feedback"
 import { Details } from "components/display"
@@ -49,6 +50,7 @@ import useToPostMultisigTx from "pages/multisig/utils/useToPostMultisigTx"
 import styles from "./Tx.module.scss"
 
 import {tokensList, contractsInfo, useTokenInfo} from "./mint/MintForm"
+import { validNetworkID, defaultNetworkID } from 'config/networks'
 
 
 // Interfaz TxValues definido en SwapForm
@@ -269,7 +271,7 @@ function Txm<TxValues>(props: Props<TxValues>) {
   
   // TODO: Este lo usaremos si el slippage es mayor q el establecido para que muestre 
   // la advertencia en rojo debajo del formulario y desactive los botones
-  const disabled = ""  
+  const disabled = true
 
     
   // SEND TRANSACTIONS  
@@ -389,11 +391,12 @@ function Txm<TxValues>(props: Props<TxValues>) {
   }
 
   const { chain } = useNetwork()
-  const isWrongNetwork = chain && chain.id != 42
+  const isWrongNetwork = chain && !validNetworkID.includes(chain.id)
 
   const submitButton = (
     <>
-      {isWrongNetwork && <FormError>{"Switch to Kovan testnet"}</FormError>}
+      {isWrongNetwork && <FormWarning>{t("Wrong network")}</FormWarning>}
+      {<FormHelp>{t("This module is not yet activated")}</FormHelp>}
 
       {!isConnected ? (
         <ConnectWallet

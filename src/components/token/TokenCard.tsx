@@ -11,7 +11,7 @@ import styles from "./TokenCard.module.scss"
 
 interface Props extends Partial<TokenItem>, Partial<FormatConfig> {
   // customizable
-  token: Token
+  token?: Token
   amount?: Amount
   balance?: Amount
   className?: string
@@ -24,7 +24,7 @@ interface Props extends Partial<TokenItem>, Partial<FormatConfig> {
 // 1. Swap form
 // 2. Withdraw rewards
 // 3. others - if too many tokens to display on the screen
-const TokenCard = ({ token, icon, symbol, name, balance, ...props }: Props) => {
+const TokenCard = ({ icon, symbol, name, balance, ...props }: Props) => {
   const { amount = balance, value, className, ...rest } = props
   const { valueCurrency, valueConfig, ...config } = rest
   const currency = useCurrency()
@@ -33,7 +33,7 @@ const TokenCard = ({ token, icon, symbol, name, balance, ...props }: Props) => {
     <article className={classNames(styles.item, className)}>
       <Flex start gap={10} className={styles.main}>
         <div className={styles.wrapper}>
-          <TokenIcon token={token} icon={icon} />
+          <TokenIcon icon={icon} />
         </div>
 
         <header className={styles.detail}>

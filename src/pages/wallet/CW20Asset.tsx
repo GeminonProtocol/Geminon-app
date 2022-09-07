@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import { useTokenBalance } from "data/queries/wasm"
+// import { useTokenBalance } from "data/queries/wasm"
 import { Props as AssetProps } from "./Asset"
 
 interface Props extends TokenItem {
@@ -7,9 +7,10 @@ interface Props extends TokenItem {
 }
 
 const CW20Asset = ({ children: render, ...item }: Props) => {
-  const { token } = item
-  const { data: balance, ...state } = useTokenBalance(token)
-  return <>{render({ ...item, ...state, balance })}</>
+  return null
+  // const { token } = item
+  // const { data: balance, ...state } = useTokenBalance(token)
+  // return <>{render({ ...item, ...state, balance })}</>
 }
 
 export default CW20Asset

@@ -23,7 +23,7 @@ import ConnectWallet from "./sections/ConnectWallet"
 /* extra */
 // import LatestTx from "./sections/LatestTx"
 // import ValidatorButton from "./sections/ValidatorButton"
-import DevTools from "./sections/DevTools"
+// import DevTools from "./sections/DevTools"
 
 /* init */
 // import InitBankBalance from "./InitBankBalance"
@@ -46,9 +46,8 @@ const App = () => {
         <NetworkName />
 
         <Actions>
-          <DevTools />
           <section>
-            <Refresh />
+            {/* <Refresh /> */}
             <Preferences />
             <SelectTheme />
           </section>

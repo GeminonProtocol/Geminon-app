@@ -1,10 +1,11 @@
 import { PropsWithChildren } from "react"
 import { useTranslation } from "react-i18next"
 import createContext from "utils/createContext"
-import { GasPrices, useGasPrices } from "data/Terra/TerraAPI"
+import { GasPrices } from "data/Terra/TerraAPI"
+// import { useGasPrices } from "data/Terra/TerraAPI"
 import { Card } from "components/layout"
 import { ErrorBoundary, Wrong } from "components/feedback"
-import { useTxKey } from "./Tx"
+// import { useTxKey } from "./Tx"
 
 
 export const [useTx, TxProvider] = createContext<{ gasPrices: GasPrices }>("useTx")
@@ -26,12 +27,12 @@ const TxContext = ({ children }: PropsWithChildren<{}>) => {
   )
   
   // If the gas prices doesn't exist, nothing is worth rendering.
-  if (!gasPrices) {
-    console.log("TxContext: gas prices NOT OK")
-    return null
-  }
+  // if (!gasPrices) {
+  //   console.log("TxContext: gas prices NOT OK")
+  //   return null
+  // }
 
-  console.log("TxContext OK")
+  // console.log("TxContext OK")
   return (
     <TxProvider value={{ gasPrices }} key={txKey}>
       <ErrorBoundary fallback={fallback}>{children}</ErrorBoundary>

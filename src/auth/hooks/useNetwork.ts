@@ -1,7 +1,7 @@
 import { atom, useRecoilState, useRecoilValue } from "recoil"
 // import { useWallet } from "@terra-money/wallet-provider"
 import { useNetworks } from "app/InitNetworks"
-import { sandbox } from "../scripts/env"
+// import { sandbox } from "../scripts/env"
 import { getStoredNetwork, storeNetwork } from "../scripts/network"
 
 
@@ -22,15 +22,15 @@ export const useNetworkState = () => {
 }
 
 /* helpers */
-export const useNetworkOptions = () => {
-  const networks = useNetworks()
+// export const useNetworkOptions = () => {
+//   const networks = useNetworks()
 
-  if (!sandbox) return
+//   if (!sandbox) return
 
-  return Object.values(networks).map(({ name }) => {
-    return { value: name, label: name }
-  })
-}
+//   return Object.values(networks).map(({ name }) => {
+//     return { value: name, label: name }
+//   })
+// }
 
 /* Devuelve la red almacenada actualmente en el almacenamiento
  * local de la página web (ver useNetworkState más arriba, proporciona
@@ -38,10 +38,15 @@ export const useNetworkOptions = () => {
  * referencia en todo el código de la app que lo use). Si no hay
  * ninguno, devuelve la mainnet. */
 export const useNetwork = (): CustomNetwork => {
-  const networks = useNetworks()
-  const network = useRecoilValue(networkState)
+  return {
+    name: "localterra",
+    chainID: "localterra",
+    lcd: "http://localhost:1317"
+  }
+  // const networks = useNetworks()
+  // const network = useRecoilValue(networkState)
 
-  return networks[network] ?? networks.mainnet
+  // return networks[network] ?? networks.mainnet
 }
 
 /* export const useNetwork = (): CustomNetwork => {
@@ -55,11 +60,13 @@ export const useNetwork = (): CustomNetwork => {
 
 
 export const useNetworkName = () => {
-  const { name } = useNetwork()
-  return name
+  return "A"
+  // const { name } = useNetwork()
+  // return name
 }
 
 export const useChainID = () => {
-  const { chainID } = useNetwork()
-  return chainID
+  return "0"
+  // const { chainID } = useNetwork()
+  // return chainID
 }

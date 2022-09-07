@@ -61,6 +61,6 @@ const toToken = (info: AssetInfo) => {
     : info.token.contract_addr
 }
 
-export const toTokenItem = ({ amount, info }: Asset) => {
+export const toTokenItem = ({ amount, info }: TerrAsset) => {
   return { amount, token: toToken(info) }
 }

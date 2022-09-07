@@ -54,7 +54,8 @@ const useSwapUtils = () => {
   const address = useAddress()
   const lcd = useLCDClient()
   const context = useSwap()
-  const { exchangeRates, pairs, contracts } = context
+  // const { exchangeRates, pairs, contracts } = context
+  const { pairs, contracts } = context
 
   /* helpers */
   // terraswap
@@ -265,7 +266,7 @@ const useSwapUtils = () => {
       return { mode, query, value, ratio, payload }
     } else {
       const { assets } = await lcd.wasm.contractQuery<{
-        assets: [Asset, Asset]
+        assets: [TerrAsset, TerrAsset]
       }>(simulation.contract, { pool: {} })
 
       const { pool, rate } = parsePool(params, assets)
@@ -447,7 +448,7 @@ const findProfitable = (results: SimulateResult[]) => {
 /* calc */
 const parsePool = (
   { offerAsset, askAsset }: SwapAssets,
-  pairPool: [Asset, Asset]
+  pairPool: [TerrAsset, TerrAsset]
 ) => {
   const pair = fromPairs(
     pairPool.map(toTokenItem).map(({ amount, token }) => [token, amount])

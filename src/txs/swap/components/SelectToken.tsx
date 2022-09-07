@@ -68,6 +68,27 @@ interface Props {
   addonAfter: ReactNode // input
   checkbox?: ReactNode
 }
+// interface Props {
+//   value?: string
+//   onChange: (value: string) => void
+//   options: {
+//     title: string
+//     children: {
+//       token?: string
+//       address?: string
+//       decimals: number
+//       symbol: string
+//       name?: string
+//       icon?: string
+//       balance?: string
+//       value: string
+//       muted?: boolean
+//       hidden?: boolean
+//     }
+//   }
+//   addonAfter: ReactNode // input
+//   checkbox?: ReactNode
+// }
 
 interface Value {
   hideBalance: boolean
@@ -107,7 +128,7 @@ const SelectToken = ({ value: selected, onChange, ...props }: Props) => {
           <button type="button" className={styles.toggle} onClick={toggle}>
             {current ? (
               <>
-                <TokenIcon token={current.token} icon={current.icon} />
+                <TokenIcon icon={current.icon} />
                 {current.symbol}
               </>
             ) : (

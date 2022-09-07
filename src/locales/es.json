@@ -17,7 +17,9 @@
     "Exchanges": "Exchanges",
     "Fiat": "Fiat",
     "APY": "TAE",
-    "Block": "Bloque"
+    "Block": "Bloque",
+    "Network": "Red",
+    "Collateral": "Colateral"
   },
   "Form": {
     "Amount": "Cantidad",
@@ -40,7 +42,8 @@
     "{{label}} must be longer than {{length}} characters": "{{label}} debe ser más largo de {{length}} caracteres",
     "Already exists": "Ya existe",
     "Invalid": "Inválido",
-    "Invalid {{label}}": "{{label}} invalido"
+    "Invalid {{label}}": "{{label}} inválido",
+    "Insufficient balance": "Saldo insuficiente"
   },
   "Loading": {
     "Initializing app...": "Inicializando la aplicación...",
@@ -71,7 +74,15 @@
     "Copied": "Copiado",
     "Active": "Activo",
     "Inactive": "Inactivo",
-    "Not found": "No se ha encontrado"
+    "Not found": "No se ha encontrado",
+    "Select theme": "Seleccionar tema",
+    "View on block explorer": "Ver en explorador de bloques",
+    "Show address as QR code": "Mostrar dirección como código QR",
+    "Wrong network": "Red incorrecta",
+    "This module is not yet activated": "Este módulo no está activado aún",
+    "Module under construction": "Módulo en construcción",
+    "This module is expected to be deployed in early Q4 2022": "Se espera que este módulo sea desplegado a principios del 4T de 2022",
+    "Geminon Protocol will be launched in the next few days. Wait for the launch announcement on our Telegram channel: ": "El Protocolo Geminon se lanzará en los próximos días. Espere el anuncio de lanzamiento en nuestro canal de Telegram: "
   },
   "Units": {
     "year": "año",
@@ -153,7 +164,10 @@
     "Trading fee": "Comisión de operativa",
     "Select a coin": "Seleccione una moneda",
     "Balance after tx": "Saldo tras transacción",
-    "Provide collateral to mint GEX": "Proporcione colateral para acuñar GEX"
+    "Provide collateral to mint GEX": "Proporcione colateral para acuñar GEX",
+    "Price impact": "Impacto en el precio",
+    "Stablecoins Minter": "Acuñador de moneda estable",
+    "Mint/redeem stablecoins using GEX": "Acuñar/canjear moneda estable usando GEX"
   },
   "Stake": {
     "Delegations": "Delegaciones",

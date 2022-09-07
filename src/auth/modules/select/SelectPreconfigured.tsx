@@ -5,38 +5,39 @@ import { Select } from "components/form"
 import useAuth from "../../hooks/useAuth"
 
 const SelectPreconfigured = () => {
-  const { t } = useTranslation()
-  const { connectedWallet, connectPreconfigured } = useAuth()
-  const preconfigured = usePreconfigured()
-  const { preconfigure } = useNetwork()
+  return null
+  // const { t } = useTranslation()
+  // const { connectedWallet, connectPreconfigured } = useAuth()
+  // const preconfigured = usePreconfigured()
+  // const { preconfigure } = useNetwork()
 
-  if (!preconfigure) return null
+  // if (!preconfigure) return null
 
-  const selected = preconfigured.find(
-    ({ name }) => name === connectedWallet?.name
-  )
+  // const selected = preconfigured.find(
+  //   ({ name }) => name === connectedWallet?.name
+  // )
 
-  return (
-    <Select
-      value={selected?.name ?? ""}
-      onChange={(e) => {
-        const wallet = preconfigured.find(({ name }) => name === e.target.value)
-        if (wallet) connectPreconfigured(wallet)
-      }}
-    >
-      <option value="" disabled>
-        {t("Preconfigured wallets...")}
-      </option>
+  // return (
+  //   <Select
+  //     value={selected?.name ?? ""}
+  //     onChange={(e) => {
+  //       const wallet = preconfigured.find(({ name }) => name === e.target.value)
+  //       if (wallet) connectPreconfigured(wallet)
+  //     }}
+  //   >
+  //     <option value="" disabled>
+  //       {t("Preconfigured wallets...")}
+  //     </option>
 
-      {preconfigured.map(({ name }) => {
-        return (
-          <option value={name} key={name}>
-            {name}
-          </option>
-        )
-      })}
-    </Select>
-  )
+  //     {preconfigured.map(({ name }) => {
+  //       return (
+  //         <option value={name} key={name}>
+  //           {name}
+  //         </option>
+  //       )
+  //     })}
+  //   </Select>
+  // )
 }
 
 export default SelectPreconfigured

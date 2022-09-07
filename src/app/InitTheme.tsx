@@ -11,8 +11,6 @@ const InitTheme = () => {
     setTheme(valid ? theme : DefaultTheme)
   }, [valid, theme, setTheme])
 
-  console.log('InitTheme OK')
-
   return null
 }
 

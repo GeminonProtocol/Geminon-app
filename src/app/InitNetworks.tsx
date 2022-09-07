@@ -5,7 +5,7 @@ import { PropsWithChildren, useState } from "react"
 // import { validNetworks } from "config/networks"
 import createContext from "utils/createContext"
 // import { useCustomNetworks } from "data/settings/CustomNetworks"
-import { useNetworkState } from "data/wallet"
+// import { useNetworkState } from "data/wallet"
 
 
 const terraNetworks = {
@@ -44,7 +44,9 @@ const terraNetworks = {
 
 export const [useNetworks, NetworksProvider] = createContext<CustomNetworks>("useNetworks")
 
-
+// El contexto provisto aquí se usa en varios sitios, principalmente el conjunto de hooks
+// en useNetwork.ts bajo src/auth/hooks. Esta funcionalidad debería proporcionarla entera
+// la librería wagmi, por lo que no debería ser necesario reutilizar nada de aquí. 
 const InitNetworks = ({ children }: PropsWithChildren<{}>) => {
   const [networks, setNetworks] = useState<CustomNetworks>(terraNetworks)
   

@@ -1,28 +1,30 @@
 import { PropsWithChildren, useMemo } from "react"
-import { QueryClient, QueryClientProvider } from "react-query"
+// import { QueryClient, QueryClientProvider } from "react-query"
 // import { WalletStatus } from "@terra-money/wallet-types"
 // import { useWallet } from "@terra-money/use-wallet"
-import { useNetworkName } from "data/wallet"
+// import { useNetworkName } from "data/wallet"
 // import { isWallet, useAuth } from "auth"
 // import Splash from "auth/modules/Splash"
-import Online from "./containers/Online"
-import WithNodeInfo from "./WithNodeInfo"
+// import Online from "./containers/Online"
+// import WithNodeInfo from "./WithNodeInfo"
 
 
 // TODO: Reaprovechar el módulo Online. Todos los demás en principio
 // no sirven de nada, incluyendo el propio Init Wallet.
 const InitWallet = ({ children }: PropsWithChildren<{}>) => {
-  const queryClient = useQueryClient()
-  const networkName = useNetworkName()
+  return null
 
-  console.log('InitWallet OK')
+  // const queryClient = useQueryClient()
+  // const networkName = useNetworkName()
 
-  return (
-    <QueryClientProvider client={queryClient} key={networkName}>
-      <WithNodeInfo>{children}</WithNodeInfo>
-      <Online />
-    </QueryClientProvider>
-  )
+  // console.log('InitWallet OK')
+
+  // return (
+  //   <QueryClientProvider client={queryClient} key={networkName}>
+  //     <WithNodeInfo>{children}</WithNodeInfo>
+  //     <Online />
+  //   </QueryClientProvider>
+  // )
 }
 
 export default InitWallet
@@ -57,11 +59,11 @@ export default InitWallet
   }, [disconnect, shouldDisconnect])
 } */
 
-const useQueryClient = () => {
-  const name = useNetworkName()
+// const useQueryClient = () => {
+//   const name = useNetworkName()
 
-  return useMemo(() => {
-    if (!name) throw new Error()
-    return new QueryClient()
-  }, [name])
-}
+//   return useMemo(() => {
+//     if (!name) throw new Error()
+//     return new QueryClient()
+//   }, [name])
+// }

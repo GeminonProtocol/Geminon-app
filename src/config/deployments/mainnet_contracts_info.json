@@ -6,7 +6,7 @@
         },
         "glp": {
             "avax": {
-                "address": "0xE38D693A1AE6CE36625191ca6F225615da589529",
+                "address": "0xA4df7a003303552AcDdF550A0A65818c4A218315",
                 "abi": [
                     {
                         "inputs": [
@@ -1343,7 +1343,7 @@
                 ]
             },
             "btcb": {
-                "address": "0x4ACad9691D43DBAf0bBA5A8d2E668e39910015De",
+                "address": "0xA782893006050ba4599558bF842Da3DB7225A00c",
                 "abi": [
                     {
                         "inputs": [
@@ -2649,7 +2649,7 @@
         },
         "glp": {
             "bnb": {
-                "address": "0xE38D693A1AE6CE36625191ca6F225615da589529",
+                "address": "0xA4df7a003303552AcDdF550A0A65818c4A218315",
                 "abi": [
                     {
                         "inputs": [
@@ -3986,7 +3986,7 @@
                 ]
             },
             "renbtc": {
-                "address": "0x4ACad9691D43DBAf0bBA5A8d2E668e39910015De",
+                "address": "0xA782893006050ba4599558bF842Da3DB7225A00c",
                 "abi": [
                     {
                         "inputs": [
@@ -5294,7 +5294,7 @@
         },
         "glp": {
             "eth": {
-                "address": "0xE38D693A1AE6CE36625191ca6F225615da589529",
+                "address": "0xA4df7a003303552AcDdF550A0A65818c4A218315",
                 "abi": [
                     {
                         "inputs": [
@@ -6631,7 +6631,7 @@
                 ]
             },
             "renbtc": {
-                "address": "0x4ACad9691D43DBAf0bBA5A8d2E668e39910015De",
+                "address": "0xA782893006050ba4599558bF842Da3DB7225A00c",
                 "abi": [
                     {
                         "inputs": [
@@ -7929,7 +7929,7 @@
                 ]
             },
             "paxg": {
-                "address": "0x239A9157b3Ed91BF4467D707473E194920A2C21D",
+                "address": "0x48A814C44beeFE3A1C7c165367c1Ea12eA599b48",
                 "abi": [
                     {
                         "inputs": [
@@ -9227,7 +9227,7 @@
                 ]
             },
             "xaut": {
-                "address": "0xc8024fB5C7beD98CcE0e498E54B7D89816B3521B",
+                "address": "0x9aFEf3344369943509b8E2103F9eC312f014d424",
                 "abi": [
                     {
                         "inputs": [

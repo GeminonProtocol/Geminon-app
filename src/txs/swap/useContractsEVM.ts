@@ -44,6 +44,10 @@ export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) =
 }
 
 
+export const usePoolSymbol = (offerAsset: AssetEVM, askAsset: AssetEVM) => {
+  return offerAsset.key == "gex" ? askAsset.key : offerAsset.key
+}
+
 export const usePoolContractInfo = (poolSymbol: string) => {
   const { chain } = useNetwork()
   const connectedNetworkId = chain?.id.toString() ?? defaultNetworkID
@@ -91,7 +95,7 @@ export const usePoolInfo = (poolSymbol:string, offerSymbol:string, offerAmount:s
   */
   const { data, refetch, ...status } = useContractRead(contract)
   // console.log("[usePoolInfo] status, contract Read:", status, data)
-  // if (status.error) console.log("[usePoolInfo] Contract read ERROR:", data, status.error)
+  // if (status.error) // console.log("[usePoolInfo] Contract read ERROR:", data, status.error)
 
   const prices = offerSymbol === "GEX" ? 
   {

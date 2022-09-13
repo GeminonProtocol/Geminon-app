@@ -10,7 +10,7 @@ import { Read } from "components/token"
 // import { PayloadRouteswap } from "../useSwapUtils"
 // import { SwapMode } from "../useSwapUtils"
 // import { SlippageParams, SwapSpread, useSingleSwap } from "../SingleSwapContext"
-import Price from "./Price"
+import Price, { FiatPrice } from "./Price"
 
 
 export interface ExpectedPriceProps  {
@@ -39,26 +39,41 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
     return <Price {...props} price={price} priceDecimals={priceDecimals}/>
   }
 
+  
   const renderUsdAskPrice = () => {
-      return (
-        <Price {...props} 
-          price={askAssetPrice} 
-          priceDecimals={askDecimals} 
-          offerAsset={"USD"}
-        />
-      )
-    }
+    return (
+      <FiatPrice {...props} 
+        price={askAssetPrice} 
+        priceDecimals={askDecimals} 
+        assetSymbol={askAsset}
+      />
+    )  
+    // return (
+    //   <Price {...props} 
+    //     price={askAssetPrice} 
+    //     priceDecimals={askDecimals} 
+    //     offerAsset={"USD"}
+    //   />
+    // )
+  }
 
   const renderUsdOfferPrice = () => {
-      return (
-        <Price {...props} 
-          price={offerAssetPrice} 
-          priceDecimals={offerDecimals}
-          offerAsset={"USD"}
-          askAsset={offerAsset}
-        />
-      )
-    }
+    return (
+      <FiatPrice {...props} 
+        price={offerAssetPrice} 
+        priceDecimals={offerDecimals} 
+        assetSymbol={offerAsset}
+      />
+    )  
+    // return (
+    //   <Price {...props} 
+    //     price={offerAssetPrice} 
+    //     priceDecimals={offerDecimals}
+    //     offerAsset={"USD"}
+    //     askAsset={offerAsset}
+    //   />
+    // )
+  }
 
   const renderExpectedPrice = () => {
     return (

@@ -30,7 +30,7 @@ import { SlippageParams } from "./SingleSwapContext"
 import {useGLP} from "./GLPContext"
 
 
-import { useReadBalances, usePoolInfo } from "./useContractsEVM"
+import { useReadBalances, usePoolSymbol, usePoolInfo } from "./useContractsEVM"
 import { defaultDecimals } from "config/assets.js"
 
 
@@ -105,6 +105,7 @@ const SwapForm = () => {
   
   const offerAssetItem: PoolAsset = offerAsset ? findAssetBySymbol(offerAsset, assetsList, assetsList[0]) : assetsList[0]
   const offerDecimals = offerAssetItem ? offerAssetItem.decimals : defaultDecimals
+  const askAssetItem: PoolAsset = askAsset ? findAssetBySymbol(askAsset, assetsList, assetsList[0]) : assetsList[1]
   const askDecimals = askAsset ? findAssetDecimalsBySymbol(askAsset, assetsList, assetsList[0]) : defaultDecimals
 
   const inAmount = new BigNumber(input ?? 0).shiftedBy(offerDecimals).toFixed(0)
@@ -112,11 +113,11 @@ const SwapForm = () => {
   
 
   // FETCH SWAP ESTIMATES
-  const enableHooks = isConnected && !!offerAsset && !!input
-  const poolSymbol = [offerAsset, askAsset].find(asset => asset && asset != "GEX")?.toLowerCase() ?? 
-    nativeAsset.symbol.toLowerCase()
-
+  const enableHooks = isConnected && !!offerAsset && !!askAsset && !!input
+  
+  const poolSymbol = usePoolSymbol(offerAssetItem, askAssetItem)
   const tradeInfo = usePoolInfo(poolSymbol, offerAssetItem.symbol, inAmount, enableHooks)
+  
   const { offerAssetPrice, askAssetPrice, askAssetRatio, feePerc, feeAmount, outAmount, priceImpact } = tradeInfo
   // console.log("[SwapForm] Tradeinfo:", tradeInfo)  
 
@@ -180,8 +181,8 @@ const SwapForm = () => {
     onPost: () => {} // Función para añadir token personalizado al wallet tras comprarlo -> implementar,
   }
 
-
-  const disabled = false //isFetching ? t("Simulating...") : false
+  // No está muy claro que tenga algún efecto: en el componente Tx se define de nuevo
+  const disabled = enableHooks ? false: "Input data" //isFetching ? t("Simulating...") : false
 
 
   // RENDER FUNCTIONS

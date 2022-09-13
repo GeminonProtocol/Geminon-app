@@ -119,7 +119,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
 
   const enableHooks = !!offerAssetItem && !!inAmount && !!outAmount && !!poolSymbol && !error
-  // if (!enableHooks) console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
+  // if (!enableHooks) // console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
   
   const balance = offerAssetItem.balance
   const offerTokenAddress = offerAssetItem.address ?? ""

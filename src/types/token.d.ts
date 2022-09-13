@@ -55,6 +55,7 @@ interface OldAssetEVM {
 type AssetEVM = {
   name: string,
   symbol: string,
+  key: string,
   decimals: number,
   icon: string,
   address?: string

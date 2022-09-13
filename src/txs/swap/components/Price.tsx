@@ -1,5 +1,6 @@
 import BigNumber from "bignumber.js"
 import { Read } from "components/token"
+import { SafeRead } from "components/token/Read"
 // import { SwapAssets } from "../useSwapUtils"
 
 
@@ -30,6 +31,30 @@ const Price = ({ price, priceDecimals=18, offerAsset, askAsset, className }: Pro
 }
 
 export default Price
+
+
+interface Props {
+  price?: string // expected in wei units
+  priceDecimals?: number
+  assetSymbol?: string
+  fiatSymbol?: string
+  className?: string
+}
+
+export const FiatPrice = ({ price, priceDecimals=18, assetSymbol, fiatSymbol="USD", className }: Props) => {
+  if (!price || !assetSymbol || !fiatSymbol || price=="0") return null
+
+  const etherPrice =  new BigNumber(price).shiftedBy(-priceDecimals).toFixed()
+  
+  return (
+    <span className={className}>
+      <SafeRead amount={"1"} token={assetSymbol} decimals={0} /> ={" "}
+      <SafeRead amount={etherPrice} token={fiatSymbol} decimals={0} auto />
+    </span>
+  )
+}
+
+
 
 
 

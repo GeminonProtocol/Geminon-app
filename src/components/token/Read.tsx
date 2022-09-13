@@ -35,7 +35,7 @@ const Read = forwardRef(
       : Number(amount) < Math.pow(10, props.decimals ?? 6)
       ? props.decimals
       : 2
-
+    
     const config = { ...props, comma, fixed }
     const [integer, decimal] = readAmount(amount, config).split(".")
 
@@ -44,7 +44,6 @@ const Read = forwardRef(
 
       const optimDecimals = integer.length > 3 ? 2 : 7 - integer.length
       const limitDecimal = decimal.length > 6 ? decimal.slice(0, optimDecimals) : decimal
-
       return (
         <span className={cx({ small: !props.prefix })}>
           {limitDecimal && `.${limitDecimal}`}
@@ -99,6 +98,53 @@ const Read = forwardRef(
 )
 
 export default Read
+
+
+export const SafeRead = forwardRef(
+  (
+    { amount, denom, approx, block, auto, ...props }: Props,
+    ref: ForwardedRef<HTMLSpanElement>
+  ) => {
+    if (!(amount || Number.isFinite(amount))) return null
+
+    const [integer, decimal] = String(amount).split(".")
+
+    const renderDecimal = () => {
+      if (!decimal) return null
+
+      const optimDecimals = integer.length > 3 ? 2 : 5 - integer.length
+      const limitDecimal = decimal.length > 6 ? decimal.slice(0, optimDecimals) : decimal
+      
+      return (
+        <span className={cx({ small: !props.prefix })}>
+          {limitDecimal && `.${limitDecimal}`}
+        </span>
+      )
+    }
+
+    const renderSymbol = () => {
+      const token = props.token ?? denom
+
+      return (
+        <span className={styles.small}>
+          {" "}{token}
+        </span>
+      )
+    }
+
+    const className = cx(styles.component, { block }, props.className)
+
+    return (
+      <span className={className} ref={ref}>
+        {approx && "≈ "}
+        {integer}
+        {renderDecimal()}
+        {renderSymbol()}
+      </span>
+    )
+  }
+)
+
 
 /* percent */
 interface PercentProps extends Partial<FormatConfig> {

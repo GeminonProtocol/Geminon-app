@@ -29,14 +29,15 @@ import { Submit, Select, Input, FormItem } from "components/form"
 import { FormError, FormWarning, FormHelp } from "components/form"
 import Approve from "components/form/Approve"
 import { Modal } from "components/feedback"
-// import { Details } from "components/display"
-import { Read } from "components/token"
+import { Details } from "components/display"
+import { Read, SafeReadPercent } from "components/token"
 import ConnectWallet from "app/sections/ConnectWallet"
 import styles from "./Tx.module.scss"
 
 
 import { validNetworkID, defaultNetworkID } from 'config/networks'
 import { useReadBalances, useFetchAllowance, useInfiniteApprove, useSubmitTx } from "./swap/useContractsEVM"
+import { defaultDecimals } from "config/assets"
 
 
 
@@ -78,12 +79,16 @@ interface RenderProps<TxValues> {
 
 export interface TxProps {
   offerAssetItem: PoolAsset,
+  askAssetItem: PoolAsset,
   inAmount: string,
   outAmount: string | undefined,
+  feeAmount: string,
   minReceive: string,
+  priceImpact: string,
   nativeSymbol: string,
   poolSymbol: string,
   resetForm: () => void,
+  updateBalances: () => void
   networkID: number,
   isConnected: boolean,
 }
@@ -93,7 +98,8 @@ export interface TxProps {
 
 function Tx<TxValues>(props: Props<TxValues>) {
   const { newProps } = props
-  const { offerAssetItem, inAmount, outAmount, minReceive, nativeSymbol, poolSymbol, resetForm, networkID, isConnected } = newProps as TxProps
+  const { offerAssetItem, askAssetItem, inAmount, outAmount, feeAmount, minReceive, priceImpact} = newProps as TxProps
+  const { nativeSymbol, poolSymbol, resetForm, updateBalances, networkID, isConnected } = newProps as TxProps
   // console.log("[TX] START - newProps:", newProps)
   const { children, onChangeMax } = props
 
@@ -117,16 +123,19 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
   
   // const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
-
-  const enableHooks = !!offerAssetItem && !!inAmount && !!outAmount && !!poolSymbol && !error
-  // if (!enableHooks) // console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
-  
   const balance = offerAssetItem.balance
+  const insufficient = new BigNumber(balance).lt(inAmount)
   const offerTokenAddress = offerAssetItem.address ?? ""
+
+  const enabled = !!offerAssetItem && !!inAmount && !!outAmount && !!poolSymbol && !error && 
+    !insufficient && validatePoolSymbol(poolSymbol, offerAssetItem.symbol, askAssetItem.symbol)
+  // console.log("[TX] inAmount, balance", inAmount, balance)
+  // if (!enabled) // console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
+
   
-  const { allowedAmount, refetchAllowance } = useFetchAllowance(offerTokenAddress, poolSymbol, enableHooks)
+  const { allowedAmount, refetchAllowance } = useFetchAllowance(offerTokenAddress, poolSymbol, enabled)
   // console.log("[TX] Allowed Amount:", allowedAmount)
-  if (allowedAmount) // console.log("[TX] is Amount Approved:", isAmountApproved(allowedAmount, inAmount))
+  // console.log("[TX] is Amount Approved:", allowedAmount && isAmountApproved(allowedAmount, inAmount))
 
   
   
@@ -151,15 +160,15 @@ function Tx<TxValues>(props: Props<TxValues>) {
   //       else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
   //         setIsApproved(false)
 
-  //   // console.log("[TX][useEffect] isApproved, enableHooks:", isApproved, enableHooks)
+  //   // console.log("[TX][useEffect] isApproved, enabled:", isApproved, enabled)
   //   }
   // }, [isConnected, symbol, inAmount])
   
 
-  const {write: writeApprove, ...approveStatus} = useInfiniteApprove(offerTokenAddress, poolSymbol, enableHooks)
+  const {write: writeApprove, ...approveStatus} = useInfiniteApprove(offerTokenAddress, poolSymbol, enabled)
   
   const {write: writeSubmit, ...submitStatus} = 
-    useSubmitTx(nativeSymbol, offerAssetItem.symbol, poolSymbol, inAmount, minReceive, enableHooks && isApproved)
+    useSubmitTx(nativeSymbol, offerAssetItem.symbol, poolSymbol, inAmount, minReceive, enabled && isApproved)
 
 
   // useEffect avoids error window repeating after closing it
@@ -220,7 +229,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   // SEND TRANSACTIONS  
   // FUNCIÓN QUE SE PASA A handleSubmit (onClick)
   const onSubmit = () => {
-    if (enableHooks) {
+    if (enabled) {
       setSubmitting(true)
       
       if (!isApproved) {
@@ -238,16 +247,14 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
 
   // render
-  const balanceAfterTx =
-    balance &&
-    inAmount &&
-    new BigNumber(balance)
-      .minus(inAmount)
-      // .minus((gasFee.denom === token && gasFee.amount) || 0)
-      .toString()
+  // const balanceAfterTx =
+  //   balance &&
+  //   inAmount &&
+  //   new BigNumber(balance).minus(inAmount).toString()
   
   // Pone la cantidad en rojo si es menor que 0
-  const insufficient = balanceAfterTx ? new BigNumber(balanceAfterTx).lt(0) : false
+  // const insufficient = balanceAfterTx ? new BigNumber(balanceAfterTx).lt(0) : false
+  
 
   
   // element
@@ -277,60 +284,49 @@ function Tx<TxValues>(props: Props<TxValues>) {
   
   // (11) DETALLES TRANSACCIÓN: CAJA NEGRA QUE APARECE JUSTO SOBRE
   // EL BOTÓN DE SUBMIT CON FEE, BALANCE Y BALANCE AFTER TX.
-  // LOS DATOS QUE MUESTRA SON UN POCO REPETITIVOS.
   const renderFee = (descriptions?: Contents) => {
-    return null
-    // if (!isConnected || inAmount=="0") return null    
-    // return (
-    //   <Details>
-    //     <dl>
-    //       {descriptions?.map(({ title, content }, index) => (
-    //         <Fragment key={index}>
-    //           <dt>{title}</dt>
-    //           <dd>{content}</dd>
-    //         </Fragment>
-    //       ))}
+    
+    if (!isConnected || !enabled || !isApproved) return null    
+    
+    return (
+      <Details>
+        <dl>
+          {descriptions?.map(({ title, content }, index) => (
+            <Fragment key={index}>
+              <dt>{title}</dt>
+              <dd>{content}</dd>
+            </Fragment>
+          ))}
 
-    //       <dt className={styles.gas}>
-    //         {t("Network fee (gas)")}
-    //         {/* {availableGasDenoms.length > 1 && (
-    //           <Select
-    //             value={gasDenom}
-    //             onChange={(e) => setGasDenom(e.target.value)}
-    //             className={styles.select}
-    //             small
-    //           >
-    //             {availableGasDenoms.map((denom) => (
-    //               <option value={denom} key={denom}>
-    //                 {readDenom(denom)}
-    //               </option>
-    //             ))}
-    //           </Select>
-    //         )} */}
-    //       </dt>
-    //       <dd>{feePerc && <Read amount={feePerc} />}</dd>
+          {feeAmount && (
+            <>
+              <dt>{t("Trading fee")}</dt>
+              <dd>
+                <Read amount={feeAmount} token={"GEX"} decimals={defaultDecimals} />
+              </dd>
+            </>
+          )}
 
-    //       {balanceAfterTx && (
-    //         <>
-    //           <dt>{t("Balance")}</dt>
-    //           <dd>
-    //             <Read amount={balance} token={symbol} decimals={decimals} />
-    //           </dd>
+          {minReceive && (
+            <>
+              <dt>{t("Minimum received")}</dt>
+              <dd>
+                <Read amount={minReceive} token={askAssetItem.symbol} decimals={askAssetItem.decimals} />
+              </dd>
+            </>
+          )}
 
-    //           <dt>{t("Balance after tx")}</dt>
-    //           <dd>
-    //             <Read
-    //               amount={balanceAfterTx}
-    //               token={symbol}
-    //               decimals={decimals}
-    //               className={classNames(insufficient && "danger")}
-    //             />
-    //           </dd>
-    //         </>
-    //       )}
-    //     </dl>
-    //   </Details>
-    // )
+          {priceImpact && (
+            <>
+              <dt>{t("Price impact")}</dt>
+              <dd>
+                <SafeReadPercent amount={Number(priceImpact)/10000} decimals={6}/>
+              </dd>
+            </>
+          )}
+        </dl>
+      </Details>
+    )
   }
 
   // const walletError = ""
@@ -375,14 +371,14 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
           {!!inAmount && inAmount!="0" && !isApproved ? (
             <Approve
-              disabled={!!disabled || approveStatus.isLoading || !enableHooks || isWrongNetwork}
+              disabled={!!disabled || approveStatus.isLoading || !enabled || isWrongNetwork}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
             </Approve>
           ) : !!inAmount && inAmount!="0" ? (
             <Submit
-              disabled={!!disabled || submitStatus.isLoading || !enableHooks || isWrongNetwork}
+              disabled={!!disabled || submitStatus.isLoading || !enabled || isWrongNetwork}
               submitting={submitting}
             >
             {submitting ? submittingLabel : disabled}
@@ -459,6 +455,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
           onRequestClose={() => {
             setSubmitting(false)
             resetForm()
+            updateBalances()
           }}
           isOpen
         />
@@ -473,10 +470,14 @@ function Tx<TxValues>(props: Props<TxValues>) {
 export default Tx
 
 
-
+// HELPERS
 const isAmountApproved = (allowed: string, requested: string) => {
   if (allowed == "0") return false
   return new BigNumber(allowed).gte(new BigNumber(requested))
+}
+
+const validatePoolSymbol = (poolSymbol: string, offerSymbol: string, askSymbol: string): boolean => {
+  return [offerSymbol.toLowerCase(), askSymbol.toLowerCase()].includes(poolSymbol)
 }
 
 

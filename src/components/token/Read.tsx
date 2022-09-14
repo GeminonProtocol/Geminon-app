@@ -146,6 +146,52 @@ export const SafeRead = forwardRef(
 )
 
 
+export const SafeReadPercent = forwardRef(
+  (
+    { amount, denom, approx, block, auto, ...props }: Props,
+    ref: ForwardedRef<HTMLSpanElement>
+  ) => {
+    if (!(amount || Number.isFinite(amount))) return null
+
+    const [integer, decimal] = String(amount).split(".")
+
+    const renderDecimal = () => {
+      if (!decimal) return null
+
+      const optimDecimals = integer.length > 2 ? 0 : 2
+      const limitDecimal = decimal.slice(0, optimDecimals)
+      
+      return (
+        <span className={cx({ small: !props.prefix })}>
+          {limitDecimal && `.${limitDecimal}`}
+        </span>
+      )
+    }
+
+    const renderSymbol = () => {
+      const token = props.token ?? denom
+
+      return (
+        <span className={styles.small}>
+          {" "}{token}
+        </span>
+      )
+    }
+
+    const className = cx(styles.component, { block }, props.className)
+
+    return (
+      <span className={className} ref={ref}>
+        {approx && "≈ "}
+        {integer}
+        {renderDecimal()}
+        <span className={styles.small}>%</span>
+      </span>
+    )
+  }
+)
+
+
 /* percent */
 interface PercentProps extends Partial<FormatConfig> {
   children?: string | number

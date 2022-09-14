@@ -7,7 +7,6 @@ import { combineState } from "data/query"
 
 import { getPoolContracts } from "config/contracts.js"
 import { defaultNetworkID } from "config/networks"
-import { calcMinimumReceive } from "./SingleSwapContext"
 
 
 
@@ -25,8 +24,8 @@ export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) =
     }
   })
   
-  const { data: coinData } = useBalance({addressOrName: address, formatUnits: 'wei'})
-  const { data: tokenData } = useContractReads({ contracts })
+  const { data: coinData, refetch: refetchNative } = useBalance({addressOrName: address, formatUnits: 'wei'})
+  const { data: tokenData, refetch: refetchTokens } = useContractReads({ contracts })
   
   const poolNative: PoolAsset = {
     ...nativeAsset, 
@@ -40,8 +39,52 @@ export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) =
     }
   })
   
-  return [poolNative, ...tokensPool]
+  const assetsList = [poolNative, ...tokensPool]
+
+  return {assetsList, refetchNative, refetchTokens}
 }
+
+// function isTokenEVMList(assetsList: AssetEVM[]): assetsList is TokenEVM[] {
+//   const evmAssets = assetsList.map((asset) => {
+//     if ("address" in asset) return asset
+//   })
+//   if (evmAssets.length) return true
+  
+//   return false
+// }
+
+// export const useUpdateBalances = (offerAsset: AssetEVM, askAsset: AssetEVM, assetsList: PoolAsset[]) => {
+//   // console.log("[useUpdateBalances] offerAsset, askAsset", offerAsset, askAsset)
+//   const { address, isConnected } = useAccount()
+
+
+//   if (isTokenEVMList(assetsList)) {
+//     const tokensList: TokenEVM[] = assetsList}
+
+
+//   const contracts = assetsList.map((asset, index) => {
+//     if (index > 0 && (asset === offerAsset || asset === askAsset)) {
+//       return {
+//         addressOrName: asset.address,
+//         contractInterface: erc20ABI,
+//         functionName: "balanceOf",
+//         args: address,
+//         enabled: isConnected
+//       }
+//     }
+//   })
+  
+//   const { data: coinData } = useBalance({addressOrName: address, formatUnits: 'wei'})
+//   const { data: tokenData } = useContractReads({ contracts })
+  
+//   if (coinData?.formatted) assetsList[0].balance = coinData.formatted
+
+//   assetsList.slice(1).forEach((asset, index) => {
+//     if (tokenData?.[index]) asset.balance = tokenData[index].toString()
+//   })
+  
+//   return assetsList
+// }
 
 
 export const usePoolSymbol = (offerAsset: AssetEVM, askAsset: AssetEVM) => {
@@ -247,7 +290,7 @@ export const useFetchAllowance = (tokenAddress:string, poolSymbol:string, enable
       contractInterface: erc20ABI,
       functionName: "allowance",
       args: [address, poolAddress],
-      enabled: isConnected && enabled
+      enabled: isConnected && enabled && !!tokenAddress
     }
   
   const { data, refetch, ...status } = useContractRead(contract)

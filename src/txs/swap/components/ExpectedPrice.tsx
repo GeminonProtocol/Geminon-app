@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next"
 // import { isDenomLuna, isDenomTerra } from "@terra.kitchen/utils"
 // import { readPercent } from "@terra.kitchen/utils"
 // import { toPrice } from "utils/num"
-import { useMarketParams } from "data/queries/market"
+// import { useMarketParams } from "data/queries/market"
 // import { useOracleParams } from "data/queries/oracle"
 import { Read } from "components/token"
 // import { TooltipIcon } from "components/display"
@@ -22,7 +22,6 @@ export interface ExpectedPriceProps  {
   askAssetPrice: string
   askAssetRatio?: string
   feeAmount: string
-  minimum_receive?: string
   isLoading: boolean
   mode?: string
 }
@@ -30,7 +29,7 @@ export interface ExpectedPriceProps  {
 const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
   const { offerAsset, offerDecimals, askAsset, askDecimals } = props
   const { offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount } = props
-  const { minimum_receive, isLoading, mode } = props
+  const { isLoading, mode } = props
   const { t } = useTranslation()
   
   
@@ -85,11 +84,13 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
   }
 
   const renderUsdPrices = () => {
+    const offerLabel = offerAsset == 'GEX' ? 'Pool price' : 'Oracle price'
+    const askLabel = askAsset == 'GEX' ? 'Pool price' : 'Oracle price'
     return (
       <>
-        <dt>{offerAsset}{" "}{t("Oracle price")}</dt>
+        <dt>{offerAsset}{" "}{t(offerLabel)}</dt>
         <dd>{!isLoading && renderUsdOfferPrice()}</dd>
-        <dt>{askAsset}{" "}{t("Oracle price")}</dt>
+        <dt>{askAsset}{" "}{t(askLabel)}</dt>
         <dd>{!isLoading && renderUsdAskPrice()}</dd>
       </>
     )
@@ -131,12 +132,12 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
         )}
 
         {/* COMPONENTE READ MATEMÁTICAS INSEGURAS */}
-        <dt>{t("Trading fee")}</dt>
+        {/* <dt>{t("Trading fee")}</dt>
         <dd>
           {!isLoading && (
             <Read amount={feeAmount} token={"GEX"} decimals={askDecimals} />
           )}
-        </dd>
+        </dd> */}
 
         {/* {renderMinimumReceived()} */}
       </>
@@ -181,11 +182,11 @@ export default ExpectedPrice
 
 
 /* hooks */
-const useSwapSpread = () => {
-  const { data: marketParams } = useMarketParams()
-  const minSpread = marketParams?.min_stability_spread
-  return minSpread?.toString()
-}
+// const useSwapSpread = () => {
+//   const { data: marketParams } = useMarketParams()
+//   const minSpread = marketParams?.min_stability_spread
+//   return minSpread?.toString()
+// }
 
 // const useTobinTax = (askAsset?: CoinDenom) => {
 //   const { data: oracleParams } = useOracleParams()

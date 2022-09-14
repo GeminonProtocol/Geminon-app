@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { useForm } from "react-hook-form"
 import { useAccount } from 'wagmi'
@@ -49,11 +49,11 @@ const SwapForm = () => {
   const [showAll, setShowAll] = useState(false)
   
   // ASSETS
-  const initialOfferAsset = nativeAsset.symbol
-  // console.log("[SWAPFORM] initialOfferAsset, nativeAsset", initialOfferAsset, nativeAsset)
+  const initialOfferSymbol = nativeAsset.symbol
+  // console.log("[SWAPFORM] initialOfferSymbol, nativeAsset", initialOfferSymbol, nativeAsset)
 
   // BALANCES
-  const assetsList: PoolAsset[] = useReadBalances(nativeAsset, tokensList)
+  const { assetsList, refetchNative, refetchTokens } = useReadBalances(nativeAsset, tokensList)
   // console.log("[SWAPFORM] assetsList ", assetsList)
   
   
@@ -83,14 +83,14 @@ const SwapForm = () => {
   // FORMULARIO
   const form = useForm<TxValues>({
     mode: "onChange", // what triggers validation of form inputs. onChange is expensive. Alt: onSubmit
-    defaultValues: { offerAsset: initialOfferAsset, askAsset: "GEX", slippageInput: 1 },
+    defaultValues: { offerAsset: initialOfferSymbol, askAsset: "GEX", slippageInput: 1 },
   })
 
   const { register, trigger, watch, setValue, resetField, handleSubmit, reset, formState } = form
   const { errors } = formState
   const { offerAsset, askAsset, input, slippageInput } = watch() // Esta desestructuración viene definida por el interfaz TxValues
   
-  // console.log("[SWAPFORM] offerAsset, initialOfferAsset ", offerAsset, initialOfferAsset)
+  // console.log("[SWAPFORM] offerAsset, initialOfferSymbol ", offerAsset, initialOfferSymbol)
 
   if (Number.isNaN(input)) resetField("input")  // A veces aparece un NaN, causa desconocida.
 
@@ -102,6 +102,26 @@ const SwapForm = () => {
     resetField("input")
   }
 
+  const updateBalances = () => {
+    if (!isConnected) return
+    // console.log("[SWAPFORM][updateBalances]");
+    (async () => {
+      const {data: nativeBalance} = await refetchNative()
+      const {data: tokensBalances} = await refetchTokens()
+
+      assetsList[0].balance = nativeBalance ? nativeBalance.formatted : assetsList[0].balance
+      
+      if (tokensBalances) {
+        tokensBalances.forEach((balance, index) => {
+          assetsList[index+1].balance = balance ? balance.toString() : assetsList[index+1].balance
+        })
+      }
+    })()
+  }
+  
+  useEffect(() => {
+    updateBalances()
+  }, [offerAsset, askAsset])
   
   const offerAssetItem: PoolAsset = offerAsset ? findAssetBySymbol(offerAsset, assetsList, assetsList[0]) : assetsList[0]
   const offerDecimals = offerAssetItem ? offerAssetItem.decimals : defaultDecimals
@@ -159,12 +179,16 @@ const SwapForm = () => {
   // PARÁMETROS QUE SE PASAN AL COMPONENTE TX
   const txProps: TxProps = {
     offerAssetItem,
+    askAssetItem,
     inAmount,
     outAmount,
+    feeAmount,
     minReceive,
+    priceImpact,
     nativeSymbol: nativeAsset.symbol,
     poolSymbol, 
     resetForm: () => reset(),
+    updateBalances,
     networkID,
     isConnected
   }
@@ -193,19 +217,18 @@ const SwapForm = () => {
     params: Partial<ExpectedPriceProps>
     ): params is ExpectedPriceProps => {
       const { offerAsset, askAsset, offerAssetPrice, askAssetPrice, 
-        askAssetRatio, feeAmount, minimum_receive } = params
+        askAssetRatio, feeAmount } = params
       return !!(offerAsset && askAsset && offerAssetPrice && 
-        askAssetPrice && askAssetRatio && feeAmount && minimum_receive)
+        askAssetPrice && askAssetRatio && feeAmount)
     }
 
   // render: expected price
   const renderExpected = () => {
     if (!input) return null
 
-    const minimum_receive = outAmount
     const isLoading = false
     const props = { offerAsset, offerDecimals, askAsset, askDecimals, 
-      offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount, minimum_receive, isLoading}
+      offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount, isLoading}
 
     if (!(isConnected && validateExpectedPriceProps(props))){
       // console.log("[SWAPFORM][renderExpected] props NOT VALIDATED", props)
@@ -363,7 +386,7 @@ const calcMinimumReceived = (expOutAmount: string, slippageInput: number) => {
 //   const { getMsgsFunction, getSimulateFunction, getSimulateQuery } = utils
 //   const { options, findTokenItem, findDecimals, calcExpected } = useSingleSwap()
 
-//   const initialOfferAsset =
+//   const initialOfferSymbol =
 //     (state as Token) ??
 //     (getAmount(bankBalance, "uusd") ? "uusd" : sortCoins(bankBalance)[0].denom)
 //   const initialGasDenom = getInitialGasDenom(bankBalance)
@@ -399,7 +422,7 @@ const calcMinimumReceived = (expOutAmount: string, slippageInput: number) => {
 //   // form
 //   const form = useForm<TxValues>({
 //     mode: "onChange",
-//     defaultValues: { offerAsset: initialOfferAsset, slippageInput: 1 },
+//     defaultValues: { offerAsset: initialOfferSymbol, slippageInput: 1 },
 //   })
 
 //   const { register, trigger, watch, setValue, handleSubmit, formState } = form

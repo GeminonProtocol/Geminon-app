@@ -3,63 +3,10 @@ import { publicProvider } from 'wagmi/providers/public'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 
-const isTesting: boolean = process.env.NODE_ENV == "production" ? false : 
-  process.env.REACT_APP_TESTNET == "true" ? true : false
+export const isTesting: boolean = process.env.REACT_APP_TESTNET == "true" ? true : false
 
 export const defaultNetworkID = isTesting ? 4 : 1
 export const validNetworkID = isTesting ? [4, 97, 43113] : [1, 56, 43114]
-
-
-const testnets = {
-  rinkeby: {
-    name: "rinkeby",
-    chainID: "4",
-    lcd: ""
-  },
-  kovan: {
-    name: "kovan",
-    chainID: "42",
-    lcd: ""
-  },
-  bsc_test: {
-    name: "bsc testnet",
-    chainID: "97",
-    lcd: ""
-  },
-  fuji: {
-    name: "fuji testnet",
-    chainID: "43113",
-    lcd: ""
-  }
-}
-
-
-const mainnets = {
-  ethereum: {
-    name: "ethereum",
-    chainID: "1",
-    lcd: ""
-  },
-  bsc: {
-    name: "bsc",
-    chainID: "56",
-    lcd: ""
-  },
-  avalanche: {
-    name: "avalanche",
-    chainID: "43114",
-    lcd: ""
-  },
-  // Mainnet para compatibilidad código Terra
-  mainnet: {
-    name: "ethereum",
-    chainID: "1",
-    lcd: ""
-  }
-}
-
-
-// export const validNetworks = isTesting ? testnets : mainnets
 
 
 const avalancheChain: Chain = {

@@ -342,7 +342,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
     const submitButton = (
     <>
-      {isWrongNetwork && <FormWarning>{"Wrong network"}</FormWarning>}
+      {isWrongNetwork && <FormWarning>{t("Wrong network")}</FormWarning>}
 
       {!isConnected ? (
         <ConnectWallet

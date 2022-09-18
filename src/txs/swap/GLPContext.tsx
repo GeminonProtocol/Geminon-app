@@ -14,7 +14,7 @@ interface GLP {
   tokensList: TokenEVM[]
 }
 
-export const [useGLP, GLPProvider] = createContext<GLP>("useSingleSwap")
+export const [useGLP, GLPProvider] = createContext<GLP>("useGLP")
 
 
 const GLPContext = ({ children }: PropsWithChildren<{}>) => {

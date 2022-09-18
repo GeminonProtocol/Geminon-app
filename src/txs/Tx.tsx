@@ -1,9 +1,8 @@
 import { Fragment, ReactNode } from "react"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { QueryKey, useQuery } from "react-query"
-import { useAccount, useNetwork } from 'wagmi'
-import { useRecoilValue, useSetRecoilState } from "recoil"
+import { QueryKey } from "react-query"
+import { useRecoilValue } from "recoil"
 import classNames from "classnames"
 import BigNumber from "bignumber.js"
 import { head, isNil } from "ramda"
@@ -30,13 +29,13 @@ import { FormError, FormWarning, FormHelp } from "components/form"
 import Approve from "components/form/Approve"
 import { Modal } from "components/feedback"
 import { Details } from "components/display"
-import { Read, SafeReadPercent } from "components/token"
+import { Read, SafeReadPercent, AddToken } from "components/token"
 import ConnectWallet from "app/sections/ConnectWallet"
 import styles from "./Tx.module.scss"
 
 
-import { validNetworkID, defaultNetworkID } from 'config/networks'
-import { useReadBalances, useFetchAllowance, useInfiniteApprove, useSubmitTx } from "./swap/useContractsEVM"
+import { validNetworkID } from 'config/networks'
+import { useFetchAllowance, useInfiniteApprove, useSubmitTx } from "./swap/useContractsEVM"
 import { defaultDecimals } from "config/assets"
 
 
@@ -111,18 +110,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
   // context
   const { t } = useTranslation()
-  // const { isConnected } = useAccount()
-  // const { chain } = useNetwork()
-  
-  // const networkID = chain?.id ?? defaultNetworkID
-  // // console.log("[TX] networkID=", networkID, " defaultNetworkID=", defaultNetworkID, " wagmi chain id=", chain?.id)
 
-  // const { nativeAsset, tokensList } = getAssetsList(networkID)
-  // const assetsList: PoolAsset[] = useReadBalances(nativeAsset, tokensList)
-
-  // const findAssetBySymbol = (symbol: string) => assetsList.find((item) => item.symbol === symbol)
-  
-  // const offerAssetItem = symbol ? findAssetBySymbol(symbol) : undefined
   const balance = offerAssetItem.balance
   const insufficient = new BigNumber(balance).lt(inAmount)
   const offerTokenAddress = offerAssetItem.address ?? ""
@@ -150,19 +138,6 @@ function Tx<TxValues>(props: Props<TxValues>) {
     else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
       setIsApproved(false)
   }
-  // useEffect avoids infinite rendering loop
-  // useEffect(() => {
-  //   if (symbol == nativeSymbol) {
-  //     return !isApproved ? setIsApproved(true) : undefined
-  //   } else if (!!allowedAmount && inAmount!="0") {
-  //       if (!isApproved && isAmountApproved(allowedAmount, inAmount)) 
-  //         setIsApproved(true)
-  //       else if (isApproved && !isAmountApproved(allowedAmount, inAmount)) 
-  //         setIsApproved(false)
-
-  //   // console.log("[TX][useEffect] isApproved, enabled:", isApproved, enabled)
-  //   }
-  // }, [isConnected, symbol, inAmount])
   
 
   const {write: writeApprove, ...approveStatus} = useInfiniteApprove(offerTokenAddress, poolSymbol, enabled)
@@ -458,7 +433,9 @@ function Tx<TxValues>(props: Props<TxValues>) {
             updateBalances()
           }}
           isOpen
-        />
+        >
+          {/* {askAssetItem.symbol == "GEX" && <AddToken asset={askAssetItem}/>} */}
+        </Modal>
       )}
     </>
   )
@@ -505,16 +482,16 @@ export const calcMax = ({ balance, gasAmount }: Params) => {
 }
 
 /* hooks */
-export const useTxKey = () => {
-  const { txhash } = useRecoilValue(latestTxState)
-  const [key, setKey] = useState(txhash)
+// export const useTxKey = () => {
+//   const { txhash } = useRecoilValue(latestTxState)
+//   const [key, setKey] = useState(txhash)
 
-  useEffect(() => {
-    if (txhash) setKey(txhash)
-  }, [txhash])
+//   useEffect(() => {
+//     if (txhash) setKey(txhash)
+//   }, [txhash])
 
-  return key
-}
+//   return key
+// }
 
 
 

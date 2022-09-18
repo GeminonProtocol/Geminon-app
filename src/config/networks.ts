@@ -3,7 +3,7 @@ import { publicProvider } from 'wagmi/providers/public'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 
-export const isTesting: boolean = process.env.REACT_APP_TESTNET == "true" ? true : false
+export const isTesting = process.env.REACT_APP_TESTNET == "true" ? true : false
 
 export const defaultNetworkID = isTesting ? 4 : 1
 export const validNetworkID = isTesting ? [4, 97, 43113] : [1, 56, 43114]

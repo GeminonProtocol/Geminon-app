@@ -1,9 +1,5 @@
 {
     "43114": {
-        "tokens": {
-            "gex": "0x2743Bb6962fb1D7d13C056476F3Bc331D7C3E112",
-            "btcb": "0x152b9d0FdC40C096757F570A51E494bd4b943E50"
-        },
         "glp": {
             "avax": {
                 "address": "0xA4df7a003303552AcDdF550A0A65818c4A218315",
@@ -1343,7 +1339,7 @@
                 ]
             },
             "btcb": {
-                "address": "0xA782893006050ba4599558bF842Da3DB7225A00c",
+                "address": "0x5ae76CbAedf4E0F710C2b429890B4cCC0737104D",
                 "abi": [
                     {
                         "inputs": [
@@ -1746,6 +1742,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -2291,7 +2300,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -2640,13 +2649,13 @@
                     }
                 ]
             }
+        },
+        "tokens": {
+            "gex": "0x2743Bb6962fb1D7d13C056476F3Bc331D7C3E112",
+            "btcb": "0x152b9d0FdC40C096757F570A51E494bd4b943E50"
         }
     },
     "56": {
-        "tokens": {
-            "gex": "0x2743Bb6962fb1D7d13C056476F3Bc331D7C3E112",
-            "renbtc": "0xfCe146bF3146100cfe5dB4129cf6C82b0eF4Ad8c"
-        },
         "glp": {
             "bnb": {
                 "address": "0xA4df7a003303552AcDdF550A0A65818c4A218315",
@@ -3986,7 +3995,7 @@
                 ]
             },
             "renbtc": {
-                "address": "0xA782893006050ba4599558bF842Da3DB7225A00c",
+                "address": "0x5ae76CbAedf4E0F710C2b429890B4cCC0737104D",
                 "abi": [
                     {
                         "inputs": [
@@ -4389,6 +4398,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -4934,7 +4956,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -5283,15 +5305,13 @@
                     }
                 ]
             }
+        },
+        "tokens": {
+            "gex": "0x2743Bb6962fb1D7d13C056476F3Bc331D7C3E112",
+            "renbtc": "0xfCe146bF3146100cfe5dB4129cf6C82b0eF4Ad8c"
         }
     },
     "1": {
-        "tokens": {
-            "gex": "0x2743Bb6962fb1D7d13C056476F3Bc331D7C3E112",
-            "renbtc": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
-            "paxg": "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
-            "xaut": "0x68749665FF8D2d112Fa859AA293F07A622782F38"
-        },
         "glp": {
             "eth": {
                 "address": "0xA4df7a003303552AcDdF550A0A65818c4A218315",
@@ -6631,7 +6651,7 @@
                 ]
             },
             "renbtc": {
-                "address": "0xA782893006050ba4599558bF842Da3DB7225A00c",
+                "address": "0x5ae76CbAedf4E0F710C2b429890B4cCC0737104D",
                 "abi": [
                     {
                         "inputs": [
@@ -7034,6 +7054,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -7579,7 +7612,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -9227,7 +9260,7 @@
                 ]
             },
             "xaut": {
-                "address": "0x9aFEf3344369943509b8E2103F9eC312f014d424",
+                "address": "0xE7e708277A03dA75186C231b5B43FcFB34BEd29B",
                 "abi": [
                     {
                         "inputs": [
@@ -9630,6 +9663,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -10175,7 +10221,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -10524,6 +10570,12 @@
                     }
                 ]
             }
+        },
+        "tokens": {
+            "gex": "0x2743Bb6962fb1D7d13C056476F3Bc331D7C3E112",
+            "renbtc": "0xEB4C2781e4ebA804CE9a9803C67d0893436bB27D",
+            "paxg": "0x45804880De22913dAFE09f4980848ECE6EcbAf78",
+            "xaut": "0x68749665FF8D2d112Fa859AA293F07A622782F38"
         }
     }
 }

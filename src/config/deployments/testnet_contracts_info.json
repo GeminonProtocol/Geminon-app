@@ -1,12 +1,12 @@
 {
     "43113": {
         "tokens": {
-            "gex": "0x8634ab6969965e6F66beEC557ac83866Bba71B47",
-            "btcb": "0x0D1259D08b27Ddaf745809e6f9554964c67Cbb95"
+            "gex": "0xD100C367Ae8e2b1278dC0c5DF138cBba6455d4B7",
+            "btcb": "0x42A4B3860206b48D6a46ff7C66773c3F16A88571"
         },
         "glp": {
             "avax": {
-                "address": "0xAfEA39D13e90Cf19284Ecf48666e6CEd639c7a26",
+                "address": "0xbFb67BdBBa303261AEC1F574e6e44519E672E671",
                 "abi": [
                     {
                         "inputs": [
@@ -404,6 +404,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -962,7 +975,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -1343,7 +1356,7 @@
                 ]
             },
             "btcb": {
-                "address": "0x22fD9a05FC88dE2Ec6BA88CcEa09B61A1204FFF5",
+                "address": "0x8d484EF7F0C2b638002Af8dE580251B418941aa1",
                 "abi": [
                     {
                         "inputs": [
@@ -1746,6 +1759,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -2291,7 +2317,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -2644,12 +2670,12 @@
     },
     "97": {
         "tokens": {
-            "gex": "0x8634ab6969965e6F66beEC557ac83866Bba71B47",
-            "renbtc": "0x0D1259D08b27Ddaf745809e6f9554964c67Cbb95"
+            "gex": "0xD100C367Ae8e2b1278dC0c5DF138cBba6455d4B7",
+            "renbtc": "0x42A4B3860206b48D6a46ff7C66773c3F16A88571"
         },
         "glp": {
             "bnb": {
-                "address": "0xAfEA39D13e90Cf19284Ecf48666e6CEd639c7a26",
+                "address": "0xbFb67BdBBa303261AEC1F574e6e44519E672E671",
                 "abi": [
                     {
                         "inputs": [
@@ -3047,6 +3073,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -3605,7 +3644,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -3986,7 +4025,7 @@
                 ]
             },
             "renbtc": {
-                "address": "0x22fD9a05FC88dE2Ec6BA88CcEa09B61A1204FFF5",
+                "address": "0x8d484EF7F0C2b638002Af8dE580251B418941aa1",
                 "abi": [
                     {
                         "inputs": [
@@ -4389,6 +4428,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -4934,7 +4986,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -5286,15 +5338,9 @@
         }
     },
     "4": {
-        "tokens": {
-            "gex": "0x8634ab6969965e6F66beEC557ac83866Bba71B47",
-            "renbtc": "0x0D1259D08b27Ddaf745809e6f9554964c67Cbb95",
-            "paxg": "0x655Be66A7E852C2Cf6D27cd2f34908Ad0a56AE5d",
-            "xaut": "0x2516f58E21FC293D54fEAaB656AfF66501355389"
-        },
         "glp": {
             "eth": {
-                "address": "0xAfEA39D13e90Cf19284Ecf48666e6CEd639c7a26",
+                "address": "0xbFb67BdBBa303261AEC1F574e6e44519E672E671",
                 "abi": [
                     {
                         "inputs": [
@@ -5692,6 +5738,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -6250,7 +6309,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -6631,7 +6690,7 @@
                 ]
             },
             "renbtc": {
-                "address": "0x22fD9a05FC88dE2Ec6BA88CcEa09B61A1204FFF5",
+                "address": "0xe9950429651dA6b7F557535B7Ff163F7b66764ee",
                 "abi": [
                     {
                         "inputs": [
@@ -7034,6 +7093,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -7579,7 +7651,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -7929,7 +8001,7 @@
                 ]
             },
             "paxg": {
-                "address": "0x0A5928916ce8635eb10F1BbB14b363557b53C417",
+                "address": "0xeFD93936Cc09Aa4D0b6954DCaFcBF9e340E14230",
                 "abi": [
                     {
                         "inputs": [
@@ -8332,6 +8404,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -8877,7 +8962,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -9227,7 +9312,7 @@
                 ]
             },
             "xaut": {
-                "address": "0x2538EaFD8eeA5E4e942a5Ca037714E6B9F89061A",
+                "address": "0xcd4Ee0C8eC161b3646D1f660bBE046e9Ebb68cE0",
                 "abi": [
                     {
                         "inputs": [
@@ -9630,6 +9715,19 @@
                                 "internalType": "address",
                                 "name": "newAddressRequested",
                                 "type": "address"
+                            }
+                        ],
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "inputs": [],
+                        "name": "collatDecimals",
+                        "outputs": [
+                            {
+                                "internalType": "uint8",
+                                "name": "",
+                                "type": "uint8"
                             }
                         ],
                         "stateMutability": "view",
@@ -10175,7 +10273,7 @@
                             },
                             {
                                 "internalType": "uint256",
-                                "name": "amountCollateral",
+                                "name": "uwAmountCollateral",
                                 "type": "uint256"
                             },
                             {
@@ -10524,6 +10622,12 @@
                     }
                 ]
             }
+        },
+        "tokens": {
+            "gex": "0xD100C367Ae8e2b1278dC0c5DF138cBba6455d4B7",
+            "renbtc": "0x42A4B3860206b48D6a46ff7C66773c3F16A88571",
+            "paxg": "0x14AF95Ea53B64c90CB11e272FaF39D2cC3282DFb",
+            "xaut": "0xe1A70Dcc7C4625849Db4b1959e0802EC7EA2aA23"
         }
     }
 }

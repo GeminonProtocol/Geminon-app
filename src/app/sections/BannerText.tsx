@@ -1,14 +1,14 @@
-// import { useTranslation } from "react-i18next"
-// import classNames from "classnames"
-// import styles from "./NetworkName.module.scss"
+import { useTranslation } from "react-i18next"
+import classNames from "classnames"
+import styles from "./NetworkName.module.scss"
 //import { useNetworkName } from "data/wallet"
 
 const BannerText = () => {
-  return null
-  // const { t } = useTranslation()
-  // const text = t("Geminon Protocol will be launched in the next few days. Wait for the launch announcement on our Telegram channel: ") + "https://t.me/geminon_ann"
+  // return null
+  const { t } = useTranslation()
+  const text = t("Geminon Protocol will launch on September 25. More info on our Telegram channel: ") + "https://t.me/geminon_ann"
 
-  // return <div className={classNames(styles.text, styles.info)}>{text}</div>
+  return <div className={classNames(styles.text, styles.info)}>{text}</div>
 }
 
 

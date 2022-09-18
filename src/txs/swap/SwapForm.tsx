@@ -27,7 +27,7 @@ import ExpectedPrice, { ExpectedPriceProps } from "./components/ExpectedPrice"
 import { SwapMode } from "./useSwapUtils"
 import { SlippageParams } from "./SingleSwapContext"
 // import styles from "./SwapForm.module.scss"
-import {useGLP} from "./GLPContext"
+import { useGLP } from "./GLPContext"
 
 
 import { useReadBalances, usePoolSymbol, usePoolInfo } from "./useContractsEVM"

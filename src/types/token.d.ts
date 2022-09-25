@@ -57,6 +57,7 @@ type AssetEVM = {
   symbol: string,
   key: string,
   decimals: number,
+  uwdecimals: number
   icon: string,
   address?: string
 }

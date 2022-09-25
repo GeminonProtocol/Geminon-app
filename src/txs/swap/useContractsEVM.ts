@@ -33,13 +33,16 @@ export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) =
   }
 
   const tokensPool: PoolAsset[] = tokensList.map((asset, index) => {
+    // console.log("[useReadBalances] asset / balance", asset.symbol, new BigNumber(tokenData?.[index]?.toString() ?? "0").shiftedBy(18-asset.uwdecimals).toFixed(0))
     return {
       ...asset, 
-      balance: tokenData?.[index]?.toString() ?? "0"//new BigNumber(tokenData?.[index]?.toString() ?? "0").shiftedBy(18-asset.decimals).toFixed(0)
+      balance: new BigNumber(tokenData?.[index]?.toString() ?? "0").shiftedBy(18-asset.uwdecimals).toFixed(0)
     }
   })
   
   const assetsList = [poolNative, ...tokensPool]
+
+  // console.log("[useReadBalances] assetsList", assetsList)
 
   return {assetsList, refetchNative, refetchTokens}
 }

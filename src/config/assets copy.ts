@@ -28,6 +28,7 @@ const nativeAssets: AssetsMap = {
         symbol: "ETH",
         key: "eth",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: ethIcon,
     }, 
     bnb: {
@@ -35,6 +36,7 @@ const nativeAssets: AssetsMap = {
         symbol: "BNB",
         key: "bnb",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: bnbIcon,
     }, 
     avax: {
@@ -42,6 +44,7 @@ const nativeAssets: AssetsMap = {
         symbol: "AVAX",
         key: "avax",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: avaxIcon,
     }, 
 }
@@ -53,6 +56,7 @@ const ethAssets: AssetsMap = {
         symbol: "GEX",
         key: "gex",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: gexIcon,
     }, 
     renbtc: {
@@ -60,6 +64,7 @@ const ethAssets: AssetsMap = {
         symbol: "RENBTC",
         key: "renbtc",
         decimals: defaultDecimals,
+        uwdecimals: 8,
         icon: renbtcIcon,
     },
     paxg: {
@@ -67,6 +72,7 @@ const ethAssets: AssetsMap = {
         symbol: "PAXG",
         key: "paxg",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: paxgIcon,
     },
     xaut: {
@@ -74,6 +80,7 @@ const ethAssets: AssetsMap = {
         symbol: "XAUT",
         key: "xaut",
         decimals: defaultDecimals,
+        uwdecimals: 6,
         icon: xautIcon,
     },
 }
@@ -84,6 +91,7 @@ const bnbAssets: AssetsMap = {
         symbol: "GEX",
         key: "gex",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: gexIcon,
     }, 
     renbtc: {
@@ -91,6 +99,7 @@ const bnbAssets: AssetsMap = {
         symbol: "RENBTC",
         key: "renbtc",
         decimals: defaultDecimals,
+        uwdecimals: 8,
         icon: renbtcbnbIcon,
     },
 }
@@ -101,6 +110,7 @@ const avaxAssets: AssetsMap = {
         symbol: "GEX",
         key: "gex",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: gexIcon,
     }, 
     btcb: {
@@ -108,6 +118,7 @@ const avaxAssets: AssetsMap = {
         symbol: "BTC.b",
         key: "btcb",
         decimals: defaultDecimals,
+        uwdecimals: 8,
         icon: btcbIcon,
     },
 }

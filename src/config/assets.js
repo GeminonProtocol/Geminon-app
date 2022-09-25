@@ -27,6 +27,7 @@ export const gexToken = {
     symbol: "GEX",
     key: "gex",
     decimals: defaultDecimals,
+    uwdecimals: defaultDecimals,
     icon: gexIcon
 }
 
@@ -36,6 +37,7 @@ const nativeAssets = {
         symbol: "ETH",
         key: "eth",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: ethIcon,
     }, 
     bnb: {
@@ -43,6 +45,7 @@ const nativeAssets = {
         symbol: "BNB",
         key: "bnb",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: bnbIcon,
     }, 
     avax: {
@@ -50,6 +53,7 @@ const nativeAssets = {
         symbol: "AVAX",
         key: "avax",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: avaxIcon,
     }, 
 }
@@ -61,7 +65,8 @@ const ethAssets = {
     //     name: "Ren Bitcoin",
     //     symbol: "RENBTC",
     //     key: "renbtc",
-    //     decimals: 8,
+    //     decimals: defaultDecimals,
+    //     uwdecimals: 8,
     //     icon: renbtcIcon,
     // },
     paxg: {
@@ -69,37 +74,41 @@ const ethAssets = {
         symbol: "PAXG",
         key: "paxg",
         decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
         icon: paxgIcon,
     },
-    // xaut: {
-    //     name: "Tether Gold",
-    //     symbol: "XAUT",
-    //     key: "xaut",
-    //     decimals: 6,
-    //     icon: xautIcon,
-    // },
+    xaut: {
+        name: "Tether Gold",
+        symbol: "XAUT",
+        key: "xaut",
+        decimals: defaultDecimals,
+        uwdecimals: 6,
+        icon: xautIcon,
+    },
 }
 
 const bnbAssets = {
     gex: gexToken, 
-    // renbtc: {
-    //     name: "Ren Bitcoin",
-    //     symbol: "RENBTC",
-    //     key: "renbtc",
-    //     decimals: 8,
-    //     icon: renbtcbnbIcon,
-    // },
+    renbtc: {
+        name: "Ren Bitcoin",
+        symbol: "RENBTC",
+        key: "renbtc",
+        decimals: defaultDecimals,
+        uwdecimals: 8,
+        icon: renbtcbnbIcon,
+    },
 }
 
 const avaxAssets = {
     gex: gexToken, 
-    // btcb: {
-    //     name: "Avalanche Bridged Bitcoin",
-    //     symbol: "BTC.b",
-    //     key: "btcb",
-    //     decimals: 8,
-    //     icon: btcbIcon,
-    // },
+    btcb: {
+        name: "Avalanche Bridged Bitcoin",
+        symbol: "BTC.b",
+        key: "btcb",
+        decimals: defaultDecimals,
+        uwdecimals: 8,
+        icon: btcbIcon,
+    },
 }
 
 

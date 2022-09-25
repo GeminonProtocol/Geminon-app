@@ -143,7 +143,7 @@ export const rpcProviders = [
   jsonRpcProvider({
     priority: 0,
     rpc: (chain) => {
-      if (chain.id == 1) return { http: "https://mainnet.infura.io/v3/" }
+      if (chain.id == 1) return { http: "https://cloudflare-eth.com" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.avax2 }
       else if (chain.id == bscChain.id) return { http: chain.rpcUrls.binance4 }
       else return null

@@ -323,7 +323,7 @@ export const useInfiniteApprove = (tokenAddress:string, poolSymbol:string, enabl
   
   const { ...waitState } = useWaitForTransaction({ 
     hash: data?.hash,
-    confirmations: 2, 
+    confirmations: 1, 
   })
   
   const state = combineState(writeState, waitState)
@@ -370,7 +370,7 @@ export const useSubmitTx = (
   
   const { ...waitState } = useWaitForTransaction({ 
     hash: data?.hash,
-    confirmations: 4, 
+    confirmations: 1, 
   })
   
   const state = combineState(writeState, waitState)

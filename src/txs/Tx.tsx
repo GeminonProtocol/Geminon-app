@@ -434,7 +434,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
           }}
           isOpen
         >
-          {/* {askAssetItem.symbol == "GEX" && <AddToken asset={askAssetItem}/>} */}
+          {/* {askAssetItem.symbol == "GEX" && <AddToken/>} */}
         </Modal>
       )}
     </>

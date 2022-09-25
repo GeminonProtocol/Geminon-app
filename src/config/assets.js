@@ -19,6 +19,17 @@ const contracts = isTesting ? testnetContracts : mainnetContracts
 
 export const defaultDecimals = 18
 
+
+export const gexUrlIcon = 'https://geminon.fi/tokens/gex.png'
+export const gexAddress = ''
+export const gexToken = {
+    name: "Geminon",
+    symbol: "GEX",
+    key: "gex",
+    decimals: defaultDecimals,
+    icon: gexIcon
+}
+
 const nativeAssets = {
     eth: {
         name: "Ethereum",
@@ -45,20 +56,14 @@ const nativeAssets = {
 
 
 const ethAssets = {
-    gex: {
-        name: "Geminon",
-        symbol: "GEX",
-        key: "gex",
-        decimals: defaultDecimals,
-        icon: gexIcon,
-    }, 
-    renbtc: {
-        name: "Ren Bitcoin",
-        symbol: "RENBTC",
-        key: "renbtc",
-        decimals: defaultDecimals,
-        icon: renbtcIcon,
-    },
+    gex: gexToken, 
+    // renbtc: {
+    //     name: "Ren Bitcoin",
+    //     symbol: "RENBTC",
+    //     key: "renbtc",
+    //     decimals: defaultDecimals,
+    //     icon: renbtcIcon,
+    // },
     paxg: {
         name: "PAX Gold",
         symbol: "PAXG",
@@ -76,13 +81,7 @@ const ethAssets = {
 }
 
 const bnbAssets = {
-    gex: {
-        name: "Geminon",
-        symbol: "GEX",
-        key: "gex",
-        decimals: defaultDecimals,
-        icon: gexIcon,
-    }, 
+    gex: gexToken, 
     renbtc: {
         name: "Ren Bitcoin",
         symbol: "RENBTC",
@@ -93,13 +92,7 @@ const bnbAssets = {
 }
 
 const avaxAssets = {
-    gex: {
-        name: "Geminon",
-        symbol: "GEX",
-        key: "gex",
-        decimals: defaultDecimals,
-        icon: gexIcon,
-    }, 
+    gex: gexToken, 
     btcb: {
         name: "Avalanche Bridged Bitcoin",
         symbol: "BTC.b",

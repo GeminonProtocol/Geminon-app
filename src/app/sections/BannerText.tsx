@@ -4,11 +4,11 @@ import styles from "./NetworkName.module.scss"
 //import { useNetworkName } from "data/wallet"
 
 const BannerText = () => {
-  // return null
-  const { t } = useTranslation()
-  const text = t("Geminon Protocol will launch on September 25. More info on our Telegram channel: ") + "https://t.me/geminon_ann"
+  return null
+  // const { t } = useTranslation()
+  // const text = t("Geminon Protocol will launch on September 25. More info on our Telegram channel: ") + "https://t.me/geminon_ann"
 
-  return <div className={classNames(styles.text, styles.info)}>{text}</div>
+  // return <div className={classNames(styles.text, styles.info)}>{text}</div>
 }
 
 

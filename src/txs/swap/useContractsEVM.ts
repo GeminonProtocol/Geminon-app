@@ -35,7 +35,7 @@ export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) =
   const tokensPool: PoolAsset[] = tokensList.map((asset, index) => {
     return {
       ...asset, 
-      balance: tokenData?.[index]?.toString() ?? "0"
+      balance: tokenData?.[index]?.toString() ?? "0"//new BigNumber(tokenData?.[index]?.toString() ?? "0").shiftedBy(18-asset.decimals).toFixed(0)
     }
   })
   

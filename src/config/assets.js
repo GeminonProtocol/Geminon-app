@@ -61,7 +61,7 @@ const ethAssets = {
     //     name: "Ren Bitcoin",
     //     symbol: "RENBTC",
     //     key: "renbtc",
-    //     decimals: defaultDecimals,
+    //     decimals: 8,
     //     icon: renbtcIcon,
     // },
     paxg: {
@@ -71,35 +71,35 @@ const ethAssets = {
         decimals: defaultDecimals,
         icon: paxgIcon,
     },
-    xaut: {
-        name: "Tether Gold",
-        symbol: "XAUT",
-        key: "xaut",
-        decimals: defaultDecimals,
-        icon: xautIcon,
-    },
+    // xaut: {
+    //     name: "Tether Gold",
+    //     symbol: "XAUT",
+    //     key: "xaut",
+    //     decimals: 6,
+    //     icon: xautIcon,
+    // },
 }
 
 const bnbAssets = {
     gex: gexToken, 
-    renbtc: {
-        name: "Ren Bitcoin",
-        symbol: "RENBTC",
-        key: "renbtc",
-        decimals: defaultDecimals,
-        icon: renbtcbnbIcon,
-    },
+    // renbtc: {
+    //     name: "Ren Bitcoin",
+    //     symbol: "RENBTC",
+    //     key: "renbtc",
+    //     decimals: 8,
+    //     icon: renbtcbnbIcon,
+    // },
 }
 
 const avaxAssets = {
     gex: gexToken, 
-    btcb: {
-        name: "Avalanche Bridged Bitcoin",
-        symbol: "BTC.b",
-        key: "btcb",
-        decimals: defaultDecimals,
-        icon: btcbIcon,
-    },
+    // btcb: {
+    //     name: "Avalanche Bridged Bitcoin",
+    //     symbol: "BTC.b",
+    //     key: "btcb",
+    //     decimals: 8,
+    //     icon: btcbIcon,
+    // },
 }
 
 

@@ -114,10 +114,11 @@ function Tx<TxValues>(props: Props<TxValues>) {
   const balance = offerAssetItem.balance
   const insufficient = new BigNumber(balance).lt(inAmount)
   const offerTokenAddress = offerAssetItem.address ?? ""
+  // console.log("[TX] validatePoolSymbol(poolSymbol, offerSymbol, askSymbol)", validatePoolSymbol(poolSymbol, offerAssetItem.key, askAssetItem.key), poolSymbol, offerAssetItem.key, askAssetItem.key)
 
   const enabled = !!offerAssetItem && !!inAmount && !!outAmount && !!poolSymbol && !error && 
-    !insufficient && validatePoolSymbol(poolSymbol, offerAssetItem.symbol, askAssetItem.symbol)
-  // console.log("[TX] inAmount, balance", inAmount, balance)
+    !insufficient && validatePoolSymbol(poolSymbol, offerAssetItem.key, askAssetItem.key)
+  // console.log("[TX] inAmount, balance, insufficient?", inAmount, balance, insufficient)
   // if (!enabled) // console.log("[TX] Hooks DISABLED: token, error", offerAssetItem, error)
 
   

@@ -61,14 +61,14 @@ const nativeAssets = {
 
 const ethAssets = {
     gex: gexToken, 
-    // renbtc: {
-    //     name: "Ren Bitcoin",
-    //     symbol: "RENBTC",
-    //     key: "renbtc",
-    //     decimals: defaultDecimals,
-    //     uwdecimals: 8,
-    //     icon: renbtcIcon,
-    // },
+    renbtc: {
+        name: "Ren Bitcoin",
+        symbol: "RENBTC",
+        key: "renbtc",
+        decimals: defaultDecimals,
+        uwdecimals: 8,
+        icon: renbtcIcon,
+    },
     paxg: {
         name: "PAX Gold",
         symbol: "PAXG",

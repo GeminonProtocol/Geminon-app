@@ -10,10 +10,7 @@ import {chainsUsed, rpcProviders} from "../config/networks"
 
 
 const InitWeb3 = ({ children }: PropsWithChildren<{}>) => {
-  const { chains, provider, webSocketProvider } = configureChains(
-    chainsUsed,
-    rpcProviders,
-  )
+  const { chains, provider, webSocketProvider } = configureChains(chainsUsed, rpcProviders)
   // console.log("[INITWEB3] chainsUsed:", chainsUsed)
   // console.log("[INITWEB3] chains:", chains)
   const client = createClient({

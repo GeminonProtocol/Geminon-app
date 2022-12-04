@@ -47,54 +47,13 @@ export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) =
   return {assetsList, refetchNative, refetchTokens}
 }
 
-// function isTokenEVMList(assetsList: AssetEVM[]): assetsList is TokenEVM[] {
-//   const evmAssets = assetsList.map((asset) => {
-//     if ("address" in asset) return asset
-//   })
-//   if (evmAssets.length) return true
-  
-//   return false
-// }
-
-// export const useUpdateBalances = (offerAsset: AssetEVM, askAsset: AssetEVM, assetsList: PoolAsset[]) => {
-//   // console.log("[useUpdateBalances] offerAsset, askAsset", offerAsset, askAsset)
-//   const { address, isConnected } = useAccount()
-
-
-//   if (isTokenEVMList(assetsList)) {
-//     const tokensList: TokenEVM[] = assetsList}
-
-
-//   const contracts = assetsList.map((asset, index) => {
-//     if (index > 0 && (asset === offerAsset || asset === askAsset)) {
-//       return {
-//         addressOrName: asset.address,
-//         contractInterface: erc20ABI,
-//         functionName: "balanceOf",
-//         args: address,
-//         enabled: isConnected
-//       }
-//     }
-//   })
-  
-//   const { data: coinData } = useBalance({addressOrName: address, formatUnits: 'wei'})
-//   const { data: tokenData } = useContractReads({ contracts })
-  
-//   if (coinData?.formatted) assetsList[0].balance = coinData.formatted
-
-//   assetsList.slice(1).forEach((asset, index) => {
-//     if (tokenData?.[index]) asset.balance = tokenData[index].toString()
-//   })
-  
-//   return assetsList
-// }
-
 
 export const usePoolSymbol = (offerAsset: AssetEVM, askAsset: AssetEVM) => {
   return offerAsset.key == "gex" ? askAsset.key : offerAsset.key
 }
 
-export const usePoolContractInfo = (poolSymbol: string) => {
+
+const usePoolContractInfo = (poolSymbol: string) => {
   const { chain } = useNetwork()
   const connectedNetworkId = chain?.id.toString() ?? defaultNetworkID
   
@@ -107,7 +66,6 @@ export const usePoolContractInfo = (poolSymbol: string) => {
     abi: networkPools[key].abi, 
   }
 }
-
 
 export const usePoolInfo = (poolSymbol:string, offerSymbol:string, offerAmount:string, enabled:boolean) => {
   // console.log("[usePoolInfo] poolSymbol, offerSymbol, offerAmount, enabled:", poolSymbol, offerSymbol, offerAmount, enabled)  
@@ -166,121 +124,122 @@ export const usePoolInfo = (poolSymbol:string, offerSymbol:string, offerAmount:s
 }
 
 
-export const usePoolTradeInfo = (poolSymbol:string, offerSymbol:string, offerAmount:string, enabled:boolean) => {
-  // console.log("[usePoolTradeInfo] poolSymbol, offerSymbol, offerAmount, enabled:", poolSymbol, offerSymbol, offerAmount, enabled)  
-  const { isConnected } = useAccount()
-  const { poolAddress, abi } = usePoolContractInfo(poolSymbol)
 
-  const contracts = offerSymbol === "GEX" ?
-  [
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getOutCollateralAmount",
-      args: offerAmount, 
+// const usePoolTradeInfo = (poolSymbol:string, offerSymbol:string, offerAmount:string, enabled:boolean) => {
+//   // console.log("[usePoolTradeInfo] poolSymbol, offerSymbol, offerAmount, enabled:", poolSymbol, offerSymbol, offerAmount, enabled)  
+//   const { isConnected } = useAccount()
+//   const { poolAddress, abi } = usePoolContractInfo(poolSymbol)
+
+//   const contracts = offerSymbol === "GEX" ?
+//   [
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getOutCollateralAmount",
+//       args: offerAmount, 
       
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getGEXPrice",
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getCollateralPrice",
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getCollateralQuote",
-    },
-  ] : [
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getOutGEXAmount",
-      args: offerAmount, 
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getCollateralPrice",
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getGEXPrice",
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getGEXQuote",
-    },
-  ]
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getGEXPrice",
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getCollateralPrice",
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getCollateralQuote",
+//     },
+//   ] : [
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getOutGEXAmount",
+//       args: offerAmount, 
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getCollateralPrice",
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getGEXPrice",
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getGEXQuote",
+//     },
+//   ]
     
-  const { data } = useContractReads({ 
-    contracts,
-    enabled: enabled && isConnected 
-    })
-  // console.log("[usePoolTradeInfo] Contract Read:", data)
+//   const { data } = useContractReads({ 
+//     contracts,
+//     enabled: enabled && isConnected 
+//     })
+//   // console.log("[usePoolTradeInfo] Contract Read:", data)
   
-  // All amounts numbers as string in wei units (1e18)
-  return { 
-    outAmount: data?.[0]?.toString(),
-    offerAssetPrice: data?.[1]?.toString(),
-    askAssetPrice: data?.[2]?.toString(),
-    askAssetRatio: data?.[3]?.toString(),
-  }
-}
+//   // All amounts numbers as string in wei units (1e18)
+//   return { 
+//     outAmount: data?.[0]?.toString(),
+//     offerAssetPrice: data?.[1]?.toString(),
+//     askAssetPrice: data?.[2]?.toString(),
+//     askAssetRatio: data?.[3]?.toString(),
+//   }
+// }
 
 
-export const usePoolFees = (poolSymbol:string, offerSymbol:string, gexAmount:string) => {
-  // console.log("[usePoolFees] poolSymbol, offerSymbol, gexAmount:", poolSymbol, offerSymbol, gexAmount)  
-  const { isConnected } = useAccount()
-  const { poolAddress, abi } = usePoolContractInfo(poolSymbol)
+// const usePoolFees = (poolSymbol:string, offerSymbol:string, gexAmount:string) => {
+//   // console.log("[usePoolFees] poolSymbol, offerSymbol, gexAmount:", poolSymbol, offerSymbol, gexAmount)  
+//   const { isConnected } = useAccount()
+//   const { poolAddress, abi } = usePoolContractInfo(poolSymbol)
   
-  const contracts = offerSymbol === "GEX" ?
-  [
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "amountRedeemFee",
-      args: gexAmount, 
-      enabled: isConnected
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getFee",
-      args: [gexAmount, 2000], 
-      enabled: isConnected
-    },
-  ] : [
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "amountMintFee",
-      args: gexAmount, 
-      enabled: isConnected
-    },
-    {
-      addressOrName: poolAddress,
-      contractInterface: abi,
-      functionName: "getFee",
-      args: [gexAmount, 1000], 
-      enabled: isConnected
-    },
-  ]
+//   const contracts = offerSymbol === "GEX" ?
+//   [
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "amountRedeemFee",
+//       args: gexAmount, 
+//       enabled: isConnected
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getFee",
+//       args: [gexAmount, 2000], 
+//       enabled: isConnected
+//     },
+//   ] : [
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "amountMintFee",
+//       args: gexAmount, 
+//       enabled: isConnected
+//     },
+//     {
+//       addressOrName: poolAddress,
+//       contractInterface: abi,
+//       functionName: "getFee",
+//       args: [gexAmount, 1000], 
+//       enabled: isConnected
+//     },
+//   ]
   
-  const { data, ...status } = useContractReads({ contracts })
-  if (status.error) // console.log("[usePoolFees] Contract read ERROR:", data, status.error)
+//   const { data, ...status } = useContractReads({ contracts })
+//   if (status.error) // console.log("[usePoolFees] Contract read ERROR:", data, status.error)
   
-  return { 
-    feeAmount: data?.[0]?.toString(),  // Number as string in wei units (1e18)
-    feePerc: data?.[1]?.toString(),  // Number as string in 1e6 units
-  }
-}
+//   return { 
+//     feeAmount: data?.[0]?.toString(),  // Number as string in wei units (1e18)
+//     feePerc: data?.[1]?.toString(),  // Number as string in 1e6 units
+//   }
+// }
 
 
 export const useFetchAllowance = (tokenAddress:string, poolSymbol:string, enabled:boolean) => {

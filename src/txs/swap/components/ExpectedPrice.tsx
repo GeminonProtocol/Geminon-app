@@ -14,9 +14,9 @@ import Price, { FiatPrice } from "./Price"
 
 
 export interface ExpectedPriceProps  {
-  offerAsset: string
+  offerSymbol: string
   offerDecimals: number
-  askAsset: string
+  askSymbol: string
   askDecimals: number
   offerAssetPrice: string
   askAssetPrice: string
@@ -27,7 +27,7 @@ export interface ExpectedPriceProps  {
 }
 
 const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
-  const { offerAsset, offerDecimals, askAsset, askDecimals } = props
+  const { offerSymbol, offerDecimals, askSymbol, askDecimals } = props
   const { offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount } = props
   const { isLoading, mode } = props
   const { t } = useTranslation()
@@ -44,14 +44,14 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
       <FiatPrice {...props} 
         price={askAssetPrice} 
         priceDecimals={askDecimals} 
-        assetSymbol={askAsset}
+        assetSymbol={askSymbol}
       />
     )  
     // return (
     //   <Price {...props} 
     //     price={askAssetPrice} 
     //     priceDecimals={askDecimals} 
-    //     offerAsset={"USD"}
+    //     offerSymbol={"USD"}
     //   />
     // )
   }
@@ -61,15 +61,15 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
       <FiatPrice {...props} 
         price={offerAssetPrice} 
         priceDecimals={offerDecimals} 
-        assetSymbol={offerAsset}
+        assetSymbol={offerSymbol}
       />
     )  
     // return (
     //   <Price {...props} 
     //     price={offerAssetPrice} 
     //     priceDecimals={offerDecimals}
-    //     offerAsset={"USD"}
-    //     askAsset={offerAsset}
+    //     offerSymbol={"USD"}
+    //     askSymbol={offerSymbol}
     //   />
     // )
   }
@@ -84,13 +84,13 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
   }
 
   const renderUsdPrices = () => {
-    const offerLabel = offerAsset == 'GEX' ? 'Pool price' : 'Oracle price'
-    const askLabel = askAsset == 'GEX' ? 'Pool price' : 'Oracle price'
+    const offerLabel = offerSymbol == 'GEX' ? 'Pool price' : 'Oracle price'
+    const askLabel = askSymbol == 'GEX' ? 'Pool price' : 'Oracle price'
     return (
       <>
-        <dt>{offerAsset}{" "}{t(offerLabel)}</dt>
+        <dt>{offerSymbol}{" "}{t(offerLabel)}</dt>
         <dd>{!isLoading && renderUsdOfferPrice()}</dd>
-        <dt>{askAsset}{" "}{t(askLabel)}</dt>
+        <dt>{askSymbol}{" "}{t(askLabel)}</dt>
         <dd>{!isLoading && renderUsdAskPrice()}</dd>
       </>
     )
@@ -107,7 +107,7 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
   //         {!isLoading && (
   //           <Read
   //             amount={minimum_receive}
-  //             token={askAsset}
+  //             token={askSymbol}
   //             decimals={askDecimals}
   //           />
   //         )}
@@ -188,10 +188,10 @@ export default ExpectedPrice
 //   return minSpread?.toString()
 // }
 
-// const useTobinTax = (askAsset?: CoinDenom) => {
+// const useTobinTax = (askSymbol?: CoinDenom) => {
 //   const { data: oracleParams } = useOracleParams()
 //   const tobinTax = oracleParams?.whitelist.find(
-//     ({ name }) => name === askAsset
+//     ({ name }) => name === askSymbol
 //   )?.tobin_tax
 
 //   return tobinTax?.toString()
@@ -206,18 +206,18 @@ export default ExpectedPrice
 // }
 
 // const ExpectedPrice = ({ mode, input, ...props }: Props) => {
-//   const { offerAsset, askAsset } = props
+//   const { offerSymbol, askSymbol } = props
 //   const { price, rate, minimum_receive, payload, isLoading } = props
 //   const { t } = useTranslation()
 
 //   /* decimals */
 //   const { findDecimals } = useSingleSwap()
-//   const offerDecimals = findDecimals(offerAsset)
-//   const askDecimals = findDecimals(askAsset)
+//   const offerDecimals = findDecimals(offerSymbol)
+//   const askDecimals = findDecimals(askSymbol)
 
 //   /* query: native */
 //   const minSpread = useSwapSpread()
-//   const tobinTax = useTobinTax(askAsset)
+//   const tobinTax = useTobinTax(askSymbol)
 
 
 
@@ -241,7 +241,7 @@ export default ExpectedPrice
 
 //     const tooltip = (
 //       <>
-//         {[offerAsset, askAsset].some(isDenomLuna) && (
+//         {[offerSymbol, askSymbol].some(isDenomLuna) && (
 //           <p>
 //             {t("Minimum Luna swap spread: {{minSpread}}", {
 //               minSpread: readPercent(minSpread),
@@ -249,7 +249,7 @@ export default ExpectedPrice
 //           </p>
 //         )}
 
-//         {askAsset && isDenomTerra(askAsset) && tobinTax && (
+//         {askSymbol && isDenomTerra(askSymbol) && tobinTax && (
 //           <p>
 //             {t("Terra tobin tax: {{tobinTax}}", {
 //               tobinTax: readPercent(tobinTax),
@@ -269,7 +269,7 @@ export default ExpectedPrice
 //         </dt>
 //         <dd>
 //           {!isLoading && (
-//             <Read amount={spread} denom={askAsset} decimals={askDecimals} />
+//             <Read amount={spread} denom={askSymbol} decimals={askDecimals} />
 //           )}
 //         </dd>
 //       </>
@@ -296,7 +296,7 @@ export default ExpectedPrice
 //         <dt>{t("Trading fee")}</dt>
 //         <dd>
 //           {!isLoading && (
-//             <Read amount={fee} denom={askAsset} decimals={askDecimals} />
+//             <Read amount={fee} denom={askSymbol} decimals={askDecimals} />
 //           )}
 //         </dd>
 //       </>
@@ -326,8 +326,8 @@ export default ExpectedPrice
 //           {!isLoading && (
 //             <Read
 //               amount={minimum_receive}
-//               token={askAsset}
-//               decimals={findDecimals(askAsset)}
+//               token={askSymbol}
+//               decimals={findDecimals(askSymbol)}
 //             />
 //           )}
 //         </dd>

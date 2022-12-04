@@ -15,3 +15,9 @@ export const getPoolContracts = (networkID) => {
 }
 
 
+export const getMinterContract = (networkID) => {
+    // console.log("[CONFIG][contracts][getMinterContract] networkID, defaultID", networkID, defaultNetworkID)
+    const networkData = contracts[networkID] ?? contracts[defaultNetworkID]
+    // console.log("[CONFIG][contracts][getMinterContract] network data", networkData)
+    return networkData.scminter
+}

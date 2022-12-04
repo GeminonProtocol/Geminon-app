@@ -4,7 +4,7 @@ import { Card } from "components/layout"
 
 import { useAccount, useNetwork } from 'wagmi'
 
-import getAssetsList from "config/assets.js"
+import { getPoolAssetsList } from "config/assets.js"
 import { defaultNetworkID } from "config/networks"
 
 
@@ -25,7 +25,7 @@ const GLPContext = ({ children }: PropsWithChildren<{}>) => {
   
   const context = useMemo(() => {
     
-    const { nativeAsset, tokensList } = getAssetsList(networkID)
+    const { nativeAsset, tokensList } = getPoolAssetsList(networkID)
 
     // console.log("[GLPContext] networkId=", networkID, " connected chain id=", chain?.id)
     // console.log("[GLPContext] nativeAsset", nativeAsset)

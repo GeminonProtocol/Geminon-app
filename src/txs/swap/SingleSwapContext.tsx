@@ -293,12 +293,12 @@ export default SingleSwapContext
 
 
 /* type guard */
-export const validateSlippageParams = (
-  params: Partial<SlippageParams>
-): params is SlippageParams => {
-  const { input, slippageInput, ratio, ...assets } = params
-  return !!(validateAssets(assets) && input && slippageInput && ratio)
-}
+// export const validateSlippageParams = (
+//   params: Partial<SlippageParams>
+// ): params is SlippageParams => {
+//   const { input, slippageInput, ratio, ...assets } = params
+//   return !!(validateAssets(assets) && input && slippageInput && ratio)
+// }
 
 /* minimum received */
 export const calcMinimumReceive = (

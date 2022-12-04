@@ -1,12 +1,16 @@
 import ethIcon from "../styles/images/tokens/eth.png"
-import gexIcon from "../styles/images/tokens/gex.png"
+import bnbIcon from "../styles/images/tokens/bnb.png"
+import avaxIcon from "../styles/images/tokens/avax.png"
+
 import renbtcIcon from "../styles/images/tokens/renBTC.svg"
 import paxgIcon from "../styles/images/tokens/paxg.png"
 import xautIcon from "../styles/images/tokens/xaut.png"
-import bnbIcon from "../styles/images/tokens/bnb.png"
-import renbtcbnbIcon from "../styles/images/tokens/renbtc_bnb.png"
-import avaxIcon from "../styles/images/tokens/avax.png"
 import btcbIcon from "../styles/images/tokens/bbtc.png"
+
+import gexIcon from "../styles/images/tokens/gex.png"
+import usdiIcon from "../styles/images/tokens/usdi.png"
+import usdgIcon from "../styles/images/tokens/usdg.png"
+import euriIcon from "../styles/images/tokens/euri.png"
 
 import mainnetContracts from "./deployments/mainnet_contracts_info.json"
 import testnetContracts from "./deployments/testnet_contracts_info.json"
@@ -20,15 +24,26 @@ const contracts = isTesting ? testnetContracts : mainnetContracts
 export const defaultDecimals = 18
 
 
-export const gexUrlIcon = 'https://geminon.fi/tokens/gex.png'
-export const gexAddress = ''
-export const gexToken = {
+export const gexUrlIcon = 'https://geminon.fi/tokens/gex_128x128.png'
+
+const gexToken = {
     name: "Geminon",
     symbol: "GEX",
     key: "gex",
     decimals: defaultDecimals,
     uwdecimals: defaultDecimals,
     icon: gexIcon
+}
+
+const stableAssets = {
+    usdi: {
+        name: "CPI Indexed USD",
+        symbol: "USDI",
+        key: "usdi",
+        decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
+        icon: usdiIcon
+    },
 }
 
 const nativeAssets = {
@@ -95,7 +110,7 @@ const bnbAssets = {
         key: "renbtc",
         decimals: defaultDecimals,
         uwdecimals: 8,
-        icon: renbtcbnbIcon,
+        icon: renbtcIcon,
     },
 }
 
@@ -113,7 +128,12 @@ const avaxAssets = {
 
 
 
-const getAssetsList = (networkID) => {
+export const getGEXToken = (networkID) => {
+    const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
+    return {...gexToken, address: contracts[validNetID].tokens.gex}
+}
+
+export const getPoolAssetsList = (networkID) => {
     const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
     // console.log("[CONFIG][assets][getAssetsList] networkID, validNetID", networkID, validNetID)
     const tokensData = contracts[validNetID].tokens
@@ -121,6 +141,7 @@ const getAssetsList = (networkID) => {
     const mapNative = {
         1: nativeAssets.eth,
         4: nativeAssets.eth,
+        5: nativeAssets.eth,
         42: nativeAssets.eth,
         56: nativeAssets.bnb,
         97: nativeAssets.bnb,
@@ -131,6 +152,7 @@ const getAssetsList = (networkID) => {
     const mapAssets = {
         1: ethAssets,
         4: ethAssets,
+        5: ethAssets,
         42: ethAssets,
         56: bnbAssets,
         97: bnbAssets,
@@ -139,7 +161,7 @@ const getAssetsList = (networkID) => {
     }
 
     const nativeAsset = mapNative[validNetID]
-    const netTokens =  mapAssets[validNetID]
+    const netTokens = mapAssets[validNetID]
     
     const tokensList = []
     for (const key in netTokens) {        
@@ -153,6 +175,22 @@ const getAssetsList = (networkID) => {
     return {nativeAsset, tokensList}
 }
 
-export default getAssetsList
+
+export const getStableAssetsList = (networkID) => {
+    const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
+    // console.log("[CONFIG][assets][getMinterAssetsList] networkID, validNetID", networkID, validNetID)
+    const stablecoinsData = contracts[validNetID].stablecoins
+    
+    const stablecoinsList = []
+    for (const key in stableAssets) {        
+        stablecoinsList.push({
+            ...stableAssets[key],
+            address: stablecoinsData[key]
+        })
+    }
+
+    // console.log("[CONFIG][assets][getMinterAssetsList] nativeAsset, tokensList", nativeAsset, tokensList)
+    return stablecoinsList
+}
 
 

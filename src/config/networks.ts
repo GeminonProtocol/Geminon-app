@@ -5,8 +5,8 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 export const isTesting = process.env.REACT_APP_TESTNET == "true" ? true : false
 
-export const defaultNetworkID = isTesting ? 4 : 1
-export const validNetworkID = isTesting ? [4, 97, 43113] : [1, 56, 43114]
+export const defaultNetworkID = isTesting ? 5 : 1
+export const validNetworkID = isTesting ? [5, 97, 43113] : [1, 56, 43114] // Remember also map assets in networks.ts
 
 
 const avalancheChain: Chain = {
@@ -24,6 +24,7 @@ const avalancheChain: Chain = {
     avax2: 'https://avalancheapi.terminet.io/ext/bc/C/rpc',
     ankr: "https://rpc.ankr.com/avalanche",
     pokt: "https://avax-mainnet.gateway.pokt.network/v1/lb/62f2849a04ec160039ea9772",
+    pokt2: "https://avax-mainnet.gateway.pokt.network/v1/lb/41f1366a7b4823949b2696f0",
   },
   blockExplorers: {
     default: { name: 'SnowTrace', url: 'https://snowtrace.io' },
@@ -66,6 +67,7 @@ const bscChain: Chain = {
     binance4: 'https://bsc-dataseed4.binance.org/',
     ankr: "https://rpc.ankr.com/bsc",
     pokt: "https://bsc-mainnet.gateway.pokt.network/v1/lb/62f2849a04ec160039ea9772",
+    pokt2: "https://bsc-mainnet.gateway.pokt.network/v1/lb/41f1366a7b4823949b2696f0",
   },
   blockExplorers: {
     default: { name: 'BscScan', url: 'https://bscscan.com' },
@@ -94,7 +96,7 @@ const bsctestChain: Chain = {
 }
 
 const mainChains = [chain.mainnet, avalancheChain, bscChain]
-const testChains = [chain.rinkeby, fujiChain, bsctestChain]
+const testChains = [chain.goerli, fujiChain, bsctestChain]
 
 export const chainsUsed = isTesting ? testChains : mainChains
 
@@ -103,9 +105,9 @@ chainsUsed.forEach((chain) => blockExplorers.set(chain.id, chain.blockExplorers?
 
 
 export const rpcProviders = [
-  publicProvider({ priority: 0 }),
+  publicProvider({ priority: 2 }),
   jsonRpcProvider({
-    priority: 0,
+    priority: 2,
     rpc: (chain) => {
       if (chain.id == 1) return { http: "https://rpc.ankr.com/eth" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.ankr }
@@ -114,7 +116,7 @@ export const rpcProviders = [
     },
   }),
   jsonRpcProvider({
-    priority: 0,
+    priority: 2,
     rpc: (chain) => {
       if (chain.id == 1) return { http: "https://cloudflare-eth.com" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.avax1 }
@@ -123,7 +125,7 @@ export const rpcProviders = [
     },
   }),
   jsonRpcProvider({
-    priority: 0,
+    priority: 2,
     rpc: (chain) => {
       if (chain.id == 1) return { http: "https://eth-rpc.gateway.pokt.network" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.avax2 }
@@ -132,7 +134,7 @@ export const rpcProviders = [
     },
   }),
   jsonRpcProvider({
-    priority: 0,
+    priority: 2,
     rpc: (chain) => {
       if (chain.id == 1) return { http: "https://eth-mainnet.public.blastapi.io" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.avax1 }
@@ -141,7 +143,7 @@ export const rpcProviders = [
     },
   }),
   jsonRpcProvider({
-    priority: 0,
+    priority: 2,
     rpc: (chain) => {
       if (chain.id == 1) return { http: "https://cloudflare-eth.com" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.avax2 }
@@ -152,7 +154,18 @@ export const rpcProviders = [
   jsonRpcProvider({
     priority: 0,
     rpc: (chain) => {
+      if (chain.id == 1) return { http: "https://eth-mainnet.gateway.pokt.network/v1/lb/41f1366a7b4823949b2696f0" }
+      else if (chain.id == 5) return { http: "https://eth-goerli.gateway.pokt.network/v1/lb/41f1366a7b4823949b2696f0" }
+      else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.pokt2 }
+      else if (chain.id == bscChain.id) return { http: chain.rpcUrls.pokt2 }
+      else return null
+    },
+  }),
+  jsonRpcProvider({
+    priority: 1,
+    rpc: (chain) => {
       if (chain.id == 1) return { http: "https://eth-mainnet.gateway.pokt.network/v1/lb/62f2849a04ec160039ea9772" }
+      else if (chain.id == 5) return { http: "https://eth-goerli.gateway.pokt.network/v1/lb/62f2849a04ec160039ea9772" }
       else if (chain.id == avalancheChain.id) return { http: chain.rpcUrls.pokt }
       else if (chain.id == bscChain.id) return { http: chain.rpcUrls.pokt }
       else return null

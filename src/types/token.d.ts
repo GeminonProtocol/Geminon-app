@@ -42,16 +42,6 @@ interface TokenItemWithBalance extends TokenItem {
 }
 
 
-interface OldAssetEVM {
-  address?: TokenAddress
-  decimals: number
-  symbol: string
-  name?: string
-  icon?: string
-  balance: string
-  token: Token
-}
-
 type AssetEVM = {
   name: string,
   symbol: string,
@@ -64,10 +54,7 @@ type AssetEVM = {
 
 type TokenEVM = AssetEVM & {address: string}
 type PoolAsset = AssetEVM & {balance: string}
-
-interface ERC20Token extends OldAssetEVM {
-  address: TokenAddress
-}
+type PoolToken = TokenEVM & {balance: string}
 
 
 

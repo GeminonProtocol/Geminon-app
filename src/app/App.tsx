@@ -20,13 +20,6 @@ import Preferences from "./sections/Preferences"
 import SelectTheme from "./sections/SelectTheme"
 import ConnectWallet from "./sections/ConnectWallet"
 
-/* extra */
-// import LatestTx from "./sections/LatestTx"
-// import ValidatorButton from "./sections/ValidatorButton"
-// import DevTools from "./sections/DevTools"
-
-/* init */
-// import InitBankBalance from "./InitBankBalance"
 
 const App = () => {
   const { element: routes } = useNav()
@@ -47,7 +40,7 @@ const App = () => {
 
         <Actions>
           <section>
-            {/* <Refresh /> */}
+            <Refresh />
             <Preferences />
             <SelectTheme />
           </section>

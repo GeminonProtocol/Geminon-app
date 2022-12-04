@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next"
-import { Page } from "components/layout"
-import TxContext from "../TxContext"
-import MintContext from "./MintContext"
-import SingleMintContext from "./SingleMintContext"
+import { Page, Card } from "components/layout"
+import { ErrorBoundary, Wrong } from "components/feedback"
+
+import SCMinterContext from "./SCMinterContext"
 import MintForm from "./MintForm"
 
 
@@ -11,15 +11,15 @@ const MintTx = () => {
   const { t } = useTranslation()
   const description = t("Mint/redeem stablecoins using GEX")
 
+  const fallback = () => <Card><Wrong/></Card>
+
   return (
     <Page title={t("Stablecoins Minter")} small extra={description}>
-      <TxContext>
-        <MintContext>
-          <SingleMintContext>
-            <MintForm />
-          </SingleMintContext>
-        </MintContext>
-      </TxContext>
+      <ErrorBoundary fallback={fallback}>
+        <SCMinterContext>
+          <MintForm />
+        </SCMinterContext>
+      </ErrorBoundary>
     </Page>
   )
 }

@@ -2,14 +2,17 @@ import { useTranslation } from "react-i18next"
 import { useAccount } from 'wagmi'
 import { Button } from "components/general"
 
-import { gexToken, gexAddress, gexUrlIcon } from "config/assets"
+import { getGEXToken, gexUrlIcon } from "config/assets"
 
 
-const AddToken = () => {
+interface Props {networkID: number}
+
+const AddToken = (networkID: Props) => {
     const { t } = useTranslation()
     const { connector, isConnected } = useAccount()
+    const gexToken: TokenEVM = getGEXToken(networkID)
     
-    console.log("[AddToken] connector", connector?.name)
+    // console.log("[AddToken] connector", connector?.name)
     if (!isConnected || !connector) return null
 
     // Wagmi method has a bug. It doesn't work.
@@ -34,7 +37,7 @@ const AddToken = () => {
                     params: {
                         type: 'ERC20',
                         options: {
-                            address: gexAddress,
+                            address: gexToken.address,
                             symbol: gexToken.symbol,
                             decimals: gexToken.decimals,
                             image: gexUrlIcon, // A string url of the token logo

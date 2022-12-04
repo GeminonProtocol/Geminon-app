@@ -19,7 +19,7 @@ import { Contents } from "types/components"
 import { has } from "utils/num"
 import { getAmount, sortCoins } from "utils/coin"
 // import { getErrorMessage } from "utils/error"
-import { isBroadcastingState, latestTxState } from "data/queries/tx"
+// import { isBroadcastingState, latestTxState } from "data/queries/tx"
 
 
 import { Pre } from "components/general"
@@ -35,7 +35,7 @@ import styles from "./Tx.module.scss"
 
 
 import { validNetworkID } from 'config/networks'
-import { useFetchAllowance, useInfiniteApprove, useSubmitTx } from "./swap/useContractsEVM"
+import { useFetchAllowance, useInfiniteApprove, useSubmitTx } from "./swap/useContractsGLP"
 import { defaultDecimals } from "config/assets"
 
 
@@ -435,7 +435,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
           }}
           isOpen
         >
-          {/* {askAssetItem.symbol == "GEX" && <AddToken/>} */}
+          {askAssetItem.symbol == "GEX" && <AddToken networkID={networkID}/>}
         </Modal>
       )}
     </>

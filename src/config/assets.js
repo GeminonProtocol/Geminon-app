@@ -10,7 +10,7 @@ import btcbIcon from "../styles/images/tokens/bbtc.png"
 import gexIcon from "../styles/images/tokens/gex.png"
 import usdiIcon from "../styles/images/tokens/usdi.png"
 import usdgIcon from "../styles/images/tokens/usdg.png"
-import euriIcon from "../styles/images/tokens/euri.png"
+import eurgIcon from "../styles/images/tokens/eurg.png"
 
 import mainnetContracts from "./deployments/mainnet_contracts_info.json"
 import testnetContracts from "./deployments/testnet_contracts_info.json"
@@ -32,7 +32,8 @@ const gexToken = {
     key: "gex",
     decimals: defaultDecimals,
     uwdecimals: defaultDecimals,
-    icon: gexIcon
+    icon: gexIcon,
+    urlicon: gexUrlIcon
 }
 
 const stableAssets = {
@@ -42,7 +43,8 @@ const stableAssets = {
         key: "usdi",
         decimals: defaultDecimals,
         uwdecimals: defaultDecimals,
-        icon: usdiIcon
+        icon: usdiIcon,
+        urlicon: 'https://geminon.fi/tokens/usdi_128x128.png'
     },
 }
 
@@ -83,6 +85,7 @@ const ethAssets = {
         decimals: defaultDecimals,
         uwdecimals: 8,
         icon: renbtcIcon,
+        urlicon: 'https://geminon.fi/tokens/renBTC.svg'
     },
     paxg: {
         name: "PAX Gold",
@@ -91,6 +94,7 @@ const ethAssets = {
         decimals: defaultDecimals,
         uwdecimals: defaultDecimals,
         icon: paxgIcon,
+        urlicon: 'https://geminon.fi/tokens/paxg.png'
     },
     xaut: {
         name: "Tether Gold",
@@ -99,6 +103,7 @@ const ethAssets = {
         decimals: defaultDecimals,
         uwdecimals: 6,
         icon: xautIcon,
+        urlicon: 'https://geminon.fi/tokens/xaut.png'
     },
 }
 
@@ -111,6 +116,7 @@ const bnbAssets = {
         decimals: defaultDecimals,
         uwdecimals: 8,
         icon: renbtcIcon,
+        urlicon: 'https://geminon.fi/tokens/renBTC.svg'
     },
 }
 
@@ -123,6 +129,7 @@ const avaxAssets = {
         decimals: defaultDecimals,
         uwdecimals: 8,
         icon: btcbIcon,
+        urlicon: 'https://geminon.fi/tokens/bbtc.png'
     },
 }
 
@@ -194,3 +201,13 @@ export const getStableAssetsList = (networkID) => {
 }
 
 
+export const getAllTokensList = (networkID) => {
+    const { tokensList } = getPoolAssetsList(networkID)
+    const stablecoinsList = getStableAssetsList(networkID)
+    return [...tokensList, ...stablecoinsList]
+}
+
+export const getToken = (networkID, tokenSymbol) => {
+    const tokensList = getAllTokensList(networkID)
+    return tokensList.find((item) => item.symbol === tokenSymbol)
+}

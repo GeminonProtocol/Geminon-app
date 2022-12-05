@@ -40,7 +40,7 @@ interface TxValues {
 
 
 const MintForm = () => {
-  console.log("[MINTFORM] START")
+  // console.log("[MINTFORM] START")
   const { t } = useTranslation()
   const { isConnected } = useAccount()
   const { networkID, tokensList } = useSCM()
@@ -130,7 +130,7 @@ const MintForm = () => {
   const tradeInfo = useMinterInfo(offerAssetItem.symbol, inAmount, stableAsset.address, enableHooks)
   
   const { offerAssetPrice, askAssetPrice, feePerc, feeAmount, outAmount } = tradeInfo
-  console.log("[MINTFORM] Tradeinfo:", tradeInfo)
+  // console.log("[MINTFORM] Tradeinfo:", tradeInfo)
   
 
   
@@ -215,12 +215,12 @@ const MintForm = () => {
       offerAssetPrice, askAssetPrice, feeAmount, isLoading, mode:"SCMint"}
 
     if (!(isConnected && validateExpectedPriceProps(props))){
-      console.log("[MINTFORM][renderExpected] props NOT VALIDATED", props)
+      // console.log("[MINTFORM][renderExpected] props NOT VALIDATED", props)
       return null
     } 
     // (7-10) DATOS DEBAJO DEL PAR, APARECEN SOLO
     // SI SE INTRODUCE UNA CANTIDAD ARRIBA PARA CAMBIAR
-    console.log("[MINTFORM][renderExpected] props VALIDATED", props)
+    // console.log("[MINTFORM][renderExpected] props VALIDATED", props)
     return <ExpectedPrice {...props} isLoading={isFetching} />
   }
 
@@ -299,7 +299,7 @@ const MintForm = () => {
           {renderExpected()}
           
           {/* (11) DETALLES FEE. COMPONENTE renderFee() DE Tx */}
-          {isConnected && fee.render()}
+          {/* {isConnected && fee.render()} */}
 
           {/* {( Banner rojo error parte inferior caja
             <FormError>{t("Pair does not exist")}</FormError>

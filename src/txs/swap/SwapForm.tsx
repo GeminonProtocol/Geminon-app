@@ -301,7 +301,7 @@ const SwapForm = () => {
                 <AssetReadOnly>
                   {outAmount ? (
                     <Read
-                      amount={outAmount - feeAmount}
+                      amount={outAmount}
                       decimals={askDecimals}
                       approx
                     />
@@ -367,4 +367,10 @@ const calcMinimumReceived = (expOutAmount: string, slippageInput: number) => {
   // const round_value = value.integerValue(BigNumber.ROUND_FLOOR).toString()
   // console.log("[calcMinimumReceived] expOutAmount, value, round_value", expOutAmount, value)//, round_value)
   return value
+}
+
+const diffStrings = (minuend: string, subtrahend: string) => {
+  const num1 = new BigNumber(minuend)
+  const num2 = new BigNumber(subtrahend)
+  return num1.minus(num2).toFixed(0)
 }

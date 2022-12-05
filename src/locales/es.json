@@ -57,6 +57,8 @@
     "Queued": "En cola"
   },
   "Success": {
+    "Approved": "Aprobado",
+    "Success": "Exitoso",
     "Success!": "Éxito!"
   },
   "Failure": {
@@ -80,6 +82,7 @@
     "Show address as QR code": "Mostrar dirección como código QR",
     "Wrong network": "Red incorrecta",
     "Add token to wallet": "Añadir token al monedero",
+    "Add {{tokenSymbol}} to wallet": "Añadir {{tokenSymbol}} al monedero",
     "This module is not yet activated": "Este módulo no está activado aún",
     "Module under construction": "Módulo en construcción",
     "This module is expected to be deployed in early Q4 2022": "Se espera que este módulo sea desplegado a principios del 4T de 2022",
@@ -169,7 +172,8 @@
     "Provide collateral to mint GEX": "Proporcione colateral para acuñar GEX",
     "Price impact": "Impacto en el precio",
     "Stablecoins Minter": "Acuñador de moneda estable",
-    "Mint/redeem stablecoins using GEX": "Acuñar/canjear moneda estable usando GEX"
+    "Mint/redeem stablecoins using GEX": "Acuñar/canjear moneda estable usando GEX",
+    "Peg value": "Valor de referencia"
   },
   "Stake": {
     "Delegations": "Delegaciones",
@@ -183,7 +187,7 @@
     "Voting power": "Poder de voto",
     "Self delegation": "Autodelegación",
     "Commission": "Comisión",
-    "Uptime": "Tempo activo",
+    "Uptime": "Tiempo activo",
     "Validator details": "Información del validador",
     "Operator address": "Dirección del operador",
     "Account address": "Dirección de la cuenta",

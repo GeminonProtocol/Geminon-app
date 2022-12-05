@@ -1,31 +1,30 @@
 import BigNumber from "bignumber.js"
 import { Read } from "components/token"
 import { SafeRead } from "components/token/Read"
-// import { SwapAssets } from "../useSwapUtils"
 
 
 interface Props {
-  offerAsset?: string
-  askAsset?: string
+  offerSymbol?: string
+  askSymbol?: string
   price?: string // expected in wei units
   priceDecimals?: number
   className?: string
 }
 
-const Price = ({ price, priceDecimals=18, offerAsset, askAsset, className }: Props) => {
-  if (!price || !offerAsset || !askAsset || price=="0") return null
+const Price = ({ price, priceDecimals=18, offerSymbol, askSymbol, className }: Props) => {
+  if (!price || !offerSymbol || !askSymbol || price=="0") return null
 
   const smallNumPrice =  new BigNumber(price).shiftedBy(-priceDecimals).toNumber()
   
   return smallNumPrice > 1 ? (
     <span className={className}>
-      <Read amount={String(1)} token={askAsset} decimals={0} /> ={" "}
-      <Read amount={String(smallNumPrice)} token={offerAsset} decimals={0} auto />
+      <Read amount={String(1)} token={askSymbol} decimals={0} /> ={" "}
+      <Read amount={String(smallNumPrice)} token={offerSymbol} decimals={0} auto />
     </span>
   ) : (
     <span className={className}>
-      <Read amount={String(1)} token={offerAsset} decimals={0} /> ={" "}
-      <Read amount={String(1 / smallNumPrice)} token={askAsset} decimals={0} auto />
+      <Read amount={String(1)} token={offerSymbol} decimals={0} /> ={" "}
+      <Read amount={String(1 / smallNumPrice)} token={askSymbol} decimals={0} auto />
     </span>
   )
 }
@@ -33,7 +32,7 @@ const Price = ({ price, priceDecimals=18, offerAsset, askAsset, className }: Pro
 export default Price
 
 
-interface Props {
+interface FiatProps {
   price?: string // expected in wei units
   priceDecimals?: number
   assetSymbol?: string
@@ -41,7 +40,7 @@ interface Props {
   className?: string
 }
 
-export const FiatPrice = ({ price, priceDecimals=18, assetSymbol, fiatSymbol="USD", className }: Props) => {
+export const FiatPrice = ({ price, priceDecimals=18, assetSymbol, fiatSymbol="USD", className }: FiatProps) => {
   if (!price || !assetSymbol || !fiatSymbol || price=="0") return null
 
   const etherPrice =  new BigNumber(price).shiftedBy(-priceDecimals).toFixed()
@@ -53,28 +52,3 @@ export const FiatPrice = ({ price, priceDecimals=18, assetSymbol, fiatSymbol="US
     </span>
   )
 }
-
-
-
-
-
-// interface Props extends SwapAssets {
-//   price?: Price
-//   className?: string
-// }
-
-// const Price = ({ price, offerAsset, askAsset, className }: Props) => {
-//   if (!price) return null
-
-//   return price > 1 ? (
-//     <span className={className}>
-//       <Read amount={String(1)} token={askAsset} decimals={0} /> ={" "}
-//       <Read amount={String(price)} token={offerAsset} decimals={0} auto />
-//     </span>
-//   ) : (
-//     <span className={className}>
-//       <Read amount={String(1)} token={offerAsset} decimals={0} /> ={" "}
-//       <Read amount={String(1 / price)} token={askAsset} decimals={0} auto />
-//     </span>
-//   )
-// }

@@ -414,7 +414,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
       {approveStatus.isSuccess && submitting && !isApproved && (
         <Modal
-          {...{title: "Approved"}}
+          {...{title: t("Approved")}}
           icon={<CheckIcon fontSize="inherit" className="success" />}
           onRequestClose={() => {
             setSubmitting(false)
@@ -426,7 +426,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
 
       {submitStatus.isSuccess && submitting && isApproved && (
         <Modal
-          {...{title: "Success"}}
+          {...{title: t("Success")}}
           icon={<CheckCircleOutlineIcon fontSize="inherit" className="success" />}
           onRequestClose={() => {
             setSubmitting(false)
@@ -435,7 +435,8 @@ function Tx<TxValues>(props: Props<TxValues>) {
           }}
           isOpen
         >
-          {askAssetItem.symbol == "GEX" && <AddToken networkID={networkID}/>}
+          {askAssetItem.symbol != nativeSymbol && 
+            <AddToken networkID={networkID} tokenSymbol={askAssetItem.symbol}/>}
         </Modal>
       )}
     </>

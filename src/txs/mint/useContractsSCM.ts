@@ -11,7 +11,7 @@ import { defaultNetworkID } from "config/networks"
 
 
 export const useReadBalances = (tokensList: TokenEVM[]) => {
-  console.log("[useReadBalances] tokensList", tokensList)
+  // console.log("[useReadBalances] tokensList", tokensList)
   const { address, isConnected } = useAccount()
 
   const contracts = tokensList.map((asset) => {
@@ -27,13 +27,13 @@ export const useReadBalances = (tokensList: TokenEVM[]) => {
   const { data, refetch } = useContractReads({ contracts })
   
   const tokensPool: PoolToken[] = tokensList.map((asset, index) => {
-    console.log("[useReadBalances] asset / balance", asset.symbol, new BigNumber(data?.[index]?.toString() ?? "0").shiftedBy(18-asset.uwdecimals).toFixed(0))
+    // console.log("[useReadBalances] asset / balance", asset.symbol, new BigNumber(data?.[index]?.toString() ?? "0").shiftedBy(18-asset.uwdecimals).toFixed(0))
     return {
       ...asset, 
       balance: new BigNumber(data?.[index]?.toString() ?? "0").shiftedBy(18-asset.uwdecimals).toFixed(0)
     }
   })
-  console.log("[useReadBalances] assetsList", tokensPool)
+  // console.log("[useReadBalances] assetsList", tokensPool)
 
   return {assetsList: tokensPool, refetchTokens: refetch}
 }
@@ -57,7 +57,7 @@ const useMinterContract = () => {
 export const useMinterInfo = (offerSymbol:string, offerAmount:string, stablecoinAddress:string, enabled:boolean) => {
   const { isConnected } = useAccount()
   const { minterAddress, abi } = useMinterContract()
-  console.log("[useMinterInfo] params:", offerSymbol, offerAmount, stablecoinAddress, enabled)
+  // console.log("[useMinterInfo] params:", offerSymbol, offerAmount, stablecoinAddress, enabled)
   
   const contract = offerSymbol === "GEX" ? 
   {
@@ -75,8 +75,8 @@ export const useMinterInfo = (offerSymbol:string, offerAmount:string, stablecoin
   }
 
   const { data, refetch, ...status } = useContractRead(contract)
-  console.log("[useMinterInfo] status, contract Read:", status, data)
-  if (status.error) console.log("[useMinterInfo] Contract read ERROR:", data, status.error)
+  // console.log("[useMinterInfo] status, contract Read:", status, data)
+  // if (status.error) // console.log("[useMinterInfo] Contract read ERROR:", data, status.error)
   
   return { 
     offerAssetPrice: data?.[0].toString(),
@@ -90,7 +90,7 @@ export const useMinterInfo = (offerSymbol:string, offerAmount:string, stablecoin
 
 
 export const useFetchAllowance = (tokenAddress:string, enabled:boolean) => {
-  console.log("[useFetchAllowance] tokenAddress, enabled:", tokenAddress, enabled)
+  // console.log("[useFetchAllowance] tokenAddress, enabled:", tokenAddress, enabled)
   const { address, isConnected } = useAccount()
   const { minterAddress } = useMinterContract()
   
@@ -103,14 +103,14 @@ export const useFetchAllowance = (tokenAddress:string, enabled:boolean) => {
     }
   
   const { data, refetch, ...status } = useContractRead(contract)
-  console.log("[useFetchAllowance] allowedAmount, status:", data, status)
+  // console.log("[useFetchAllowance] allowedAmount, status:", data, status)
   
   return {allowedAmount: data?.toString(), refetchAllowance: refetch}
 }
   
   
 export const useInfiniteApprove = (tokenAddress:string, enabled:boolean) => {
-  console.log("[useInfiniteApprove] tokenAddress, enabled:", tokenAddress, enabled)  
+  // console.log("[useInfiniteApprove] tokenAddress, enabled:", tokenAddress, enabled)  
   const { isConnected } = useAccount()
   const { minterAddress } = useMinterContract()
 
@@ -125,7 +125,7 @@ export const useInfiniteApprove = (tokenAddress:string, enabled:boolean) => {
   }
   
   const { config, ...prepareState } = usePrepareContractWrite(contract)
-  if (prepareState.error) console.log("[useInfiniteApprove] Prepare contract ERROR:", prepareState.error)
+  // if (prepareState.error) // console.log("[useInfiniteApprove] Prepare contract ERROR:", prepareState.error)
   
   const { data, write, ...writeState } = useContractWrite(config)
   
@@ -135,14 +135,14 @@ export const useInfiniteApprove = (tokenAddress:string, enabled:boolean) => {
   })
   
   const state = combineState(writeState, waitState)
-  console.log("[useInfiniteApprove] Combined state, enabled:", state, enabled)
+  // console.log("[useInfiniteApprove] Combined state, enabled:", state, enabled)
 
   return { write, ...state }
 }
   
   
 export const useSubmitTx = (offerSymbol:string, stablecoinAddress:string, inAmount:string, enabled:boolean) => {
-  console.log("[useSubmitTx] offerSymbol, inAmount, stablecoinAddress, enabled:", offerSymbol, inAmount, stablecoinAddress, enabled)
+  // console.log("[useSubmitTx] offerSymbol, inAmount, stablecoinAddress, enabled:", offerSymbol, inAmount, stablecoinAddress, enabled)
   const { isConnected } = useAccount()
   const { minterAddress, abi } = useMinterContract()
 
@@ -158,8 +158,8 @@ export const useSubmitTx = (offerSymbol:string, stablecoinAddress:string, inAmou
 
   const { config, ...prepareState } = usePrepareContractWrite(contract)
   if (prepareState.error) {
-    console.log("[useSubmitTx] Prepare contract ERROR:", prepareState.error)
-    console.log("[useSubmitTx] Prepare contract CONFIG:", config)
+    // console.log("[useSubmitTx] Prepare contract ERROR:", prepareState.error)
+    // console.log("[useSubmitTx] Prepare contract CONFIG:", config)
   }
   
   const { data, write, ...writeState } = useContractWrite(config)
@@ -170,7 +170,7 @@ export const useSubmitTx = (offerSymbol:string, stablecoinAddress:string, inAmou
   })
   
   const state = combineState(writeState, waitState)
-  console.log("[useSubmitTx] Combined state, enabled:", state, enabled)
+  // console.log("[useSubmitTx] Combined state, enabled:", state, enabled)
 
   return { write, ...state }
 }

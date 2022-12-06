@@ -25,6 +25,3 @@ const MintTx = () => {
 }
 
 export default MintTx
-
-
-

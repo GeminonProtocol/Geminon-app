@@ -7,6 +7,7 @@ import { Navigate, useNavigate, useRoutes } from "react-router-dom"
 // import { ReactComponent as HistoryIcon } from "styles/images/menu/History.svg"
 import { ReactComponent as SwapIcon } from "styles/images/menu/Swap.svg"
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { ReactComponent as StakeIcon } from "styles/images/menu/Stake.svg"
 // import { ReactComponent as GovernanceIcon } from "styles/images/menu/Governance.svg"
 // import { ReactComponent as ContractIcon } from "styles/images/menu/Contract.svg"
@@ -28,8 +29,10 @@ import { ReactComponent as StakeIcon } from "styles/images/menu/Stake.svg"
 /* txs */
 // import SendTx from "txs/send/SendTx"
 // import TransferCW721Tx from "txs/wasm/TransferCW721Tx"
-import SwapTx from "txs/swap/SwapTx"
+import CollatTx from "txs/swap/CollatTx"
 import MintTx from "txs/mint/MintTx"
+import SwapTx from "txs/stableswap/SwapTx"
+
 // import SwapMultipleTx from "txs/swap/SwapMultipleTx"
 // import StakeTx from "txs/stake/StakeTx"
 // import WithdrawRewardsTx from "txs/stake/WithdrawRewardsTx"
@@ -69,7 +72,7 @@ export const useNav = () => {
   const menu = [
     {
       path: "/collateral",
-      element: <SwapTx />,
+      element: <CollatTx />,
       title: t("Collateral"),
       icon: <StakeIcon {...ICON_SIZE} />
     },
@@ -81,9 +84,15 @@ export const useNav = () => {
     },
     {
       path: "/swap",
-      element: <UnderConstruction />,
+      element: <SwapTx />,
       title: t("StableSwap"),
       icon: <SwapIcon {...ICON_SIZE} />
+    },
+    {
+      path: "/lb",
+      element: <UnderConstruction when={'Q1 2023'}/>,
+      title: t("Lend & Borrow"),
+      icon: <AccountBalanceIcon {...ICON_SIZE} />
     },
   ]
 

@@ -46,6 +46,15 @@ const stableAssets = {
         icon: usdiIcon,
         urlicon: 'https://geminon.fi/tokens/usdi_128x128.png'
     },
+    usdg: {
+        name: "Geminon US Dollar",
+        symbol: "USDG",
+        key: "usdg",
+        decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
+        icon: usdgIcon,
+        urlicon: 'https://geminon.fi/tokens/usdg_128x128.png'
+    },
 }
 
 const nativeAssets = {

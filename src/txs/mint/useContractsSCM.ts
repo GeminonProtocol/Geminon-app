@@ -88,6 +88,34 @@ export const useMinterInfo = (offerSymbol:string, offerAmount:string, stablecoin
 }
 
 
+export const useSwapInfo = (offerAmount:string, offerAddress:string, askAddress:string, enabled:boolean) => {
+  const { isConnected } = useAccount()
+  const { minterAddress, abi } = useMinterContract()
+  // console.log("[useSwapInfo] params:", offerAmount, offerAddress, askAddress, enabled)
+  
+  const contract = {
+    addressOrName: minterAddress,
+    contractInterface: abi,
+    functionName: "getStableSwapInfo",
+    args: [offerAmount, offerAddress, askAddress],
+    enabled: isConnected && enabled
+  }
+
+  const { data, refetch, ...status } = useContractRead(contract)
+  // console.log("[useSwapInfo] status, contract Read:", status, data)
+  // if (status.error) // console.log("[useSwapInfo] Contract read ERROR:", data, status.error)
+  
+  return { 
+    offerAssetPrice: data?.[0].toString(),
+    askAssetPrice: data?.[1].toString(),
+    askAssetRatio: data?.[2].toString(),
+    feePerc: data?.[3].toString(),  // Number as string in 1e6 units
+    feeAmount: data?.[4].toString(),
+    outAmount: data?.[5].toString()
+  }
+}
+
+
 
 export const useFetchAllowance = (tokenAddress:string, enabled:boolean) => {
   // console.log("[useFetchAllowance] tokenAddress, enabled:", tokenAddress, enabled)
@@ -171,6 +199,39 @@ export const useSubmitTx = (offerSymbol:string, stablecoinAddress:string, inAmou
   
   const state = combineState(writeState, waitState)
   // console.log("[useSubmitTx] Combined state, enabled:", state, enabled)
+
+  return { write, ...state }
+}
+
+
+export const useSubmitSwapTx = (offerAddress:string, askAddress:string, inAmount:string, enabled:boolean) => {
+  // console.log("[useSubmitSwapTx] offerAddress, askAddress, inAmount, enabled:", offerAddress, askAddress, inAmount, enabled)
+  const { isConnected } = useAccount()
+  const { minterAddress, abi } = useMinterContract()
+
+  const contract = {
+    addressOrName: minterAddress,
+    contractInterface: abi,
+    functionName: 'stableSwap',
+    args: [offerAddress, askAddress, inAmount],
+    enabled: isConnected && enabled
+  }
+
+  const { config, ...prepareState } = usePrepareContractWrite(contract)
+  if (prepareState.error) {
+    // console.log("[useSubmitSwapTx] Prepare contract ERROR:", prepareState.error)
+    // console.log("[useSubmitSwapTx] Prepare contract CONFIG:", config)
+  }
+  
+  const { data, write, ...writeState } = useContractWrite(config)
+  
+  const { ...waitState } = useWaitForTransaction({ 
+    hash: data?.hash,
+    confirmations: 1, 
+  })
+  
+  const state = combineState(writeState, waitState)
+  // console.log("[useSubmitSwapTx] Combined state, enabled:", state, enabled)
 
   return { write, ...state }
 }

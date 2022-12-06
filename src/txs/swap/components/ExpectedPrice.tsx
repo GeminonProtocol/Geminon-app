@@ -70,7 +70,6 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
     return (
       <>
         {renderUsdPrices()}
-
         {!!askAssetRatio && (
           <>
             <dt>{t("Pair price")}</dt>
@@ -85,8 +84,6 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
     return (
       <>
         {renderUsdPrices()}
-
-        {/* COMPONENTE READ MATEMÁTICAS INSEGURAS */}
         <dt>{t("Trading fee")}</dt>
         <dd>
           {!isLoading && (
@@ -97,11 +94,27 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
     )
   }
 
+  const renderStableSwap = () => {
+    return (
+      <>
+        {renderUsdPrices()}
+        <dt>{t("Pair price")}</dt>
+        <dd>{renderPrice(askAssetRatio)}</dd>
+        <dt>{t("Trading fee")}</dt>
+        <dd>
+          <Read amount={feeAmount} token={askSymbol} decimals={askDecimals} />
+        </dd>
+      </>
+    )
+  }
+
   // (7-10) VALORES ESPERADOS DEL SWAP
   return (
     <dl>
       {mode == "SCMint" ? 
-       renderSCMint() : 
+       renderSCMint() :
+       mode == "Swap" ? 
+       renderStableSwap() :
        renderGLPswap()
       }
     </dl>

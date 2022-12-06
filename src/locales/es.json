@@ -18,8 +18,7 @@
     "Fiat": "Fiat",
     "APY": "TAE",
     "Block": "Bloque",
-    "Network": "Red",
-    "Collateral": "Colateral"
+    "Network": "Red"
   },
   "Form": {
     "Amount": "Cantidad",
@@ -85,7 +84,7 @@
     "Add {{tokenSymbol}} to wallet": "Añadir {{tokenSymbol}} al monedero",
     "This module is not yet activated": "Este módulo no está activado aún",
     "Module under construction": "Módulo en construcción",
-    "This module is expected to be deployed in early Q4 2022": "Se espera que este módulo sea desplegado a principios del 4T de 2022",
+    "This module is expected to be deployed in {{when}}": "Se espera que este módulo sea desplegado en el {{when}}",
     "Geminon Protocol will launch on September 25. More info on our Telegram channel: ": "El Protocolo Geminon se lanzará el 25 de septiembre. Más información en nuestro canal de Telegram: "
   },
   "Units": {
@@ -116,6 +115,8 @@
     "Install extension": "Instalar extensión"
   },
   "Menu": {
+    "Collateral": "Colateral",
+    "Lend & Borrow": "Préstamos",
     "Dashboard": "Tablero de mandos",
     "Wallet": "Cartera",
     "NFT": "NFT",
@@ -173,7 +174,9 @@
     "Price impact": "Impacto en el precio",
     "Stablecoins Minter": "Acuñador de moneda estable",
     "Mint/redeem stablecoins using GEX": "Acuñar/canjear moneda estable usando GEX",
-    "Peg value": "Valor de referencia"
+    "Peg value": "Valor de referencia",
+    "Stablecoins Swap": "Intercambio de moneda estable",
+    "Swap stablecoins with zero slippage": "Intercambiar monedas estables sin deslizamiento"
   },
   "Stake": {
     "Delegations": "Delegaciones",

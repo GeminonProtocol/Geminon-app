@@ -286,7 +286,7 @@ const MintForm = () => {
               addonAfter={
                 <AssetReadOnly>
                   <Read
-                    amount={outAmount - feeAmount}
+                    amount={outAmount}
                     decimals={askDecimals}
                     approx
                   />

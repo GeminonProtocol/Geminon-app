@@ -9,8 +9,8 @@ import btcbIcon from "../styles/images/tokens/bbtc.png"
 
 import gexIcon from "../styles/images/tokens/gex.png"
 import usdiIcon from "../styles/images/tokens/usdi.png"
-import usdgIcon from "../styles/images/tokens/usdg.png"
-import eurgIcon from "../styles/images/tokens/eurg.png"
+// import usdgIcon from "../styles/images/tokens/usdg.png"
+// import eurgIcon from "../styles/images/tokens/eurg.png"
 
 import mainnetContracts from "./deployments/mainnet_contracts_info.json"
 import testnetContracts from "./deployments/testnet_contracts_info.json"
@@ -46,15 +46,15 @@ const stableAssets = {
         icon: usdiIcon,
         urlicon: 'https://geminon.fi/tokens/usdi_128x128.png'
     },
-    usdg: {
-        name: "Geminon US Dollar",
-        symbol: "USDG",
-        key: "usdg",
-        decimals: defaultDecimals,
-        uwdecimals: defaultDecimals,
-        icon: usdgIcon,
-        urlicon: 'https://geminon.fi/tokens/usdg_128x128.png'
-    },
+    // usdg: {
+    //     name: "Geminon US Dollar",
+    //     symbol: "USDG",
+    //     key: "usdg",
+    //     decimals: defaultDecimals,
+    //     uwdecimals: defaultDecimals,
+    //     icon: usdgIcon,
+    //     urlicon: 'https://geminon.fi/tokens/usdg_128x128.png'
+    // },
 }
 
 const nativeAssets = {

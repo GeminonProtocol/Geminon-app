@@ -82,24 +82,24 @@ export const useNav = () => {
       title: t("StableMint"),
       icon: <AttachMoneyIcon {...ICON_SIZE} />
     },
-    {
-      path: "/swap",
-      element: <UnderConstruction when={'Q4 2022'}/>,
-      title: t("StableSwap"),
-      icon: <SwapIcon {...ICON_SIZE} />
-    },
     // {
     //   path: "/swap",
-    //   element: <SwapTx />,
+    //   element: <UnderConstruction when={'Q4 2022'}/>,
     //   title: t("StableSwap"),
     //   icon: <SwapIcon {...ICON_SIZE} />
     // },
-    // {
-    //   path: "/lb",
-    //   element: <UnderConstruction when={'Q1 2023'}/>,
-    //   title: t("Lend & Borrow"),
-    //   icon: <AccountBalanceIcon {...ICON_SIZE} />
-    // },
+    {
+      path: "/swap",
+      element: <SwapTx />,
+      title: t("StableSwap"),
+      icon: <SwapIcon {...ICON_SIZE} />
+    },
+    {
+      path: "/lb",
+      element: <UnderConstruction when={'Q1 2023'}/>,
+      title: t("Lend & Borrow"),
+      icon: <AccountBalanceIcon {...ICON_SIZE} />
+    },
   ]
 
   const routes = [

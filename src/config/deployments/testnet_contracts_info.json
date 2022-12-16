@@ -6330,7 +6330,8 @@
         },
         "stablecoins": {
             "usdi": "0xac39Fd0e90152426FDD33348040ED5277F37b9dF",
-            "usdg": "0xF7b21ab50ebc985c92515752BF1E4407ACD12Cfa"
+            "usdg": "0xF7b21ab50ebc985c92515752BF1E4407ACD12Cfa",
+            "euri": "0x2eaC43Fe68c5B9bFf782EDE5bA0DBB393d66a544"
         },
         "scminter": {
             "address": "0x2F36a54eae97a4239B184686ABa046B606fcd66d",
@@ -11910,6 +11911,7 @@
         },
         "stablecoins": {
             "usdi": "0x8480a529F3081EC751Ee1FA4636B580069EEbd97",
+            "euri": "0x2D4C4D992D580D63F51901FBe8620Cd8178F9121",
             "usdg": "0xF1a39C85dA34F4973cE22D7f8134E5232352405C"
         },
         "scminter": {
@@ -17490,6 +17492,7 @@
         },
         "stablecoins": {
             "usdi": "0x53D4d29b7c6bf8ee1F655376856e70EA09695e7A",
+            "euri": "0x99d00a87DA812F26fd4e2f916c3921C5664923CD",
             "usdg": "0xcd4Ee0C8eC161b3646D1f660bBE046e9Ebb68cE0"
         },
         "scminter": {

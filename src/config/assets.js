@@ -9,6 +9,7 @@ import btcbIcon from "../styles/images/tokens/bbtc.png"
 
 import gexIcon from "../styles/images/tokens/gex.png"
 import usdiIcon from "../styles/images/tokens/usdi.png"
+import euriIcon from "../styles/images/tokens/euri.png"
 // import usdgIcon from "../styles/images/tokens/usdg.png"
 // import eurgIcon from "../styles/images/tokens/eurg.png"
 
@@ -46,6 +47,15 @@ const stableAssets = {
         icon: usdiIcon,
         urlicon: 'https://geminon.fi/tokens/usdi_128x128.png'
     },
+    euri: {
+        name: "HICP Indexed Euro",
+        symbol: "EURI",
+        key: "euri",
+        decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
+        icon: euriIcon,
+        urlicon: 'https://geminon.fi/tokens/euri_128x128.png'
+    },
     // usdg: {
     //     name: "Geminon US Dollar",
     //     symbol: "USDG",
@@ -54,6 +64,15 @@ const stableAssets = {
     //     uwdecimals: defaultDecimals,
     //     icon: usdgIcon,
     //     urlicon: 'https://geminon.fi/tokens/usdg_128x128.png'
+    // },
+    // eurg: {
+    //     name: "Geminon Euro",
+    //     symbol: "EURG",
+    //     key: "eurg",
+    //     decimals: defaultDecimals,
+    //     uwdecimals: defaultDecimals,
+    //     icon: eurgIcon,
+    //     urlicon: 'https://geminon.fi/tokens/eurg_128x128.png'
     // },
 }
 

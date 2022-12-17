@@ -4244,7 +4244,8 @@
             ]
         },
         "stablecoins": {
-            "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05"
+            "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05",
+            "euri": "0xcbB00E1f27a59735f390F3263d335A112f10Db8b"
         },
         "scminter": {
             "address": "0xeF0dfe8cF872B4dF3681Ad37A17Ef5e2D473B877",
@@ -9810,7 +9811,8 @@
             ]
         },
         "stablecoins": {
-            "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05"
+            "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05",
+            "euri": "0xcbB00E1f27a59735f390F3263d335A112f10Db8b"
         },
         "scminter": {
             "address": "0xeF0dfe8cF872B4dF3681Ad37A17Ef5e2D473B877",
@@ -17987,7 +17989,8 @@
             ]
         },
         "stablecoins": {
-            "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05"
+            "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05",
+            "euri": "0xcbB00E1f27a59735f390F3263d335A112f10Db8b"
         },
         "scminter": {
             "address": "0xeF0dfe8cF872B4dF3681Ad37A17Ef5e2D473B877",

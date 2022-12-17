@@ -50,7 +50,7 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
 
   const renderUsdPrices = () => {
     const gexLabel = mode == "SCMint" ? 'Oracle price' : 'Pool price'
-    const otherLabel = mode == "SCMint" ? 'Peg value' : 'Oracle price'
+    const otherLabel = mode == "SCMint" || mode == "Swap" ? 'Peg value' : 'Oracle price'
     const offerLabel = offerSymbol == 'GEX' ? gexLabel : otherLabel
     const askLabel = askSymbol == 'GEX' ? gexLabel : otherLabel
     return (

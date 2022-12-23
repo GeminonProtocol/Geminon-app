@@ -2,7 +2,7 @@ import ethIcon from "../styles/images/tokens/eth.png"
 import bnbIcon from "../styles/images/tokens/bnb.png"
 import avaxIcon from "../styles/images/tokens/avax.png"
 
-import renbtcIcon from "../styles/images/tokens/renBTC.svg"
+// import renbtcIcon from "../styles/images/tokens/renBTC.svg"
 import paxgIcon from "../styles/images/tokens/paxg.png"
 import xautIcon from "../styles/images/tokens/xaut.png"
 import btcbIcon from "../styles/images/tokens/bbtc.png"
@@ -11,7 +11,7 @@ import gexIcon from "../styles/images/tokens/gex.png"
 import usdiIcon from "../styles/images/tokens/usdi.png"
 import euriIcon from "../styles/images/tokens/euri.png"
 import usdgIcon from "../styles/images/tokens/usdg.png"
-// import eurgIcon from "../styles/images/tokens/eurg.png"
+import eurgIcon from "../styles/images/tokens/eurg.png"
 
 import mainnetContracts from "./deployments/mainnet_contracts_info.json"
 import testnetContracts from "./deployments/testnet_contracts_info.json"
@@ -65,15 +65,15 @@ const stableAssets = {
         icon: usdgIcon,
         urlicon: 'https://geminon.fi/tokens/usdg_128x128.png'
     },
-    // eurg: {
-    //     name: "Geminon Euro",
-    //     symbol: "EURG",
-    //     key: "eurg",
-    //     decimals: defaultDecimals,
-    //     uwdecimals: defaultDecimals,
-    //     icon: eurgIcon,
-    //     urlicon: 'https://geminon.fi/tokens/eurg_128x128.png'
-    // },
+    eurg: {
+        name: "Geminon Euro",
+        symbol: "EURG",
+        key: "eurg",
+        decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
+        icon: eurgIcon,
+        urlicon: 'https://geminon.fi/tokens/eurg_128x128.png'
+    },
 }
 
 const nativeAssets = {
@@ -106,15 +106,15 @@ const nativeAssets = {
 
 const ethAssets = {
     gex: gexToken, 
-    renbtc: {
-        name: "Ren Bitcoin",
-        symbol: "RENBTC",
-        key: "renbtc",
-        decimals: defaultDecimals,
-        uwdecimals: 8,
-        icon: renbtcIcon,
-        urlicon: 'https://geminon.fi/tokens/renBTC.svg'
-    },
+    // renbtc: {
+    //     name: "Ren Bitcoin",
+    //     symbol: "RENBTC",
+    //     key: "renbtc",
+    //     decimals: defaultDecimals,
+    //     uwdecimals: 8,
+    //     icon: renbtcIcon,
+    //     urlicon: 'https://geminon.fi/tokens/renBTC.svg'
+    // },
     paxg: {
         name: "PAX Gold",
         symbol: "PAXG",
@@ -137,15 +137,15 @@ const ethAssets = {
 
 const bnbAssets = {
     gex: gexToken, 
-    renbtc: {
-        name: "Ren Bitcoin",
-        symbol: "RENBTC",
-        key: "renbtc",
-        decimals: defaultDecimals,
-        uwdecimals: 8,
-        icon: renbtcIcon,
-        urlicon: 'https://geminon.fi/tokens/renBTC.svg'
-    },
+    // renbtc: {
+    //     name: "Ren Bitcoin",
+    //     symbol: "RENBTC",
+    //     key: "renbtc",
+    //     decimals: defaultDecimals,
+    //     uwdecimals: 8,
+    //     icon: renbtcIcon,
+    //     urlicon: 'https://geminon.fi/tokens/renBTC.svg'
+    // },
 }
 
 const avaxAssets = {

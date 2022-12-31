@@ -12,6 +12,8 @@ import usdiIcon from "../styles/images/tokens/usdi.png"
 import euriIcon from "../styles/images/tokens/euri.png"
 import usdgIcon from "../styles/images/tokens/usdg.png"
 import eurgIcon from "../styles/images/tokens/eurg.png"
+import cnygIcon from "../styles/images/tokens/cnyg.png"
+import jpygIcon from "../styles/images/tokens/cnyg.png"
 
 import mainnetContracts from "./deployments/mainnet_contracts_info.json"
 import testnetContracts from "./deployments/testnet_contracts_info.json"
@@ -74,6 +76,24 @@ const stableAssets = {
         icon: eurgIcon,
         urlicon: 'https://geminon.fi/tokens/eurg_128x128.png'
     },
+    cnyg: {
+        name: "Geminon Renminbi",
+        symbol: "CNYG",
+        key: "cnyg",
+        decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
+        icon: cnygIcon,
+        urlicon: 'https://geminon.fi/tokens/cnyg_128x128.png'
+    },
+    // jpyg: {
+    //     name: "Geminon Japanese Yen",
+    //     symbol: "JPYG",
+    //     key: "jpyg",
+    //     decimals: defaultDecimals,
+    //     uwdecimals: defaultDecimals,
+    //     icon: jpygIcon,
+    //     urlicon: 'https://geminon.fi/tokens/jpyg_128x128.png'
+    // },
 }
 
 const nativeAssets = {
@@ -170,7 +190,7 @@ export const getGEXToken = (networkID) => {
 
 export const getPoolAssetsList = (networkID) => {
     const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
-    // console.log("[CONFIG][assets][getAssetsList] networkID, validNetID", networkID, validNetID)
+    console.log("[CONFIG][assets][getAssetsList] networkID, validNetID", networkID, validNetID)
     const tokensData = contracts[validNetID].tokens
 
     const mapNative = {
@@ -206,25 +226,25 @@ export const getPoolAssetsList = (networkID) => {
         })
     }
 
-    // console.log("[CONFIG][assets][getAssetsList] nativeAsset, tokensList", nativeAsset, tokensList)
+    console.log("[CONFIG][assets][getAssetsList] nativeAsset, tokensList", nativeAsset, tokensList)
     return {nativeAsset, tokensList}
 }
 
 
 export const getStableAssetsList = (networkID) => {
     const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
-    // console.log("[CONFIG][assets][getMinterAssetsList] networkID, validNetID", networkID, validNetID)
+    console.log("[CONFIG][assets][getStableAssetsList] networkID, validNetID", networkID, validNetID)
     const stablecoinsData = contracts[validNetID].stablecoins
     
     const stablecoinsList = []
-    for (const key in stableAssets) {        
+    for (const key in stablecoinsData) {        
         stablecoinsList.push({
             ...stableAssets[key],
             address: stablecoinsData[key]
         })
     }
 
-    // console.log("[CONFIG][assets][getMinterAssetsList] nativeAsset, tokensList", nativeAsset, tokensList)
+    console.log("[CONFIG][assets][getStableAssetsList] stablecoinsList", stablecoinsList)
     return stablecoinsList
 }
 

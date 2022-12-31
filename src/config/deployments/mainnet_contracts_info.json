@@ -17996,7 +17996,8 @@
             "usdi": "0x4C24e67DC2a00AdA5E90C1E284d2EE4260A21E05",
             "euri": "0xcbB00E1f27a59735f390F3263d335A112f10Db8b",
             "usdg": "0x825B116b431c441C8f5eC19abC069adbd0a169cF",
-            "eurg": "0x38f8058b4dF45E8451d10f40343DBAaeCAE620cF"
+            "eurg": "0x38f8058b4dF45E8451d10f40343DBAaeCAE620cF",
+            "cnyg": "0x52644C661Bd2436C0a620Cf11b617276b8c7C2D1"
         },
         "scminter": {
             "address": "0xeF0dfe8cF872B4dF3681Ad37A17Ef5e2D473B877",

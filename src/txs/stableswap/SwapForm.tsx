@@ -62,8 +62,8 @@ const SwapForm = () => {
         // Sombrear en la lista, si hay un activo seleccionado en el otro
         // formulario, diferente a GEX, todas las opciones que no sean GEX 
         const muted = { 
-          offerSymbol: !!askSymbol && (askSymbol!="GEX" && value!="GEX") || (askSymbol==value),
-          askSymbol: !!offerSymbol && (offerSymbol!="GEX" && value!="GEX") || (offerSymbol==value)
+          offerSymbol: !!askSymbol && (askSymbol==value) || (offerSymbol==value),
+          askSymbol: !!offerSymbol && (offerSymbol==value) || (askSymbol==value)
         }[key]
 
         const hidden = key === "offerSymbol" && !showAll && !has(balance) && isConnected

@@ -13,7 +13,8 @@ import euriIcon from "../styles/images/tokens/euri.png"
 import usdgIcon from "../styles/images/tokens/usdg.png"
 import eurgIcon from "../styles/images/tokens/eurg.png"
 import cnygIcon from "../styles/images/tokens/cnyg.png"
-import jpygIcon from "../styles/images/tokens/cnyg.png"
+import jpygIcon from "../styles/images/tokens/jpyg.png"
+// import gbpgIcon from "../styles/images/tokens/gbpg.png"
 
 import mainnetContracts from "./deployments/mainnet_contracts_info.json"
 import testnetContracts from "./deployments/testnet_contracts_info.json"
@@ -85,14 +86,23 @@ const stableAssets = {
         icon: cnygIcon,
         urlicon: 'https://geminon.fi/tokens/cnyg_128x128.png'
     },
-    // jpyg: {
-    //     name: "Geminon Japanese Yen",
-    //     symbol: "JPYG",
-    //     key: "jpyg",
+    jpyg: {
+        name: "Geminon Japanese Yen",
+        symbol: "JPYG",
+        key: "jpyg",
+        decimals: defaultDecimals,
+        uwdecimals: defaultDecimals,
+        icon: jpygIcon,
+        urlicon: 'https://geminon.fi/tokens/jpyg_128x128.png'
+    },
+    // gbpg: {
+    //     name: "Geminon Pound Sterling",
+    //     symbol: "GBPG",
+    //     key: "gbpg",
     //     decimals: defaultDecimals,
     //     uwdecimals: defaultDecimals,
-    //     icon: jpygIcon,
-    //     urlicon: 'https://geminon.fi/tokens/jpyg_128x128.png'
+    //     icon: gbpgIcon,
+    //     urlicon: 'https://geminon.fi/tokens/gbpg_128x128.png'
     // },
 }
 

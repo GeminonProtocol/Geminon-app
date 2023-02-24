@@ -85,7 +85,7 @@ export const useNav = () => {
     {
       path: "/swap",
       element: <SwapTx />,
-      title: t("StableSwap"),
+      title: t("ForDEX"),
       icon: <SwapIcon {...ICON_SIZE} />
     },
     {

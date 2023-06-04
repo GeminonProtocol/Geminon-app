@@ -204,7 +204,8 @@ const CollatForm = () => {
   }
 
   // No está muy claro que tenga algún efecto: en el componente Tx se define de nuevo
-  const disabled = enableHooks ? false: "Input data" //isFetching ? t("Simulating...") : false
+  // const disabled = enableHooks ? false: "Input data" //isFetching ? t("Simulating...") : false
+  const disabled = false
 
 
   // RENDER FUNCTIONS
@@ -335,9 +336,8 @@ const CollatForm = () => {
           {/* (11) DETALLES FEE. COMPONENTE renderFee() DE Tx */}
           {isConnected && fee.render()}
 
-          {/* {( Banner rojo error parte inferior caja
-            <FormError>{t("Pair does not exist")}</FormError>
-          )} */}
+          {/* {( Banner rojo error parte inferior caja)} */}
+          {disabled && <FormError>{disabled}</FormError>}
 
           {/* (12) BOTÓN ENVIAR TRANSACCIÓN */}
           {submit.button}

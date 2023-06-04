@@ -85,7 +85,7 @@
     "This module is not yet activated": "Este módulo no está activado aún",
     "Module under construction": "Módulo en construcción",
     "This module is expected to be deployed in {{when}}": "Se espera que este módulo sea desplegado en el {{when}}",
-    "Geminon Protocol will launch on September 25. More info on our Telegram channel: ": "El Protocolo Geminon se lanzará el 25 de septiembre. Más información en nuestro canal de Telegram: "
+    "Token minting has been paused until v2 release. More info in this post: ": "La acuñación de tokens se ha pausado hasta el lanzamiento de v2. Más info en este post: "
   },
   "Units": {
     "year": "año",

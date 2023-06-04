@@ -146,7 +146,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   
   // TODO: Este lo usaremos si el slippage es mayor q el establecido para que muestre 
   // la advertencia en rojo debajo del formulario y desactive los botones
-  const disabled = ""
+  const disabled = "Mint paused" //false
   
 
     
@@ -230,6 +230,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   const submitButton = (
     <>
       {isWrongNetwork && <FormWarning>{t("Wrong network")}</FormWarning>}
+      {disabled && <FormWarning>{t("Mint paused")}</FormWarning>}
 
       {!isConnected ? (
         <ConnectWallet

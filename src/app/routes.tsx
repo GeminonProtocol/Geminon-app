@@ -88,12 +88,12 @@ export const useNav = () => {
       title: t("ForDEX"),
       icon: <SwapIcon {...ICON_SIZE} />
     },
-    {
-      path: "/lb",
-      element: <UnderConstruction when={'Q1 2023'}/>,
-      title: t("Lend & Borrow"),
-      icon: <AccountBalanceIcon {...ICON_SIZE} />
-    },
+    // {
+    //   path: "/lb",
+    //   element: <UnderConstruction when={'Q1 2023'}/>,
+    //   title: t("Lend & Borrow"),
+    //   icon: <AccountBalanceIcon {...ICON_SIZE} />
+    // },
   ]
 
   const routes = [

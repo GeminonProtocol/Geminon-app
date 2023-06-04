@@ -188,7 +188,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
   
   // TODO: Este lo usaremos si el slippage es mayor q el establecido para que muestre 
   // la advertencia en rojo debajo del formulario y desactive los botones
-  const disabled = ""
+  const disabled = askAssetItem.symbol == "GEX" && "Mint paused"
     // passwordRequired && !password
     //   ? t("Enter password")
     //   : estimatedGasState.isLoading
@@ -319,6 +319,7 @@ function Tx<TxValues>(props: Props<TxValues>) {
     const submitButton = (
     <>
       {isWrongNetwork && <FormWarning>{t("Wrong network")}</FormWarning>}
+      {disabled && <FormWarning>{disabled}</FormWarning>}
 
       {!isConnected ? (
         <ConnectWallet

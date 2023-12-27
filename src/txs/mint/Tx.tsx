@@ -16,7 +16,7 @@ import { has } from "utils/num"
 
 import { Pre } from "components/general"
 import { Flex, Grid } from "components/layout"
-import { Submit, Select, Input, FormItem } from "components/form"
+import { Submit, FormItem } from "components/form"
 import { FormError, FormWarning, FormHelp } from "components/form"
 import Approve from "components/form/Approve"
 import { Modal } from "components/feedback"

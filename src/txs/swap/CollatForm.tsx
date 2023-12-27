@@ -15,7 +15,7 @@ import { Read } from "components/token"
 /* tx modules */
 import { getPlaceholder, toInput } from "../utils"
 import validate from "../validate"
-import Tx, { TxProps } from "../Tx"
+import Tx, { TxProps } from "./Tx"
 
 /* swap modules */
 import AssetFormItem from "./components/AssetFormItem"

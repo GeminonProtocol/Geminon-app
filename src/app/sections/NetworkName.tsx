@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next"
 import { useAccount, useNetwork } from 'wagmi'
-import Select from '@mui/material/Select' // https://mui.com/material-ui/react-select/
 import styles from "./IsClassicNetwork.module.scss"
 
 import { validNetworkID } from 'config/networks'
@@ -22,15 +21,5 @@ const NetworkName = () => {
   )
 }
 
-
-/* const IsClassicNetwork = () => {
-  const isClassic = useIsClassic()
-
-  return (
-    <div className={styles.component}>
-      {isClassic ? "Terra Classic" : "Terra 2.0"}
-    </div>
-  )
-} */
 
 export default NetworkName

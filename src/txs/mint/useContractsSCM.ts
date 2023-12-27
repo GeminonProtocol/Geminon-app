@@ -3,11 +3,27 @@ import BigNumber from "bignumber.js"
 import { useNetwork, useAccount, useBalance, useContractRead, useContractReads, erc20ABI } from 'wagmi'
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 
-import { combineState } from "data/query"
+// import { combineState } from "data/query"
 
 import { getMinterContract } from "config/contracts.js"
 import { defaultNetworkID } from "config/networks"
 
+
+interface QueryState {
+  isIdle?: boolean
+  isLoading?: boolean
+  isFetching?: boolean
+  isSuccess?: boolean
+  error?: Error | unknown
+}
+
+const combineState = (...results: QueryState[]) => ({
+  isIdle: results.some((result) => result.isIdle),
+  isLoading: results.some((result) => result.isLoading),
+  isFetching: results.some((result) => result.isFetching),
+  isSuccess: results.every((result) => result.isSuccess),
+  error: results.find((result) => result.error)?.error,
+})
 
 
 export const useReadBalances = (tokensList: TokenEVM[]) => {

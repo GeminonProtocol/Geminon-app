@@ -1,7 +1,7 @@
 import { always } from "ramda"
 import BigNumber from "bignumber.js"
-import { AccAddress } from "@terra-money/terra.js"
-import { validateMsg } from "utils/data"
+// import { AccAddress } from "@terra-money/terra.js"
+
 
 const lessThan = (max: number, label = "Amount", optional = false) => {
   return (value = 0) => {
@@ -38,20 +38,20 @@ const input = (
   }
 }
 
-const recipient = () => {
-  return {
-    required: (recipient = "") => !!recipient || "Recipient is required",
-    validate: (recipient = "") =>
-      validateRecipient(recipient) || "Invalid recipient",
-  }
-}
+// const recipient = () => {
+//   return {
+//     required: (recipient = "") => !!recipient || "Recipient is required",
+//     validate: (recipient = "") =>
+//       validateRecipient(recipient) || "Invalid recipient",
+//   }
+// }
 
-const address = (label = "Recipient", optional = false) => {
-  return (address?: string) => {
-    if (!address) return optional || `${label} is required`
-    return (address && AccAddress.validate(address)) || "Invalid address"
-  }
-}
+// const address = (label = "Recipient", optional = false) => {
+//   return (address?: string) => {
+//     if (!address) return optional || `${label} is required`
+//     return (address && AccAddress.validate(address)) || "Invalid address"
+//   }
+// }
 
 const size = (length: number, label = "Memo") => {
   return (value?: string) => {
@@ -79,8 +79,8 @@ const validate = {
   input,
   decimal,
   lessThan,
-  recipient,
-  address,
+  // recipient,
+  // address,
   size,
   memo,
   msg,
@@ -89,5 +89,21 @@ const validate = {
 export default validate
 
 /* tns */
-export const validateRecipient = (address: string) =>
-  AccAddress.validate(address) || address.endsWith(".ust")
+// export const validateRecipient = (address: string) =>
+//   AccAddress.validate(address) || address.endsWith(".ust")
+
+
+// helpers
+const parseJSON = (query: string) => {
+  try {
+    return JSON.parse(query)
+  } catch {
+    return
+  }
+}
+
+const validateMsg = (msg: string): object | undefined => {
+  const parsed = parseJSON(msg)
+  if (!parsed) return
+  return parsed
+}

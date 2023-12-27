@@ -1,4 +1,4 @@
-import { DEFAULT_GAS_ADJUSTMENT } from "config/constants"
+// import { DEFAULT_GAS_ADJUSTMENT } from "config/constants"
 import themes from "styles/themes/themes"
 
 export enum SettingKey {
@@ -19,6 +19,8 @@ export const DefaultTheme = themes[Number(isSystemDarkMode)]
 
 export const DefaultCustomTokensItem = { ibc: [], cw20: [], cw721: [] }
 const DefaultCustomTokens = { mainnet: DefaultCustomTokensItem }
+
+const DEFAULT_GAS_ADJUSTMENT = 2
 
 export const DefaultSettings = {
   [SettingKey.Theme]: DefaultTheme,

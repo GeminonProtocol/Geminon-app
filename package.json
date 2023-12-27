@@ -6,8 +6,8 @@
   "repository": "github:GeminonProtocol/Geminon-app",
   "license": "MIT",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "start": "react-scripts --openssl-legacy-provider start",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "prepare": "husky install",
     "pre-commit": "lint-staged",

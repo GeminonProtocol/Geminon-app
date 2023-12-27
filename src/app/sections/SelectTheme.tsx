@@ -6,13 +6,17 @@ import InfoIcon from "@mui/icons-material/Info"
 import { capitalize } from "@mui/material"
 import { readAmount } from "@terra.kitchen/utils"
 import { themes } from "styles/themes/themes"
-import { useAddress } from "data/wallet"
+
 import { useThemeState, useValidateTheme } from "data/settings/Theme"
 import { Flex, FlexColumn, Grid } from "components/layout"
 import { Radio } from "components/form"
 import { ModalButton } from "components/feedback"
 import HeaderIconButton from "../components/HeaderIconButton"
 import styles from "./SelectTheme.module.scss"
+
+
+const dummyAddress = "terra1p5hgj5fdvyjw8z86hjezvanjm0q7jm5j299tnj"
+const useAddress = () => {return dummyAddress}
 
 const cx = classNames.bind(styles)
 

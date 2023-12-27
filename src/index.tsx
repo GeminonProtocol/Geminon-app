@@ -12,7 +12,6 @@ import "index.scss"
 import ScrollToTop from "app/ScrollToTop"
 import InitWeb3 from "app/InitWeb3"
 import InitTheme from "app/InitTheme"
-// import ElectronVersion from "app/ElectronVersion"
 import App from "app/App"
 
 
@@ -24,7 +23,6 @@ render(
         <ScrollToTop />
           <InitWeb3>
             <InitTheme />
-            {/* <ElectronVersion /> */}
             <App />
           </InitWeb3>
         {debug.query && <ReactQueryDevtools position="bottom-right" />}

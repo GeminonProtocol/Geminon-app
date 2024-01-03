@@ -3,27 +3,9 @@ import BigNumber from "bignumber.js"
 import { useNetwork, useAccount, useBalance, useContractRead, useContractReads, erc20ABI } from 'wagmi'
 import { usePrepareContractWrite, useContractWrite, useWaitForTransaction } from 'wagmi'
 
-// import { combineState } from "data/query"
-
 import { getMinterContract } from "config/contracts.js"
 import { defaultNetworkID } from "config/networks"
 
-
-interface QueryState {
-  isIdle?: boolean
-  isLoading?: boolean
-  isFetching?: boolean
-  isSuccess?: boolean
-  error?: Error | unknown
-}
-
-const combineState = (...results: QueryState[]) => ({
-  isIdle: results.some((result) => result.isIdle),
-  isLoading: results.some((result) => result.isLoading),
-  isFetching: results.some((result) => result.isFetching),
-  isSuccess: results.every((result) => result.isSuccess),
-  error: results.find((result) => result.error)?.error,
-})
 
 
 export const useReadBalances = (tokensList: TokenEVM[]) => {
@@ -61,7 +43,7 @@ export const useStableAsset = (offerAsset: TokenEVM, askAsset: TokenEVM) => {
 
 const useMinterContract = () => {
   const { chain } = useNetwork()
-  const connectedNetworkId = chain?.id.toString() ?? defaultNetworkID
+  const connectedNetworkId = chain?.id ?? defaultNetworkID
   const scminter = getMinterContract(connectedNetworkId)
   
   return { 
@@ -251,3 +233,14 @@ export const useSubmitSwapTx = (offerAddress:string, askAddress:string, inAmount
 
   return { write, ...state }
 }
+
+
+
+/* helpers */
+const combineState = (...results: QueryState[]) => ({
+  isIdle: results.some((result) => result.isIdle),
+  isLoading: results.some((result) => result.isLoading),
+  isFetching: results.some((result) => result.isFetching),
+  isSuccess: results.every((result) => result.isSuccess),
+  error: results.find((result) => result.error)?.error,
+})

@@ -13235,7 +13235,7 @@
     },
     "97": {
         "tokens": {
-            "gex": "0xD100C367Ae8e2b1278dC0c5DF138cBba6455d4B7",
+            "gex": "0xabBC88959A5150d5244A9B417e8FBcFa2B193E71",
             "renbtc": "0x42A4B3860206b48D6a46ff7C66773c3F16A88571"
         },
         "glp": {
@@ -18814,7 +18814,7 @@
             ]
         },
         "recovercollat": {
-            "address": "0xAB7c70145904F1A77e6187502600Ac0b962b3a2C",
+            "address": "0x991447cF6e5661ff8D880fBF0aDC423C47Ba3b39",
             "abi": [
                 {
                     "inputs": [
@@ -18837,6 +18837,32 @@
                     "stateMutability": "nonpayable",
                     "type": "constructor",
                     "name": "constructor"
+                },
+                {
+                    "inputs": [],
+                    "name": "_GEX",
+                    "outputs": [
+                        {
+                            "internalType": "contract IERC20ElasticSupply",
+                            "name": "",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "_natGLP",
+                    "outputs": [
+                        {
+                            "internalType": "contract IGenesisLiquidityPool",
+                            "name": "",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
                 },
                 {
                     "inputs": [
@@ -18872,6 +18898,25 @@
                             "type": "address"
                         }
                     ],
+                    "name": "getAmount",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "holder",
+                            "type": "address"
+                        }
+                    ],
                     "name": "getHolderShare",
                     "outputs": [
                         {
@@ -18886,7 +18931,97 @@
                         },
                         {
                             "internalType": "uint256",
+                            "name": "collatPrice",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
                             "name": "usdValue",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "name": "getPrice",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "amount",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "getRedeemValues",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "share",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "collatAmount",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "collatPrice",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "usdValue",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "holder",
+                            "type": "address"
+                        }
+                    ],
+                    "name": "getShare",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "holder",
+                            "type": "address"
+                        }
+                    ],
+                    "name": "getValue",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
                             "type": "uint256"
                         }
                     ],

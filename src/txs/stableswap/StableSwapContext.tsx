@@ -4,7 +4,7 @@ import { useAccount, useNetwork } from 'wagmi'
 import { Card } from "components/layout"
 import createContext from "utils/createContext"
 
-import { getStableAssetsList, getGEXToken } from "config/assets.js"
+import { getStableAssetsList } from "config/assets.js"
 import { defaultNetworkID } from "config/networks"
 
 
@@ -26,7 +26,6 @@ const StableSwapContext = ({ children }: PropsWithChildren<{}>) => {
         return { networkID, tokensList: stablecoinsList }
     }, [chain])
 
-
     const cardKey = networkID + (isConnected ? 1 : 0)
 
     const render = () => {
@@ -36,6 +35,5 @@ const StableSwapContext = ({ children }: PropsWithChildren<{}>) => {
 
 return <Card key={cardKey}>{render()}</Card>
 }
-
 
 export default StableSwapContext

@@ -115,7 +115,9 @@ const ExpectedPrice = ({ ...props }: ExpectedPriceProps) => {
        renderSCMint() :
        mode == "Swap" ? 
        renderStableSwap() :
-       renderGLPswap()
+       mode == "GLP" ?
+       renderGLPswap() :
+       null
       }
     </dl>
   )

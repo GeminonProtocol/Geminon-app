@@ -9,22 +9,6 @@ import { getPoolContracts } from "config/contracts.js"
 import { defaultNetworkID } from "config/networks"
 
 
-interface QueryState {
-  isIdle?: boolean
-  isLoading?: boolean
-  isFetching?: boolean
-  isSuccess?: boolean
-  error?: Error | unknown
-}
-
-const combineState = (...results: QueryState[]) => ({
-  isIdle: results.some((result) => result.isIdle),
-  isLoading: results.some((result) => result.isLoading),
-  isFetching: results.some((result) => result.isFetching),
-  isSuccess: results.every((result) => result.isSuccess),
-  error: results.find((result) => result.error)?.error,
-})
-
 
 export const useReadBalances = (nativeAsset: AssetEVM, tokensList: TokenEVM[]) => {
   // console.log("[useReadBalances] nativeAsset, tokensList", nativeAsset, tokensList)
@@ -358,3 +342,12 @@ export const useSubmitTx = (
 }
 
 
+
+/* helpers */
+const combineState = (...results: QueryState[]) => ({
+  isIdle: results.some((result) => result.isIdle),
+  isLoading: results.some((result) => result.isLoading),
+  isFetching: results.some((result) => result.isFetching),
+  isSuccess: results.every((result) => result.isSuccess),
+  error: results.find((result) => result.error)?.error,
+})

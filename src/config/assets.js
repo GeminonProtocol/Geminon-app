@@ -198,10 +198,9 @@ export const getGEXToken = (networkID) => {
     return {...gexToken, address: contracts[validNetID].tokens.gex}
 }
 
-export const getPoolAssetsList = (networkID) => {
+
+export const getNativeAsset = (networkID) => {
     const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
-    console.log("[CONFIG][assets][getAssetsList] networkID, validNetID", networkID, validNetID)
-    const tokensData = contracts[validNetID].tokens
 
     const mapNative = {
         1: nativeAssets.eth,
@@ -214,6 +213,19 @@ export const getPoolAssetsList = (networkID) => {
         43114: nativeAssets.avax,
     }
 
+    const nativeAsset = mapNative[validNetID]
+
+    return nativeAsset
+}
+
+
+export const getPoolAssetsList = (networkID) => {
+    const nativeAsset = getNativeAsset(networkID)
+
+    const validNetID = validNetworkID.includes(networkID) ? networkID : defaultNetworkID
+    console.log("[CONFIG][assets][getAssetsList] networkID, validNetID", networkID, validNetID)
+    const tokensData = contracts[validNetID].tokens
+    
     const mapAssets = {
         1: ethAssets,
         4: ethAssets,
@@ -225,7 +237,6 @@ export const getPoolAssetsList = (networkID) => {
         43114: avaxAssets,
     }
 
-    const nativeAsset = mapNative[validNetID]
     const netTokens = mapAssets[validNetID]
     
     const tokensList = []
@@ -237,7 +248,7 @@ export const getPoolAssetsList = (networkID) => {
     }
 
     console.log("[CONFIG][assets][getAssetsList] nativeAsset, tokensList", nativeAsset, tokensList)
-    return {nativeAsset, tokensList}
+    return { nativeAsset, tokensList }
 }
 
 

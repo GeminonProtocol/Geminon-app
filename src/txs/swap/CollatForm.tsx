@@ -227,7 +227,7 @@ const CollatForm = () => {
 
     const isLoading = false
     const props = { offerSymbol, offerDecimals, askSymbol, askDecimals, 
-      offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount, isLoading}
+      offerAssetPrice, askAssetPrice, askAssetRatio, feeAmount, isLoading, mode:"GLP"}
 
     if (!(isConnected && validateExpectedPriceProps(props))){
       // console.log("[SWAPFORM][renderExpected] props NOT VALIDATED", props)
